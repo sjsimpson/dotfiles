@@ -6,28 +6,8 @@
 
 ---
 
-Forked from my [ZSH dotfiles](https://github.com/caarlos0/dotfiles), those are
-my Fish Shell config files, together with editor, macOS configs and other
-goodies.
-
-The main reasons for the fork are:
-
-- a lot of things I have out of the box on Fish needed plugins on zsh
-- Fish autocompletion is awesome
-- Fish syntax is easier to use
-- Fish is more modern.
-
-This is an attempt to make the same things I had on my ZSH dotfiles on Fish.
-For the user, it should look pretty much the same, although under the hood
-there are a lot of changes.
-
-Config files are still topical, and even though aliases are not a thing on Fish,
-files are named like that still (and hold both functions and abbreviations).
-
-The auto-update feature was removed, as it was hacky on ZSH and I didn't want to
-do it. Instead, now the bootstrap script is better and can be run multiple times
-without any issues, so, to update, `git pull` and run the `bootstrap.fish`
-script.
+Based on these [dotfiles](https://github.com/caarlos0/dotfiles.fish) by Carlos Becker. I modified his a bit
+to fit my preferences, and will continue to add to mine and pull from his.
 
 ## Installation
 
@@ -46,8 +26,9 @@ First, make sure you have all those things installed:
 Then, run these steps:
 
 ```console
-$ git clone https://github.com/caarlos0/dotfiles.fish.git ~/.dotfiles
+$ git clone https://gitlab.com/spencerjsimpson/dotfiles.git ~/.dotfiles
 $ cd ~/.dotfiles
+# I will be adding a step here that should download and install brew and vs-code for you
 $ ./script/bootstrap.fish
 ```
 
