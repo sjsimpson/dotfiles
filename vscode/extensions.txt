@@ -17,4 +17,3 @@ quicktype.quicktype
 vscjava.vscode-java-dependency
 ms-python.python
 visualstudioexptteam.vscodeintellicode
-
