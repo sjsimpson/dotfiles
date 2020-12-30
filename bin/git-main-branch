@@ -1,0 +1,6 @@
+#!/usr/bin/env fish
+if test -f .git/refs/remotes/origin/main
+	echo main
+else
+	echo master
+end

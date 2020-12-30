@@ -1,0 +1,82 @@
+{
+    // VS Code Configurations
+    "editor.fontSize": 12,
+    "editor.rulers": [
+		80,
+		150
+    ],
+    "editor.fontLigatures": false,
+    "editor.tabSize": 4,
+    "editor.trimAutoWhitespace": true,
+    "editor.tabCompletion": "on",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modifications",
+    "editor.cursorBlinking": "blink",
+    "editor.minimap.enabled": false,
+    "editor.fontFamily": "'Inconsolata Condense', Menlo, Mocano, 'Courier New', monospace",
+    "editor.smoothScrolling": true,
+
+    "explorer.openEditors.visible": 0,
+    "explorer.confirmDragAndDrop": false,
+
+    "extensions.autoUpdate": true,
+    "extensions.ignoreRecommendations": false,
+
+    "files.autoSave": "off",
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+		"yarn.lock": true
+	},
+    "files.insertFinalNewline": true,
+
+    "search.exclude": {
+		"**/node_modules": true,
+		"**/bower_components": true,
+		"/vendor": true
+    },
+    "search.smartCase": true,
+	"search.useGlobalIgnoreFiles": true,
+	"search.showLineNumbers": true,
+
+    "terminal.external.osxExec": "iTerm.app",
+    "terminal.integrated.fontFamily": "\"mononoki Nerd Font\"",
+    "terminal.integrated.fontSize": 12,
+    "terminal.integrated.cursorBlinking": true,
+	"terminal.integrated.cursorStyle": "line",
+	"terminal.integrated.shell.osx": "/usr/local/bin/fish",
+
+    "window.restoreWindows": "none",
+    "window.title": "${activeEditorMedium}${separator}${rootName}",
+    "window.zoomLevel": 0,
+    "window.newWindowDimensions": "maximized",
+
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorCustomizations": {},
+    "material-icon-theme.folders.theme": "specific",
+    "material-icon-theme.saturation": 0.7,
+    "material-icon-theme.opacity": 0.7,
+
+    // Language Specific Configurations
+    "javascript.updateImportsOnFileMove.enabled": "always",
+
+    "python.languageServer": "Microsoft",
+    "python.terminal.activateEnvironment": false,
+
+    "[jsonc]": {
+        "editor.defaultFormatter": "svipas.prettier-plus"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "explorer.confirmDelete": false,
+    "workbench.colorTheme": "Nord",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "java.configuration.checkProjectSettingsExclusions": false,
+    "emmet.preferences": {
+
+    }
+}
