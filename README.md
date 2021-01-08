@@ -34,6 +34,17 @@ $ ./script/bootstrap.fish
 
 > All changed files will be backed up with a `.backup` suffix.
 
+### NVM
+
+After installing `fish`, add this to `~/.config/fish/functions/nvm.fish`:
+
+```console
+function nvm
+    bass source ~/.nvm/nvm.sh --no-use ';' nvm $argv
+end
+```
+
+
 #### Update
 
 To update, you just need to `git pull` and run the bootstrap script again:
