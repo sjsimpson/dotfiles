@@ -78,5 +78,8 @@
     "java.configuration.checkProjectSettingsExclusions": false,
     "emmet.preferences": {
 
-    }
+    },
+    "python.formatting.autopep8Args": [
+        "--ignore=E731"
+    ]
 }
