@@ -5,8 +5,10 @@
 		80,
 		150
     ],
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
     "editor.fontLigatures": false,
-    "editor.tabSize": 4,
     "editor.trimAutoWhitespace": true,
     "editor.tabCompletion": "on",
     "editor.formatOnSave": true,
@@ -47,7 +49,6 @@
 
     "window.restoreWindows": "none",
     "window.title": "${activeEditorMedium}${separator}${rootName}",
-    "window.zoomLevel": 0,
     "window.newWindowDimensions": "maximized",
 
     "workbench.iconTheme": "material-icon-theme",
@@ -59,17 +60,40 @@
     // Language Specific Configurations
     "javascript.updateImportsOnFileMove.enabled": "always",
 
-    "python.languageServer": "Microsoft",
+    "python.languageServer": "Pylance",
     "python.terminal.activateEnvironment": false,
 
+    "[scss]": {
+      "editor.detectIndentation": false,
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[javascript]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[javascriptreact]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
     "[jsonc]": {
         "editor.defaultFormatter": "svipas.prettier-plus"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.detectIndentation": false,
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
     },
     "[html]": {
         "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "[python]": {
+        "editor.tabSize": 4
     },
     "explorer.confirmDelete": false,
     "workbench.colorTheme": "Nord",
@@ -81,5 +105,15 @@
     },
     "python.formatting.autopep8Args": [
         "--ignore=E731"
-    ]
+    ],
+    "[json]": {
+        "editor.defaultFormatter": "HookyQR.beautify"
+    },
+    "workbench.editorAssociations": [
+      {
+        "viewType": "jupyter-notebook",
+        "filenamePattern": "*.ipynb"
+      }
+    ],
+    "eslint.format.enable": true
 }

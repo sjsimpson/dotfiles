@@ -1,7 +1,7 @@
 <p align="center">
   <img alt="header image" src="https://raw.githubusercontent.com/caarlos0/dotfiles.fish/master/docs/header.svg" height="350" />
-  <h2 align="center">carlos' dotfiles</h2>
-  <p align="center">Config files for Fish, Java, Ruby, Go, Editors, Terminals and more.</p>
+  <h2 align="center">Spencer's dotfiles (stolen from Carlos' dotfiles)</h2>
+  <p align="center">Config files for Fish, Java, Terminals and more.</p>
 </p>
 
 ---
@@ -15,12 +15,36 @@ to fit my preferences, and will continue to add to mine and pull from his.
 
 First, make sure you have all those things installed:
 
+- [`brew`](https://brew.sh/): installing Homebrew for managing technologies
 - `git`: to clone the repo
 - `curl`: to download some stuff
 - `tar`: to extract downloaded stuff
-- `fish`: the shell
 - `sudo`: some configs may need that
+- `fish`: the shell
+- [`bat`](https://github.com/sharkdp/bat) a `cat` with wings;
+- [`exa`](https://the.exa.website) a modern replacement for `ls`;
+- [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find`;
+- [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example;
 
+To do this, first add `brew`:
+
+```console
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Then, use `brew` to install these dependencies:
+
+```console
+$ brew install fish bat exa fd fzf
+```
+
+Next, install apps that we'll need:
+
+- [VS Code](https://code.visualstudio.com/download): my preferred code editor
+- [iTerm 2](https://iterm2.com/downloads.html): my preferred terminal
+
+
+Once these are all installed, you can move on to installing the dotfiles.
 ### Install
 
 Then, run these steps:
@@ -34,15 +58,24 @@ $ ./script/bootstrap.fish
 
 > All changed files will be backed up with a `.backup` suffix.
 
-### NVM
 
-After installing `fish`, add this to `~/.config/fish/functions/nvm.fish`:
+### Pyenv
+
+First, install `pyenv` using `brew`:
 
 ```console
-function nvm
-    bass source ~/.nvm/nvm.sh --no-use ';' nvm $argv
-end
+$ brew install pyenv
 ```
+
+Then, add this to your `~/.config/fish/config.fish`:
+
+```console
+setenv PYENV_ROOT "$HOME/.pyenv"
+setenv PATH "$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
+pyenv rehash
+```
+
+You can now install python versions that you need and use them!!
 
 
 #### Update
@@ -73,32 +106,6 @@ $ fd -e backup -e local -H -E Library -d 3 .
 ```
 
 And then manually inspect/revert them.
-
-## Recommended Software
-
-For macOS, I recommend:
-
-- iTerm: a better terminal emulator;
-
-For both Linux and macOS:
-
-- [`bat`](https://github.com/sharkdp/bat) a `cat` with wings;
-- [`delta`](https://github.com/dandavison/delta) for better git diffs;
-- [`dog`](https://dns.lookup.dog) the command-line DNS client;
-- [`exa`](https://the.exa.website) a modern replacement for `ls`;
-- [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find`;
-- [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example;
-- [`gh`](https://github.com/cli/cli) for more GitHub integration with the terminal;
-- [`grc`](https://github.com/garabik/grc) to colorize command's outputs;
-- [`kubectx`](https://github.com/ahmetb/kubectx) for better Kubernetes context and namespace switch;
-- [`ripgrep`](https://github.com/BurntSushi/ripgrep) a faster `grep`;
-
-To install them all with `brew`:
-
-```console
-$ brew install bat git-delta dog exa fd fzf gh grc kubectx ripgrep
-```
-
 ## macOS defaults
 
 You use it by running:
