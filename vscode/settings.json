@@ -109,11 +109,12 @@
     "[json]": {
         "editor.defaultFormatter": "HookyQR.beautify"
     },
-    "workbench.editorAssociations": [
-      {
-        "viewType": "jupyter-notebook",
-        "filenamePattern": "*.ipynb"
-      }
-    ],
-    "eslint.format.enable": true
+    "workbench.editorAssociations": {
+      "*.ipynb": "jupyter-notebook"
+    },
+    "eslint.format.enable": true,
+    "notebook.cellToolbarLocation": {
+      "default": "right",
+      "jupyter-notebook": "left"
+    }
 }

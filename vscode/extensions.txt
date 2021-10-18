@@ -15,5 +15,10 @@ matangover.mypy
 arcticicestudio.nord-visual-studio-code
 quicktype.quicktype
 vscjava.vscode-java-dependency
+ms-python.vscode-pylance
 ms-python.python
+kevinrose.vsc-python-indent
+ms-vscode-remote.remote-containers
+vscjava.vscode-java-test
+rangav.vscode-thunder-client
 visualstudioexptteam.vscodeintellicode
