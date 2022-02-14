@@ -15,7 +15,7 @@
     "editor.formatOnSaveMode": "modifications",
     "editor.cursorBlinking": "blink",
     "editor.minimap.enabled": false,
-    "editor.fontFamily": "'Inconsolata Condense', Menlo, Mocano, 'Courier New', monospace",
+    "editor.fontFamily": "Menlo, Mocano, 'Courier New', monospace",
     "editor.smoothScrolling": true,
 
     "explorer.openEditors.visible": 0,
@@ -41,11 +41,11 @@
 	"search.showLineNumbers": true,
 
     "terminal.external.osxExec": "iTerm.app",
-    "terminal.integrated.fontFamily": "\"mononoki Nerd Font\"",
+    "terminal.integrated.fontFamily": "'mononoki Nerd Font'",
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.cursorBlinking": true,
 	"terminal.integrated.cursorStyle": "line",
-	"terminal.integrated.shell.osx": "/usr/local/bin/fish",
+	"terminal.integrated.shell.osx": "/opt/homebrew/bin/fish", // might need to be changed depending on computer
 
     "window.restoreWindows": "none",
     "window.title": "${activeEditorMedium}${separator}${rootName}",

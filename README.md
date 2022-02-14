@@ -25,6 +25,8 @@ First, make sure you have all those things installed:
 - [`exa`](https://the.exa.website) a modern replacement for `ls`;
 - [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find`;
 - [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example;
+- [`grc`](https://github.com/garabik/grc) for colorizing of output. Install using `brew install grc`
+- `delta`: better git diffs
 
 To do this, first add `brew`:
 
@@ -35,7 +37,7 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/
 Then, use `brew` to install these dependencies:
 
 ```console
-$ brew install fish bat exa fd fzf
+$ brew install fish bat exa fd fzf grc delta
 ```
 
 Next, install apps that we'll need:
