@@ -34,6 +34,13 @@ To do this, first add `brew`:
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
+Warning: `brew` might be installed in `/opt` with M1 chips. So you might have to add this to your `~/.config/fish/config.fish`:
+
+```console
+# Add bin and homebrew bin to path
+set -U fish_user_paths /usr/local/bin /opt/homebrew/bin $fish_user_paths
+```
+
 Then, use `brew` to install these dependencies:
 
 ```console
@@ -78,6 +85,25 @@ pyenv rehash
 ```
 
 You can now install python versions that you need and use them!!
+
+
+### NVM
+
+Follow the instructions [`here`](https://eshlox.net/2019/01/27/how-to-use-nvm-with-fish-shell/):
+
+Install `nvm` using `brew`:
+```console
+$ brew install nvm
+```
+
+Add fish function to `~/.config/fish/functions/nvm.fish` (I will automate this eventually):
+```console
+function nvm
+    bass source (brew --prefix nvm)/nvm.sh --no-use ';' nvm $argv
+end
+```
+
+`bass` should already be installed as a `fisher` package, and listed in `~/.config/fish/fisher_plugins` as `edc/bass`.
 
 
 #### Update
