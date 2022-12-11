@@ -98,8 +98,9 @@ function install_dotfiles
 		or abort bat
 	link_file $DOTFILES_ROOT/htop/htoprc $HOME/.config/htop/htoprc backup
 		or abort htoprc
-	link_file $DOTFILES_ROOT/ssh/config $HOME/.ssh/config local
-		or abort ssh
+    # Commenting this out for now...
+	# link_file $DOTFILES_ROOT/ssh/config $HOME/.ssh/config local
+	# 	or abort ssh
 end
 
 curl -sL git.io/fisher | source && fisher install jorgebucaran/fisher
