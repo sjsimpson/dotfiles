@@ -42,7 +42,7 @@
   "terminal.integrated.fontSize": 12,
   "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.shell.osx": "/opt/homebrew/bin/fish", // might need to be changed depending on computer
+  "terminal.integrated.shell.osx": "/usr/local/bin/fish", // might need to be changed depending on computer (M1/M2 Macs store fish in different location)
 
   "window.restoreWindows": "none",
   "window.title": "${activeEditorMedium}${separator}${rootName}",
