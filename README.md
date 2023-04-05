@@ -1,13 +1,9 @@
-<p align="center">
-  <img alt="header image" src="https://raw.githubusercontent.com/caarlos0/dotfiles.fish/master/docs/header.svg" height="350" />
-  <h2 align="center">sjsimpson dotfiles</h2>
-  <p align="center">Config files for my coding environment in [neovim](https://neovim.io) and [tmux](https://github.com/tmux/tmux/wiki).</p>
-  <p align="center">Eventually will contain my configuration for Arch Linux using AwesomeWM.
-</p>
+# sjsimpson dotfiles
 
----
+Config files for my coding environment in [neovim](https://neovim.io) and [tmux](https://github.com/tmux/tmux/wiki).
+Eventually will contain my configuration for Arch Linux using AwesomeWM.
 
-These dotfiles are based on [dotfiles](https://github.com/folke/dot) created by The Great [folke](https://github.com/folke).
+These dotfiles are based on [dotfiles](https://github.com/folke/dot) created by [folke](https://github.com/folke).
 
 Obviously, these have been modified and simplified, but I will be adding to them over time.
 An older iteration of these doftiles can be found [`old` branch](https://github.com/sjsimpson/dotfiles/tree/old) of this project.
@@ -24,7 +20,7 @@ First, make sure you have all dependencies installed:
 - `tar`: to extract downloaded stuff
 - `sudo`: some configs may need that
 - [`fish`](https://fishshell.com/): the shell
-- [`nvim`](https://neovim.io/): our preffered text/code editor
+- [`nvim`](https://neovim.io/): text/code editor
 - [`kitty`](https://sw.kovidgoyal.net/kitty/): GPU-based terminal emulator
 - [`tmux`](https://github.com/tmux/tmux/wiki): terminal multiplexer
 
@@ -51,8 +47,8 @@ So far, installation consists of copying files to their correct directories. Mos
 For `nvim`, we will:
 ```shell
 # ~/.dotfiles
-$ mv ~/.config/nvim ~/.config/nvim.bak   # if you already have a config
-$ ln -s (pwd)/config/nvim ~/.config/
+mv ~/.config/nvim ~/.config/nvim.bak   # if you already have a config
+ln -s (pwd)/config/nvim ~/.config/
 ```
 
 This flow applies to things like `kitty`, `starship`... and probably others, but give me a break, I'm just getting this started.
@@ -60,17 +56,17 @@ This flow applies to things like `kitty`, `starship`... and probably others, but
 Others will need to be installed in other places:
 
 tmux:
-```shell
+```console
 # ~/.dotfiles
-$ mv ~/.tmux.conf ~/.tmux.conf.bak
-$ ln -s (pwd)/tmux/.tmux.conf ~/
+mv ~/.tmux.conf ~/.tmux.conf.bak
+ln -s (pwd)/tmux/.tmux.conf ~/
 ```
 
 EditorConfig is still here for now. But I might change it shortly:
-```shell
+```console
 # ~/.dotfiles
-$ mv ~/.editorconfig ~/.editorconfig.bak
-$ ln -s editorconfig/editorconfig.symlink ~/.editorconfig
+mv ~/.editorconfig ~/.editorconfig.bak
+ln -s editorconfig/editorconfig.symlink ~/.editorconfig
 ```
 
 That should do it! Now you'll need to install plugins as you open apps, but for the most part that should happen automatically.
@@ -83,7 +79,7 @@ To revert these changes, simply delete the files/folders you created, and rename
 First, install `pyenv` using `brew`:
 
 ```console
-$ brew install pyenv
+brew install pyenv
 ```
 
 Then, add this to your `~/.config/fish/config.fish`:
@@ -103,7 +99,7 @@ Follow the instructions [`here`](https://eshlox.net/2019/01/27/how-to-use-nvm-wi
 
 Install `nvm` using `brew`:
 ```console
-$ brew install nvm
+brew install nvm
 ```
 
 Add fish function to `~/.config/fish/functions/nvm.fish` (I will automate this eventually):
@@ -120,7 +116,7 @@ end
 If you're configuring this on Mac, I would recommend using `brew` to install the majority of these dependencies. But first, you'll need to install `brew`:
 
 ```console
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 Warning: `brew` might be installed in `/opt` with M1 chips. So you might have to add this to your `~/.config/fish/config.fish`:
