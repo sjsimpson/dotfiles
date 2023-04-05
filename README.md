@@ -1,73 +1,83 @@
 <p align="center">
   <img alt="header image" src="https://raw.githubusercontent.com/caarlos0/dotfiles.fish/master/docs/header.svg" height="350" />
-  <h2 align="center">Spencer's dotfiles (stolen from Carlos' dotfiles)</h2>
-  <p align="center">Config files for Fish, Java, Terminals and more.</p>
+  <h2 align="center">sjsimpson dotfiles</h2>
+  <p align="center">Config files for my coding environment in [neovim](https://neovim.io) and [tmux](https://github.com/tmux/tmux/wiki).</p>
+  <p align="center">Eventually will contain my configuration for Arch Linux using AwesomeWM.
 </p>
 
 ---
 
-Based on these [dotfiles](https://github.com/caarlos0/dotfiles.fish) by Carlos Becker. I modified his a bit
-to fit my preferences, and will continue to add to mine and pull from his.
+These dotfiles are based on [dotfiles](https://github.com/folke/dot) created by The Great [folke](https://github.com/folke).
+
+Obviously, these have been modified and simplified, but I will be adding to them over time.
+An older iteration of these doftiles can be found [`old` branch](https://github.com/sjsimpson/dotfiles/tree/old) of this project.
+
 
 ## Installation
 
 ### Dependencies
 
-First, make sure you have all those things installed:
+First, make sure you have all dependencies installed:
 
-- [`brew`](https://brew.sh/): installing Homebrew for managing technologies
 - `git`: to clone the repo
 - `curl`: to download some stuff
 - `tar`: to extract downloaded stuff
 - `sudo`: some configs may need that
-- `fish`: the shell
+- [`fish`](https://fishshell.com/): the shell
+- [`nvim`](https://neovim.io/): our preffered text/code editor
+- [`kitty`](https://sw.kovidgoyal.net/kitty/): GPU-based terminal emulator
+- [`tmux`](https://github.com/tmux/tmux/wiki): terminal multiplexer
+
+Dependencies for our `neovim` setup:
+
+- [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find` (package name is `fd-find`;
+- [`ripgrep`](https://github.com/BurntSushi/ripgrep) find description there, mostly installing to help Telescope play nice and ignore `node_modules`
+
+
+These are some helpful tools, but don't affect installation:
+
 - [`bat`](https://github.com/sharkdp/bat) a `cat` with wings;
 - [`exa`](https://the.exa.website) a modern replacement for `ls`;
-- [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find`;
 - [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example;
 - [`grc`](https://github.com/garabik/grc) for colorizing of output. Install using `brew install grc`
-- `delta`: better git diffs
 
-To do this, first add `brew`:
-
-```console
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Warning: `brew` might be installed in `/opt` with M1 chips. So you might have to add this to your `~/.config/fish/config.fish`:
-
-```console
-# Add bin and homebrew bin to path
-set -U fish_user_paths /usr/local/bin /opt/homebrew/bin $fish_user_paths
-```
-
-Then, use `brew` to install these dependencies:
-
-```console
-$ brew install fish bat exa fd fzf grc delta
-```
-
-Next, install apps that we'll need:
-
-- [VS Code](https://code.visualstudio.com/download): my preferred code editor
-- [iTerm 2](https://iterm2.com/downloads.html): my preferred terminal
+I would include installation documentation for each of these, but that's quite a lot. So, instead, I've provided links that you can follow.
 
 
-Once these are all installed, you can move on to installing the dotfiles.
 ### Install
 
-Then, run these steps:
+So far, installation consists of copying files to their correct directories. Most of them should live in the `~/.config/`, so other than this example, I'll only give instructions on exceptions.
 
-```console
-$ git clone https://gitlab.com/spencerjsimpson/dotfiles.git ~/.dotfiles
-$ cd ~/.dotfiles
-# I will be adding a step here that should download and install brew and vs-code for you
-$ ./script/bootstrap.fish
+For `nvim`, we will:
+```shell
+# ~/.dotfiles
+$ mv ~/.config/nvim ~/.config/nvim.bak   # if you already have a config
+$ ln -s (pwd)/config/nvim ~/.config/
 ```
 
-> All changed files will be backed up with a `.backup` suffix.
+This flow applies to things like `kitty`, `starship`... and probably others, but give me a break, I'm just getting this started.
 
+Others will need to be installed in other places:
 
+tmux:
+```shell
+# ~/.dotfiles
+$ mv ~/.tmux.conf ~/.tmux.conf.bak
+$ ln -s (pwd)/tmux/.tmux.conf ~/
+```
+
+EditorConfig is still here for now. But I might change it shortly:
+```shell
+# ~/.dotfiles
+$ mv ~/.editorconfig ~/.editorconfig.bak
+$ ln -s editorconfig/editorconfig.symlink ~/.editorconfig
+```
+
+That should do it! Now you'll need to install plugins as you open apps, but for the most part that should happen automatically.
+
+To revert these changes, simply delete the files/folders you created, and rename your `*.bak` files/folders.
+
+## Old Instructions (but still useful-ish)
 ### Pyenv
 
 First, install `pyenv` using `brew`:
@@ -105,54 +115,22 @@ end
 
 `bass` should already be installed as a `fisher` package, and listed in `~/.config/fish/fisher_plugins` as `edc/bass`.
 
+### Mac
 
-#### Update
-
-To update, you just need to `git pull` and run the bootstrap script again:
-
-```console
-$ cd ~/.dotfiles
-$ git pull origin master
-$ ./script/bootstrap.fish
-```
-
-## Revert
-
-Reverting is not totally automated, but it pretty much consists in removing
-the fish config and dotfiles folder, as well as moving back some config files.
-
-**Remove the folders:**
+If you're configuring this on Mac, I would recommend using `brew` to install the majority of these dependencies. But first, you'll need to install `brew`:
 
 ```console
-$ rm -rf ~/.dotfiles ~/.config/fish
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-**Some config files were changed, you can find them using `fd`:**
+Warning: `brew` might be installed in `/opt` with M1 chips. So you might have to add this to your `~/.config/fish/config.fish`:
 
 ```console
-$ fd -e backup -e local -H -E Library -d 3 .
+# Add bin and homebrew bin to path
+set -U fish_user_paths /usr/local/bin /opt/homebrew/bin $fish_user_paths
 ```
 
-And then manually inspect/revert them.
-## macOS defaults
+Because I have yet to configure most of this on Mac, I'm not sure how friendly `kitty` is (feel free to read their documentation). I previously used `iterm2`, which should work fine, you'll just need to add your own configuration/theme:
 
-You use it by running:
+- [iTerm 2](https://iterm2.com/downloads.html): my preferred terminal
 
-```console
-~/.dotfiles/macos/set-defaults.sh
-```
-
-And logging out and in again or restart.
-
-## Themes and fonts being used
-
-Theme is **[Nord](https://nordtheme.com)** and font is **Inconsolata**.
-
-## Screenshots
-
-![screenshot 1][scrn1]
-
-![screenshot 2][scrn2]
-
-[scrn1]: /docs/screenshot1.png
-[scrn2]: /docs/screenshot2.png
