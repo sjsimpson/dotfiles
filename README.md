@@ -56,14 +56,14 @@ This flow applies to things like `kitty`, `starship`... and probably others, but
 Others will need to be installed in other places:
 
 tmux:
-```console
+```shell
 # ~/.dotfiles
 mv ~/.tmux.conf ~/.tmux.conf.bak
 ln -s (pwd)/tmux/.tmux.conf ~/
 ```
 
 EditorConfig is still here for now. But I might change it shortly:
-```console
+```shell
 # ~/.dotfiles
 mv ~/.editorconfig ~/.editorconfig.bak
 ln -s editorconfig/editorconfig.symlink ~/.editorconfig
@@ -78,13 +78,13 @@ To revert these changes, simply delete the files/folders you created, and rename
 
 First, install `pyenv` using `brew`:
 
-```console
+```shell
 brew install pyenv
 ```
 
 Then, add this to your `~/.config/fish/config.fish`:
 
-```console
+```shell
 setenv PYENV_ROOT "$HOME/.pyenv"
 setenv PATH "$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 pyenv rehash
@@ -98,12 +98,12 @@ You can now install python versions that you need and use them!!
 Follow the instructions [`here`](https://eshlox.net/2019/01/27/how-to-use-nvm-with-fish-shell/):
 
 Install `nvm` using `brew`:
-```console
+```shell
 brew install nvm
 ```
 
 Add fish function to `~/.config/fish/functions/nvm.fish` (I will automate this eventually):
-```console
+```shell
 function nvm
     bass source (brew --prefix nvm)/nvm.sh --no-use ';' nvm $argv
 end
@@ -115,13 +115,13 @@ end
 
 If you're configuring this on Mac, I would recommend using `brew` to install the majority of these dependencies. But first, you'll need to install `brew`:
 
-```console
+```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 Warning: `brew` might be installed in `/opt` with M1 chips. So you might have to add this to your `~/.config/fish/config.fish`:
 
-```console
+```shell
 # Add bin and homebrew bin to path
 set -U fish_user_paths /usr/local/bin /opt/homebrew/bin $fish_user_paths
 ```
