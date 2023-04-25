@@ -6,7 +6,7 @@ local M = {
   },
   opts = {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'lua', 'tsx', 'typescript', 'help', 'vim' },
+    ensure_installed = { 'lua', 'prisma', 'tsx', 'typescript', 'help', 'vim' },
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
     highlight = { enable = true },
@@ -66,7 +66,7 @@ local M = {
     },
   },
   config = function(_, opts)
-    pcall(require('nvim-treesitter.install').update { with_sync = true })
+    pcall(require('nvim-treesitter.install').update({ with_sync = true }))
     require('nvim-treesitter.configs').setup(opts)
   end,
 }

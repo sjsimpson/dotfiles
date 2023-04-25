@@ -1,7 +1,17 @@
 return {
-  "nvim-lua/plenary.nvim",
-  'tpope/vim-fugitive',
-  'numToStr/Comment.nvim', -- potentially remove this...
+  'nvim-lua/plenary.nvim',
+
+  -- 'numToStr/Comment.nvim', -- potentially remove this...
   'tpope/vim-rhubarb',
-  'tpope/vim-sleuth'
+  'prisma/vim-prisma',
+  'tpope/vim-sleuth',
+
+  -- comments
+  { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true },
+
+  -- icons
+  { 'nvim-tree/nvim-web-devicons', lazy = true },
+
+  -- ui components
+  { 'MunifTanjim/nui.nvim', lazy = true },
 }

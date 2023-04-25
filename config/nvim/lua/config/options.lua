@@ -4,6 +4,13 @@
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
+-- Auto write
+vim.opt.autowrite = true
+vim.opt.confirm = true
+
+-- Set highlight current line
+vim.opt.cursorline = true
+
 -- Set highlight on search
 vim.o.hlsearch = false
 
@@ -42,9 +49,20 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
+-- Relative Number
+vim.opt.relativenumber = true
+
+-- Tabs
+vim.opt.smartindent = true -- Insert indents automatically
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+vim.opt.softtabstop = 2
+
 -- See `:help mapleader`
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+--
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
 -- this needs to be set here (not in keymaps) otherwise we can't use our <leader> key
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
