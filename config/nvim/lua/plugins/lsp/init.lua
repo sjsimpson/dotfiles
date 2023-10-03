@@ -68,7 +68,7 @@ local M = {
     })
 
     -- Setup UFO after attaching LSPs I guess? We could probably do it before
-    require('ufo').setup()
+    -- require('ufo').setup()
   end,
 }
 

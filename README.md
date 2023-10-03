@@ -44,6 +44,32 @@ I would include installation documentation for each of these, but that's quite a
 
 So far, installation consists of copying files to their correct directories. Most of them should live in the `~/.config/`, so other than this example, I'll only give instructions on exceptions.
 
+First, we will need to back up our extisting configs:
+
+```shell
+mv ~/.config/fish ~/.config/fish.bak
+mv ~/.config/kitty ~/.config/kitty.bak
+mv ~/.config/nvim ~/.config/nvim.bak
+mv ~/.config/starship ~/.config/starship.bak
+mv ~/.editorconfig ~/.editorconfig.bak
+mv ~/.tmux.conf ~/.tmux.conf.bak
+```
+
+Then, we can link files from our `~/.dotfiles/` folder:
+
+```shell
+# Move to the directory where we stored our dotfiles
+cd `~/.dotfiles`  # or whatever you decide your path is
+
+# Create symlinks for all of our configs
+ln -s (pwd)/config/fish ~/.config/
+ln -s (pwd)/config/kitty ~/.config/
+ln -s (pwd)/config/nvim ~/.config/
+ln -s (pwd)/config/starship ~/.config/
+ln -s (pwd)/config/tmux/.tmux.conf ~/.tmux.conf
+ln -s (pwd)/editorconfig/editorconfig.symlink ~/.editorconfig
+```
+
 For `nvim`, we will:
 ```shell
 # ~/.dotfiles
@@ -59,14 +85,14 @@ tmux:
 ```shell
 # ~/.dotfiles
 mv ~/.tmux.conf ~/.tmux.conf.bak
-ln -s (pwd)/tmux/.tmux.conf ~/
+ln -s (pwd)/config/tmux/.tmux.conf ~/
 ```
 
 EditorConfig is still here for now. But I might change it shortly:
 ```shell
 # ~/.dotfiles
 mv ~/.editorconfig ~/.editorconfig.bak
-ln -s editorconfig/editorconfig.symlink ~/.editorconfig
+ln -s (pwd)/editorconfig/editorconfig.symlink ~/.editorconfig
 ```
 
 That should do it! Now you'll need to install plugins as you open apps, but for the most part that should happen automatically.

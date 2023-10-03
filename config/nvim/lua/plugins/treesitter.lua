@@ -2,11 +2,19 @@ local M = {
   -- Highlight, edit, and navigate code
   'nvim-treesitter/nvim-treesitter',
   dependencies = {
+    'JoosepAlviste/nvim-ts-context-commentstring',
     'nvim-treesitter/nvim-treesitter-textobjects',
   },
   opts = {
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { 'lua', 'prisma', 'tsx', 'typescript', 'help', 'vim' },
+
+    -- Set commentstring
+    context_commentstring = {
+      enable = true,
+      enable_autocmd = false,
+    },
+
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
     highlight = { enable = true },

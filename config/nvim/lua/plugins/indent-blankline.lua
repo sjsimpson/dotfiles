@@ -1,19 +1,21 @@
 local M = {
   'lukas-reineke/indent-blankline.nvim',
+  main = 'ibl',
   event = { 'BufReadPost', 'BufNewFile' },
-  opts = function()
-    -- vim.opt.list = true
-    -- vim.opt.listchars:append('space:⋅')
-    return {
+  opts = {
+    indent = {
       char = '▏',
-      context_char = '▏',
-      -- space_char_blankline = ' ',
       -- char = "│",
-      filetype_exclude = { 'help', 'alpha', 'dashboard', 'neo-tree', 'Trouble', 'lazy' },
-      show_trailing_blankline_indent = false,
-      show_current_context = false,
-    }
-  end,
+    },
+    exclude = {
+      filetypes = { 'help', 'alpha', 'dashboard', 'neo-tree', 'Trouble', 'lazy' },
+    },
+    scope = {
+      char = '▏',
+      -- char = "│",
+      enabled = false,
+    },
+  },
 }
 
 return M

@@ -7,12 +7,16 @@ local M = {
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
     'windwp/nvim-autopairs',
+    -- 'zbirenbaum/copilot-cmp',
   },
   opts = function()
     local cmp = require('cmp')
     local luasnip = require('luasnip')
 
     return {
+      history = true,
+      region_check_events = 'InsertEnter',
+      delete_check_events = 'TextChanged,InsertLeave',
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
@@ -48,6 +52,7 @@ local M = {
       sources = {
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
+        -- { name = 'copilot' },
       },
       formatting = {
         format = function(_, item)
@@ -63,21 +68,11 @@ local M = {
   config = function(_, opts)
     local cmp = require('cmp')
     local luasnip = require('luasnip')
-    --    local autopairs = require('nvim-autopairs')
-    --    local autopairs_completion = require("nvim-autopairs.completion.cmp")
+    -- local copilot = require('copilot_cmp')
 
     luasnip.config.setup({})
+    -- copilot.config.setup()
     cmp.setup(opts)
-
-    -- Configure autopairs
-    --    autopairs.setup ({
-    --      check_ts = true,
-    --    })
-    --    autopairs_completion.setup({
-    --      map_cr = true,   --  map <CR> on insert mode
-    --      map_complete = true, -- it will auto insert `(` after select function or method item
-    --      auto_select = true -- automatically select the first item
-    --    })
   end,
 }
 

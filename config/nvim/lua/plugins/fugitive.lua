@@ -2,7 +2,7 @@ local M = {
   'tpope/vim-fugitive',
   event = 'VeryLazy',
   keys = {
-    { '<leader>gs', '<cmd>Git<cr>', desc = 'Show git in fugitive' },
+    { '<leader>go', '<cmd>Git<cr>', desc = 'Open git in fugitive' },
   },
 }
 

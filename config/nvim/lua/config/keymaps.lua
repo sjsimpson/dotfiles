@@ -26,6 +26,14 @@ vim.keymap.set('n', '<leader>wi', '<C-W><Up>', { desc = 'Switch to above window'
 vim.keymap.set('n', '<leader>wo', '<C-W><Right>', { desc = 'Switch to right window' })
 vim.keymap.set('n', '<leader>wd', '<cmd>:q<cr>', { desc = 'Remove current window' })
 
+-- Better page jumping
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+
+-- Search and Replace
+-- vim.keymap.set('n', '<leader>rl', '[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]]')
+-- vim.keymap.set('n', '<leader>rl', '[[:%s/<C-r><C-w>/<C-r><C-w>/gI<Left><Left><Left>]]')
+
 -- Lazy
 vim.keymap.set('n', '<leader>L', '<cmd>:Lazy<cr>', { desc = 'Lazy' })
 

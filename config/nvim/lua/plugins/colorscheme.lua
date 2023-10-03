@@ -4,7 +4,7 @@ local M = {
   lazy = false,
   priority = 1000,
   opts = {
-    style = 'storm'
+    style = 'storm',
   },
   config = function(_, opts)
     local tokyonight = require('tokyonight')
