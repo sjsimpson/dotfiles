@@ -17,7 +17,7 @@ local M = {
       ['<leader>c'] = { name = '+code' },
       ['<leader>e'] = { name = '+explorer' },
       ['<leader>g'] = { name = '+git' },
-      -- ["<leader>gh"] = { name = "+hunks" },
+      ['<leader>gh'] = { name = '+hunks' },
       ['<leader>h'] = { name = '+harpoon' },
       ['<leader>l'] = { name = '+lsp' },
       ['<leader>q'] = { name = '+quit/session' },
