@@ -4,7 +4,7 @@ local M = {
   event = { 'BufReadPre', 'BufNewFile' },
   test = {},
   opts = function()
-    local signs = require('config.init').icons.git
+    local signs = require('config').icons.git
     return {
       signs = signs,
       current_line_blame = true,
