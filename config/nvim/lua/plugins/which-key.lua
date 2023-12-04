@@ -20,6 +20,7 @@ local M = {
       ['<leader>gh'] = { name = '+hunks' },
       ['<leader>h'] = { name = '+harpoon' },
       ['<leader>l'] = { name = '+lsp' },
+      ['<leader>n'] = { name = '+neo-tree' },
       ['<leader>q'] = { name = '+quit/session' },
       ['<leader>s'] = { name = '+search' },
       ['<leader>t'] = { name = '+tabs' },

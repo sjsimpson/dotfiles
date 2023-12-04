@@ -7,8 +7,8 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+-- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- Bind escape to a
 vim.keymap.set('i', 'jk', '<ESC>', { silent = true })
@@ -24,7 +24,10 @@ vim.keymap.set('n', '<leader>wn', '<C-W><Left>', { desc = 'Switch to left window
 vim.keymap.set('n', '<leader>we', '<C-W><Down>', { desc = 'Switch to below window' })
 vim.keymap.set('n', '<leader>wi', '<C-W><Up>', { desc = 'Switch to above window' })
 vim.keymap.set('n', '<leader>wo', '<C-W><Right>', { desc = 'Switch to right window' })
-vim.keymap.set('n', '<leader>wd', '<cmd>:q<cr>', { desc = 'Remove current window' })
+vim.keymap.set('n', '<leader>wd', '<cmd>q<cr>', { desc = 'Remove current window' })
+
+-- Explorer
+-- vim.keymap.set('n', '<leader>e', '<cmd>Explore<CR>', { desc = 'Open Explorer' })
 
 -- Better page jumping
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
