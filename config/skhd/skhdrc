@@ -1,0 +1,35 @@
+# global
+cmd + alt - l : pmset displaysleepnow
+
+# open terminal
+cmd + shift - k: kitty -1 -d ~ &> /dev/null
+
+shift + alt - m : yabai -m window --grid 1:1:0:0:1:1
+
+# move between windows
+alt - n : yabai -m window --focus west
+alt - e : yabai -m window --focus south
+alt - i : yabai -m window --focus north
+alt - o : yabai -m window --focus east
+
+# move between spaces
+shift + alt - o : yabai -m space --focus prev || yabai -m space --focus first
+shift + alt - i : yabai -m space --focus next || yabai -m space --focus first
+shift + alt - 1 : yabai -m space --focus 1
+shift + alt - 2 : yabai -m space --focus 2
+shift + alt - 3 : yabai -m space --focus 3
+shift + alt - 4 : yabai -m space --focus 4
+shift + alt - 5 : yabai -m space --focus 5
+shift + alt - 6 : yabai -m space --focus 6
+shift + alt - 7 : yabai -m space --focus 7
+shift + alt - 8 : yabai -m space --focus 8
+shift + alt - 9 : yabai -m space --focus 9
+
+# move windows between spaces
+# not sure how I want to do this
+
+# Create space with this window
+shift + cmd - n : yabai -m space --create && \
+                  index="$(yabai -m query --spaces --display | jq 'map(select(."is-native-fullscreen" == false))[-1].index')" && \
+                  yabai -m window --space "${index}" && \
+                  yabai -m space --focus "${index}"

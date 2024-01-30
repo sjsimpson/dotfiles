@@ -34,10 +34,3 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.keymap.set('n', 'q', '<cmd>close<cr>', { buffer = event.buf, silent = true })
   end,
 })
-
--- [[ Format on save]]
--- vim.api.nvim_create_autocmd('BufWritePre', {
---   pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
---   command = 'silent! EslintFixAll',
---   group = vim.api.nvim_create_augroup('MyAutocmdsJavaScripFormatting', {}),
--- })

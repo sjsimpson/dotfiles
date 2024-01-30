@@ -1,8 +1,9 @@
--- Set <space> as the leader key
 -- Options
 
--- [[ Setting options ]]
--- See `:help vim.o`
+-- Set <space> as the leader key
+-- See `:help mapleader`
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 
 -- Auto write
 vim.opt.autowrite = true
@@ -12,10 +13,14 @@ vim.opt.confirm = true
 vim.opt.cursorline = true
 
 -- Set highlight on search
+vim.o.incsearch = true
 vim.o.hlsearch = false
 
 -- Make line numbers default
 vim.wo.number = true
+
+-- Relative Number
+vim.opt.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -38,31 +43,31 @@ vim.o.smartcase = true
 -- Keep signcolumn on by default
 vim.wo.signcolumn = 'yes'
 
--- Decrease update time
-vim.o.updatetime = 250
-vim.o.timeout = true
-vim.o.timeoutlen = 300
+-- Decrease update time [for swapfile]
+-- vim.opt.updatetime = 250
+-- vim.opt.timeout = true
+-- vim.opt.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.opt.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
-vim.o.termguicolors = true
-
--- Relative Number
-vim.opt.relativenumber = true
+vim.opt.termguicolors = true
 
 -- Tabs
-vim.opt.smartindent = true -- Insert indents automatically
 vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
-vim.opt.softtabstop = 2
+vim.opt.smartindent = true -- Insert indents automatically
 
--- See `:help mapleader`
---
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+-- Swap/Backup Files
+vim.opt.swapfile = false
+vim.opt.backup = false
+
+-- Enables and configures undofile
+vim.opt.undodir = os.getenv('HOME') .. '/.vim/undodir'
+vim.opt.undofile = true
 
 -- this needs to be set here (not in keymaps) otherwise we can't use our <leader> key
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })

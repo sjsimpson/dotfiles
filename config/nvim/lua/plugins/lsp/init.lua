@@ -25,6 +25,9 @@ local M = {
           telemetry = { enable = false },
         },
       },
+      cssls = {},
+      tailwindcss = {},
+      prismals = {},
     },
   },
   config = function(_, opts)
