@@ -13,10 +13,10 @@ yabai -m config split_ratio 0.5
 # general space settings
 gap=10
 yabai -m config layout bsp
-yabai -m config top_padding $gap
-yabai -m config bottom_padding $gap
+yabai -m config top_padding 5
+yabai -m config bottom_padding 5
 yabai -m config left_padding 5
-yabai -m config right_padding $gap
+yabai -m config right_padding 5
 yabai -m config window_gap 20
 
 # mouse settings
@@ -26,7 +26,11 @@ yabai -m config mouse_modifier alt
 yabai -m config mouse_action1 move
 yabai -m config mouse_action2 resize
 yabai -m mouse_drop_action swap
+
 # window rules
-yabai -m rule --add app="^(Docker|System Settings|Finder)" manage=off
+yabai -m rule --add app="^(Docker|System Settings|Finder|Bitwarden|zoom.us)" manage=off
+
+# external bar (to play nice with spacebar)
+yabai -m config external_bar all:26:0
 
 echo "yabai configuration loaded..."

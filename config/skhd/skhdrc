@@ -25,6 +25,17 @@ shift + alt - 7 : yabai -m space --focus 7
 shift + alt - 8 : yabai -m space --focus 8
 shift + alt - 9 : yabai -m space --focus 9
 
+# move window to space
+cmd + shift + alt - 1 : yabai -m window --space 1
+cmd + shift + alt - 2 : yabai -m window --space 2
+cmd + shift + alt - 3 : yabai -m window --space 3
+cmd + shift + alt - 4 : yabai -m window --space 4
+cmd + shift + alt - 5 : yabai -m window --space 5
+cmd + shift + alt - 6 : yabai -m window --space 6
+cmd + shift + alt - 7 : yabai -m window --space 7
+cmd + shift + alt - 8 : yabai -m window --space 8
+cmd + shift + alt - 9 : yabai -m window --space 9
+
 # move windows between spaces
 # not sure how I want to do this
 

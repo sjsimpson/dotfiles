@@ -5,6 +5,7 @@ return {
   'tpope/vim-rhubarb',
   'prisma/vim-prisma',
   'tpope/vim-sleuth',
+  'fladson/vim-kitty',
 
   -- comments
   { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true },

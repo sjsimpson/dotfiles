@@ -1,0 +1,132 @@
+# This is a demo config to showcase some of the most important commands.
+# It is meant to be changed and configured, as it is intentionally kept sparse.
+# For a (much) more advanced configuration example see my dotfiles:
+# https://github.com/FelixKratz/dotfiles
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+##### Bar Appearance #####
+# Configuring the general appearance of the bar.
+# These are only some of the options available. For all options see:
+# https://felixkratz.github.io/SketchyBar/config/bar
+# If you are looking for other colors, see the color picker:
+# https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
+
+sketchybar --bar position=top height=28 color=0xff24283b
+
+##### Changing Defaults #####
+# We now change some default values, which are applied to all further items.
+# For a full list of all available item properties see:
+# https://felixkratz.github.io/SketchyBar/config/items
+
+
+### Tokyo Night Theme Colors ###
+
+# base
+BACKGROUND=0xff24283b
+FOREGROUND=0xffc0caf5
+
+# normal
+DARK_BLUE=0xff1d202f
+RED=0xfff7768e
+GREEN=0xff9ece6a
+YELLOW=0xffe0af68
+LIGHT_BLUE=0xff7aa2f7
+PURPLE=0xffbb9af7
+ELECTRIC_BLUE=0xff7dcfff
+GRAY=0xffa9b1d6
+
+# bright
+DARK_BLUE_BRIGHT=0xff414868
+RED_BRIGHT=0xfff7768e
+GREEN_BRIGHT=0xff9ece6a
+YELLOW_BRIGHT=0xffe0af68
+LIGHT_BLUE_BRIGHT=0xff7aa2f7
+PURPLE_BRIGHT=0xffbb9af7
+ELECTRIC_BLUE_BRIGHT=0xff7dcfff
+GRAY_BRIGHT=0xffc0caf5
+
+# extended colors
+ORANGE=0xffff9e64
+DARK_RED=0xffdb4b4b
+
+default=(
+  padding_left=5
+  padding_right=5
+  icon.font="Hack Nerd Font:Bold:14.0"
+  label.font="Hack Nerd Font:Bold:12.0"
+  icon.color=0xffffffff
+  label.color=0xffffffff
+  icon.padding_left=8
+  icon.padding_right=4
+  label.padding_left=4
+  label.padding_right=8
+)
+sketchybar --default "${default[@]}"
+
+##### Adding Mission Control Space Indicators #####
+# Let's add some mission control spaces:
+# https://felixkratz.github.io/SketchyBar/config/components#space----associate-mission-control-spaces-with-an-item
+# to indicate active and available mission control spaces.
+
+SPACE_ICONS=("" "" "" "" "" "" "" "8" "9" "10")
+SPACE_LABELS=("messages" "slack" "tasks" "web" "code" "web" "other" "" "" "")
+# SPACE_ICONS_FONT_SIZE=("16" "" "" "" "18" "" "" "" "" "")
+for i in "${!SPACE_ICONS[@]}"
+do
+  sid="$(($i+1))"
+  space=(
+    space="$sid"
+    icon="${SPACE_ICONS[i]}"
+    # icon.padding_left=7
+    # icon.font.size="${SPACE_ICONS_FONT_SIZE[i]}"
+    # icon.padding_right=4
+    icon.highlight_color=0xff7aa2f7
+    icon.font.style=Regular
+    label="${SPACE_LABELS[i]}"
+    label.y_offset=1
+    # label.padding_left=0
+    # label.padding_right=7
+    background.color=0x00000000
+    background.corner_radius=4
+    background.height=25
+    background.border_color=0xff7aa2f7
+    background.border_width=1
+    script="$PLUGIN_DIR/space.sh"
+    click_script="yabai -m space --focus $sid"
+  )
+  sketchybar --add space space."$sid" left --set space."$sid" "${space[@]}"
+done
+
+##### Adding Left Items #####
+# We add some regular items to the left side of the bar, where
+# only the properties deviating from the current defaults need to be set
+
+sketchybar --add item front_app left \
+           --set front_app icon= icon.color="$RED" \
+           script="$PLUGIN_DIR/front_app.sh" \
+           --subscribe front_app front_app_switched
+
+##### Adding Right Items #####
+# In the same way as the left items we can add items to the right side.
+# Additional position (e.g. center) are available, see:
+# https://felixkratz.github.io/SketchyBar/config/items#adding-items-to-sketchybar
+
+# Some items refresh on a fixed cycle, e.g. the clock runs its script once
+# every 10s. Other items respond to events they subscribe to, e.g. the
+# volume.sh script is only executed once an actual change in system audio
+# volume is registered. More info about the event system can be found here:
+# https://felixkratz.github.io/SketchyBar/config/events
+
+sketchybar --add item clock right \
+           --set clock update_freq=10 icon=  script="$PLUGIN_DIR/clock.sh" \
+           --add item volume right \
+           --set volume script="$PLUGIN_DIR/volume.sh" \
+           --subscribe volume volume_change \
+           --add item battery right \
+           --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
+           icon.color="$YELLOW" \
+           --subscribe battery system_woke power_source_change
+
+##### Force all scripts to run the first time (never do this in a script) #####
+sketchybar --update
