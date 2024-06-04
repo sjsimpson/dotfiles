@@ -23,7 +23,7 @@ Now, brew can install basically everything else that you need.
 - Anything listed as a dependency can be installed using brew unless otherwise stated
 - I'll provide a list of commands to run later
 
-Install `zsh`:
+Install `zsh` using `zap`:
 
 ```shell
 zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
@@ -37,9 +37,6 @@ Things I use in `zsh`:
 Now, make sure you have all dependencies installed:
 
 - `git`: to clone the repo
-- `curl`: to download some stuff
-- `tar`: to extract downloaded stuff
-- `sudo`: some configs may need that
 
 ...and some extras:
 
@@ -48,9 +45,17 @@ Now, make sure you have all dependencies installed:
 - [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example
 - [`grc`](https://github.com/garabik/grc) for colorizing of output
 
+```shell
+brew install starship git bat exa fzf grc
+```
+
 #### Terminal
 
 I use `kitty` as my termial, and `tmux` as a multiplexer:
+
+```shell
+brew install kitty tmux lazygit
+```
 
 - [`kitty`](https://sw.kovidgoyal.net/kitty/): GPU-based terminal emulator
 - [`tmux`](https://github.com/tmux/tmux/wiki): terminal multiplexer
@@ -67,50 +72,44 @@ Dependencies for our `neovim` setup:
 - [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find` (package name is `fd-find`;
 - [`ripgrep`](https://github.com/BurntSushi/ripgrep) find description there, mostly installing to help Telescope play nice and ignore `node_modules`
 
+```shell
+brew install nvim fd ripgrep
+```
+
 We also need to install our nerd fonts. As far as icons go, I typically use the [Font Awesome](https://fontawesome.com/) icons if I can:
 
-- Hack Nerd Font
-- Inconsolata Nerd Font Mono
+```shell
+brew install --cask font-hack-nerd-font font-inconsolata-nerd-font
+```
+
+> This will install the following 2 fonts:
+>
+> - Hack Nerd Font
+> - Inconsolata Nerd Font Mono
 
 #### MacOS Remastered (optional)
 
 You can completely skip this step if you would like, but these are tools I have used to get more out of MacOS features:
 
-- [`yabai`](https://github.com/koekeishiya/yabai): tiling window manager for MacOS
-- [`skhd`](https://github.com/koekeishiya/skhd): shortcut manager for MacOS
-- [`sketchybar`](https://github.com/felixkratz/sketchybar): custom toolbar for MacOS
+- [`yabai`](https://github.com/koekeishiya/yabai): tiling window manager for MacOS (install from github)
+- [`skhd`](https://github.com/koekeishiya/skhd): shortcut manager for MacOS (install from github)
+- [`sketchybar`](https://github.com/felixkratz/sketchybar): custom toolbar for MacOS (install using `brew`)
 
 ### Install
 
-So far, installation consists of copying files to their correct directories. Most of them should live in the `~/.config/`, so other than this example, I'll only give instructions on exceptions.
-
-First, we will need to back up our extisting configs:
+First, clone this repo:
 
 ```shell
-mv ~/.config/fish ~/.config/fish.bak
-mv ~/.config/kitty ~/.config/kitty.bak
-mv ~/.config/nvim ~/.config/nvim.bak
-mv ~/.config/starship ~/.config/starship.bak
-mv ~/.editorconfig ~/.editorconfig.bak
-mv ~/.tmux.conf ~/.tmux.conf.bak
+git clone https://github.com/sjsimpson/dotfiles.git
 ```
 
-Then, we can link files from our `~/.dotfiles/` folder:
+Then, make sure you are in the folder where you cloned dotfiles. I usually clone mine into `~/.dotfiles`:
 
 ```shell
-# Move to the directory where we stored our dotfiles
-cd `~/.dotfiles`  # or whatever you decide your path is
-
-# Create symlinks for all of our configs
-ln -s (pwd)/config/fish ~/.config/
-ln -s (pwd)/config/kitty ~/.config/
-ln -s (pwd)/config/nvim ~/.config/
-ln -s (pwd)/config/starship ~/.config/
-ln -s (pwd)/config/tmux/.tmux.conf ~/.tmux.conf
-ln -s (pwd)/editorconfig/editorconfig.symlink ~/.editorconfig
+cd ~/.dotfiles
 ```
 
-For `nvim`, we will:
+Then, for `nvim`, we will:
 
 ```shell
 # ~/.dotfiles
@@ -118,16 +117,32 @@ mv ~/.config/nvim ~/.config/nvim.bak   # if you already have a config
 ln -s (pwd)/config/nvim ~/.config/
 ```
 
-This flow applies to things like `kitty`, `starship`... and probably others, but give me a break, I'm just getting this started.
+> **_NOTE:_** This flow applies to things like `kitty`, `starship`, and basically everything in the config folder.
 
 Others will need to be installed in other places:
+
+zshrc:
+
+```shell
+# ~/.dotfiles
+mv ~/.zshrc ~/.zshrc.bak
+ln -s (pwd)/.zshrc ~/.zshrc
+```
 
 tmux:
 
 ```shell
 # ~/.dotfiles
 mv ~/.tmux.conf ~/.tmux.conf.bak
-ln -s (pwd)/config/tmux/.tmux.conf ~/
+ln -s (pwd)/tmux/.tmux.conf ~/
+```
+
+gitconfig:
+
+```shell
+# ~/.dotfiles
+mv ~/.gitconfig ~/.gitconfig.bak
+ln -s (pwd)/git/gitconfig ~/.gitconfig
 ```
 
 EditorConfig is still here for now. But I might change it shortly:
@@ -140,10 +155,12 @@ ln -s (pwd)/editorconfig/editorconfig.symlink ~/.editorconfig
 
 That should do it! Now you'll need to install plugins as you open apps, but for the most part that should happen automatically.
 
-To revert these changes, simply delete the files/folders you created, and rename your `*.bak` files/folders.
+To revert these changes, simply delete the files/folders (mostly symlinks) you created, and rename your `*.bak` files/folders.
+
+### Other
 
 Other things you might need:
 
 - `pnpm`
-- `asdf`
+- `asdf` (not using currently, but considering it)
 - `npm`
