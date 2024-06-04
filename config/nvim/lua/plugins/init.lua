@@ -1,11 +1,9 @@
 return {
   'nvim-lua/plenary.nvim',
-
-  -- 'numToStr/Comment.nvim', -- potentially remove this...
   'tpope/vim-rhubarb',
   'prisma/vim-prisma',
   'tpope/vim-sleuth',
-  'fladson/vim-kitty',
+  { 'fladson/vim-kitty' },
 
   -- comments
   { 'JoosepAlviste/nvim-ts-context-commentstring', lazy = true },

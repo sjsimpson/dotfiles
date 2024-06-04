@@ -13,12 +13,29 @@ local M = {
       desc = '[F]ormat buffer',
     },
   },
+
   opts = {
     formatters_by_ft = {
+      sh = { 'shfmt' },
       lua = { 'stylua' },
-      javascript = { { 'prettierd', 'prettier' } },
+      javascript = { 'prettier' },
+      javascriptreact = { 'prettier' },
+      typescript = { 'prettier' },
+      typescriptreact = { 'prettier' },
+      vue = { 'prettier' },
+      css = { 'prettier' },
+      scss = { 'prettier' },
+      less = { 'prettier' },
+      html = { 'prettier' },
+      json = { 'prettier' },
+      jsonc = { 'prettier' },
+      yaml = { 'prettier' },
+      markdown = { 'prettier' },
+      graphql = { 'prettier' },
+      handlebars = { 'prettier' },
     },
-    format_on_save = { timeout_ms = 2000, lsp_fallback = true },
+    format_after_save = { lsp_fallback = true },
+    -- format_on_save = { timeout_ms = 500, lsp_fallback = true },
   },
 }
 

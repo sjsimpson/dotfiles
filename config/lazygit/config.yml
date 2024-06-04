@@ -1,0 +1,9 @@
+# Needs to be symlinked to ~/LibraryApplication\ Support/lazygit/config.yml
+# yaml-language-server: $schema=https://json.schemastore.org/lazygit.json
+gui:
+  mouseEvents: false
+  showFileTree: false
+git:
+  paging:
+    colorArgs: always
+    pager: delta --dark --paging=never

@@ -26,7 +26,8 @@ vim.keymap.set('n', '<leader>wd', '<cmd>q<cr>', { desc = 'Remove current window'
 -- vim.keymap.set('n', '<leader>e', '<cmd>Explore<CR>', { desc = 'Open Explorer' })
 
 -- Show current filepath
-vim.keymap.set('n', '<leader>p', '1<C-g>', { desc = 'Show current filepath' })
+vim.keymap.set('n', '<leader>ps', '1<C-g>', { desc = 'Show current filepath' })
+vim.keymap.set('n', '<leader>pc', '<cmd>let @+ = expand("%")<cr>', { desc = 'Show current filepath' })
 
 -- Better page jumping
 vim.keymap.set('n', '<C-d>', '<C-d>zz')

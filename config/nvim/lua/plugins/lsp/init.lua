@@ -18,7 +18,23 @@ local M = {
   opts = {
     servers = {
       jsonls = {},
-      tsserver = {},
+      tsserver = {
+        -- keys = {
+        --   {
+        --     '<leader>co',
+        --     function()
+        --       vim.lsp.buf.code_action({
+        --         apply = true,
+        --         context = {
+        --           only = { 'source.organizeImports.ts' },
+        --           diagnostics = {},
+        --         },
+        --       })
+        --     end,
+        --     desc = 'Organize Imports',
+        --   },
+        -- },
+      },
       lua_ls = {
         Lua = {
           workspace = { checkThirdParty = false },
@@ -26,7 +42,16 @@ local M = {
         },
       },
       cssls = {},
-      tailwindcss = {},
+      tailwindcss = {
+        tailwindCSS = {
+          experimental = {
+            classRegex = {
+              { 'cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
+              { 'cx\\(([^)]*)\\)', "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+            },
+          },
+        },
+      },
       prismals = {},
     },
   },
@@ -56,7 +81,7 @@ local M = {
     local mason_lspconfig = require('mason-lspconfig')
 
     mason_lspconfig.setup({
-      ensure_installed = vim.tbl_keys(servers),
+      ensure_installed = table.insert(vim.tbl_keys(servers), { 'prettier', 'prettierd' }),
     })
 
     mason_lspconfig.setup_handlers({
