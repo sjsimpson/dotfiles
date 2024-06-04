@@ -145,14 +145,6 @@ mv ~/.gitconfig ~/.gitconfig.bak
 ln -s (pwd)/git/gitconfig ~/.gitconfig
 ```
 
-EditorConfig is still here for now. But I might change it shortly:
-
-```shell
-# ~/.dotfiles
-mv ~/.editorconfig ~/.editorconfig.bak
-ln -s (pwd)/editorconfig/editorconfig.symlink ~/.editorconfig
-```
-
 That should do it! Now you'll need to install plugins as you open apps, but for the most part that should happen automatically.
 
 To revert these changes, simply delete the files/folders (mostly symlinks) you created, and rename your `*.bak` files/folders.
