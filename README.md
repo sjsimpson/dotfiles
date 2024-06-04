@@ -12,7 +12,7 @@ An older iteration of these doftiles (including a separate readme) can be found 
 
 ### Dependencies
 
-Install `brew` (if you're on a Mac):
+Install [`brew`](https://brew.sh/) (if you're on a Mac):
 
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -76,9 +76,9 @@ We also need to install our nerd fonts. As far as icons go, I typically use the 
 
 You can completely skip this step if you would like, but these are tools I have used to get more out of MacOS features:
 
-- [`yabai`](): tiling window manager for MacOS
-- [`skhd`](): shortcut manager for MacOS
-- [`sketchybar`](): custom toolbar for MacOS
+- [`yabai`](https://github.com/koekeishiya/yabai): tiling window manager for MacOS
+- [`skhd`](https://github.com/koekeishiya/skhd): shortcut manager for MacOS
+- [`sketchybar`](https://github.com/felixkratz/sketchybar): custom toolbar for MacOS
 
 ### Install
 
