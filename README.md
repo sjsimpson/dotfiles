@@ -149,10 +149,4 @@ That should do it! Now you'll need to install plugins as you open apps, but for 
 
 To revert these changes, simply delete the files/folders (mostly symlinks) you created, and rename your `*.bak` files/folders.
 
-### Other
-
-Other things you might need:
-
-- `pnpm`
-- `asdf` (not using currently, but considering it)
-- `npm`
+USE rcm https://github.com/thoughtbot/rcm

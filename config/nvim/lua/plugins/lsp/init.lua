@@ -1,7 +1,7 @@
 local M = {
   -- LSP Configuration & Plugins
   'neovim/nvim-lspconfig',
-  event = { 'BufReadPre', 'BufNewFile' },
+  -- event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     -- Automatically install LSPs to stdpath for neovim
     'williamboman/mason.nvim',
@@ -17,6 +17,9 @@ local M = {
   },
   opts = {
     servers = {
+      astro = {},
+      bashls = {},
+      shfmt = {},
       jsonls = {},
       tsserver = {
         -- keys = {
@@ -35,6 +38,8 @@ local M = {
         --   },
         -- },
       },
+      mdx = {},
+      markdown = {},
       lua_ls = {
         Lua = {
           workspace = { checkThirdParty = false },
@@ -81,7 +86,7 @@ local M = {
     local mason_lspconfig = require('mason-lspconfig')
 
     mason_lspconfig.setup({
-      ensure_installed = table.insert(vim.tbl_keys(servers), { 'prettier', 'prettierd' }),
+      ensure_installed = table.insert(vim.tbl_keys(servers), { 'prettier' }),
     })
 
     mason_lspconfig.setup_handlers({

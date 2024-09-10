@@ -29,6 +29,9 @@ vim.keymap.set('n', '<leader>wd', '<cmd>q<cr>', { desc = 'Remove current window'
 vim.keymap.set('n', '<leader>ps', '1<C-g>', { desc = 'Show current filepath' })
 vim.keymap.set('n', '<leader>pc', '<cmd>let @+ = expand("%")<cr>', { desc = 'Show current filepath' })
 
+-- Quick actions
+vim.keymap.set('n', 'dp', '_hvk$di<space><esc>', { desc = 'Remove whitespace to last line' })
+
 -- Better page jumping
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')

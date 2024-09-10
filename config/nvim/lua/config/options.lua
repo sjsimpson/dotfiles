@@ -20,7 +20,7 @@ vim.o.hlsearch = false
 vim.wo.number = true
 
 -- Relative Number
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -48,6 +48,9 @@ vim.wo.signcolumn = 'yes'
 -- vim.opt.timeout = true
 -- vim.opt.timeoutlen = 300
 
+-- Set colorcolumn
+vim.opt.colorcolumn = '80'
+
 -- Set completeopt to have a better completion experience
 vim.opt.completeopt = 'menuone,noselect'
 
@@ -71,3 +74,10 @@ vim.opt.undofile = true
 
 -- this needs to be set here (not in keymaps) otherwise we can't use our <leader> key
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
+
+-- adding mdx support (mostly for astro)
+vim.filetype.add({
+  extension = {
+    mdx = 'markdown.mdx',
+  },
+})

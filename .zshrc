@@ -1,5 +1,12 @@
 #!/bin/sh
+#zap
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
+
+#asdf
+# . /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+#mise
+eval "$(mise activate zsh)"
 
 #history
 HISTFILE=/.zsh_history
@@ -15,7 +22,7 @@ plug "zsh-users/zsh-syntax-highlighting"
 plug "zsh-users/zsh-completions"
 plug "zap-zsh/supercharge"
 plug "zap-zsh/exa"
-plug "lukechilds/zsh-nvm"
+# plug "lukechilds/zsh-nvm" --> using asdf now
 
 # Load and initialise completion system
 autoload -Uz compinit
