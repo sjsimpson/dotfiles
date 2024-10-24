@@ -6,6 +6,7 @@ local M = {
     'hrsh7th/cmp-nvim-lsp',
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
+    'zbirenbaum/copilot-cmp',
   },
   opts = function()
     local cmp = require('cmp')
@@ -50,7 +51,7 @@ local M = {
       sources = {
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
-        -- { name = 'copilot' },
+        { name = 'copilot' },
       },
       formatting = {
         format = function(_, item)
@@ -66,10 +67,8 @@ local M = {
   config = function(_, opts)
     local cmp = require('cmp')
     local luasnip = require('luasnip')
-    -- local copilot = require('copilot_cmp')
 
     luasnip.config.setup({})
-    -- copilot.config.setup()
     cmp.setup(opts)
   end,
 }

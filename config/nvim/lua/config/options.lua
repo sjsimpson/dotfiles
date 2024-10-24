@@ -50,6 +50,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorcolumn
 vim.opt.colorcolumn = '80'
+vim.opt.textwidth = 80
 
 -- Set completeopt to have a better completion experience
 vim.opt.completeopt = 'menuone,noselect'

@@ -9,30 +9,29 @@ local M = {
     local wk = require('which-key')
     wk.setup(opts)
 
-    local keymaps = {
-      mode = { 'n', 'v' },
-      ['g'] = { name = '+goto' },
-      ['gz'] = { name = '+surround' },
-      ['<leader>['] = { name = '+previous' },
-      ['<leader>]'] = { name = '+next' },
-      ['<leader>b'] = { name = '+buffer' },
-      ['<leader>c'] = { name = '+code' },
-      ['<leader>d'] = { name = '+document' },
-      ['<leader>e'] = { name = '+explorer' },
-      ['<leader>g'] = { name = '+git' },
-      ['<leader>gh'] = { name = '+hunks' },
-      ['<leader>h'] = { name = '+harpoon' },
-      ['<leader>l'] = { name = '+lsp' },
-      ['<leader>n'] = { name = '+neo-tree' },
-      ['<leader>q'] = { name = '+quit/session' },
-      ['<leader>s'] = { name = '+search' },
-      ['<leader>t'] = { name = '+tabs' },
-      -- ["<leader>u"] = { name = "+ui" },
-      ['<leader>w'] = { name = '+windows' },
-      ['<leader>x'] = { name = '+diagnostics/quickfix' },
-    }
-
-    wk.register(keymaps)
+    wk.add({
+      {
+        mode = { 'n', 'v' },
+        { '<leader>[', group = 'previous' },
+        { '<leader>]', group = 'next' },
+        { '<leader>b', group = 'buffer' },
+        { '<leader>c', group = 'code' },
+        { '<leader>d', group = 'document' },
+        { '<leader>e', group = 'explorer' },
+        { '<leader>g', group = 'git' },
+        { '<leader>gh', group = 'hunks' },
+        { '<leader>h', group = 'harpoon' },
+        { '<leader>l', group = 'lsp' },
+        { '<leader>n', group = 'neo-tree' },
+        { '<leader>q', group = 'quit/session' },
+        { '<leader>s', group = 'search' },
+        { '<leader>t', group = 'tabs' },
+        { '<leader>w', group = 'windows' },
+        { '<leader>x', group = 'diagnostics/quickfix' },
+        { 'g', group = 'goto' },
+        { 'gz', group = 'surround' },
+      },
+    })
   end,
 }
 

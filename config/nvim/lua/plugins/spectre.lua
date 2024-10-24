@@ -10,7 +10,7 @@ local M = {
       function()
         require('spectre').toggle()
       end,
-      { desc = 'Toggle Spectre' },
+      desc = 'Toggle Spectre',
     },
   },
 }

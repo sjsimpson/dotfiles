@@ -1,4 +1,6 @@
 #!/bin/sh
+export PATH=/opt/homebrew/bin:/Users/spencer/.local/bin:/Users/spencer/.cargo/bin:/Users/spencer/.local/bin:/Users/spencer/.local/bin:/Users/spencer/.cargo/bin:/Users/spencer/.local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Applications/kitty.app/Contents/MacOS
+
 #zap
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
 

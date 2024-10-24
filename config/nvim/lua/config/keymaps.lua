@@ -41,3 +41,11 @@ vim.keymap.set('n', '<leader>L', '<cmd>:Lazy<cr>', { desc = 'Lazy' })
 
 -- Quit
 vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit all' })
+
+-- QWERTY Keymaps
+
+-- Window
+vim.keymap.set('n', '<leader>wh', '<C-W><Left>', { desc = 'Switch to left window' })
+vim.keymap.set('n', '<leader>wj', '<C-W><Down>', { desc = 'Switch to below window' })
+vim.keymap.set('n', '<leader>wk', '<C-W><Up>', { desc = 'Switch to above window' })
+vim.keymap.set('n', '<leader>wl', '<C-W><Right>', { desc = 'Switch to right window' })
