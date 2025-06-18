@@ -24,3 +24,5 @@
     diffFilter = delta --color-only
 [diff]
     colorMoved = default
+[fetch]
+	prune = true
