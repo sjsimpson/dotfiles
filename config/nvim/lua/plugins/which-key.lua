@@ -12,6 +12,7 @@ local M = {
     wk.add({
       {
         mode = { 'n', 'v' },
+        { '<leader>a', group = 'Avante AI' },
         { '<leader>[', group = 'previous' },
         { '<leader>]', group = 'next' },
         { '<leader>b', group = 'buffer' },
@@ -20,9 +21,10 @@ local M = {
         { '<leader>e', group = 'explorer' },
         { '<leader>g', group = 'git' },
         { '<leader>gh', group = 'hunks' },
-        { '<leader>h', group = 'harpoon' },
         { '<leader>l', group = 'lsp' },
         { '<leader>n', group = 'neo-tree' },
+        { '<leader>p', group = 'filepath' },
+        { '<leader>rn', desc = 'Rename' },
         { '<leader>q', group = 'quit/session' },
         { '<leader>s', group = 'search' },
         { '<leader>t', group = 'tabs' },

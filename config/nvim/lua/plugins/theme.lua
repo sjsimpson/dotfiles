@@ -5,6 +5,9 @@ local M = {
   priority = 1000,
   opts = {
     style = 'storm',
+    plugins = {
+      blink = true,
+    },
   },
   config = function(_, opts)
     local tokyonight = require('tokyonight')

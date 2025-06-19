@@ -8,6 +8,7 @@ local M = {
     },
     opts = {
       automatic_installation = true,
+      automatic_enable = false,
     },
     config = function(_, opts)
       require('mason').setup()

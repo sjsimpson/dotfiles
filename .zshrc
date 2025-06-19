@@ -13,6 +13,9 @@ eval "$(mise activate zsh)"
 #history
 HISTFILE=/.zsh_history
 
+# env variables
+source "$HOME/env.zsh"
+
 # source
 plug "$HOME/.config/zsh/alias.zsh"
 plug "$HOME/.config/zsh/export.zsh"

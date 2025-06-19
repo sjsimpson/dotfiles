@@ -1,7 +1,7 @@
 local M = {
   'saghen/blink.cmp',
   -- optional: provides snippets for the snippet source
-  dependencies = { 'rafamadriz/friendly-snippets' },
+  dependencies = { 'rafamadriz/friendly-snippets', 'folke/tokyonight.nvim' },
 
   -- use a release tag to download pre-built binaries
   version = '1.*',
@@ -24,18 +24,51 @@ local M = {
     --
     -- See :h blink-cmp-config-keymap for defining your own keymap
     keymap = {
-      preset = 'default',
-      ['<Tab>'] = { 'select_and_accept', 'fallback' },
+      preset = 'super-tab',
+      ['<C-y>'] = { 'select_and_accept', 'fallback' },
     },
 
     appearance = {
       -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
       -- Adjusts spacing to ensure icons are aligned
+      use_nvim_cmp_as_default = false,
       nerd_font_variant = 'mono',
     },
 
     -- (Default) Only show the documentation popup when manually triggered
-    completion = { documentation = { auto_show = false } },
+    completion = {
+      accept = {
+        -- experimental auto-brackets support
+        auto_brackets = {
+          enabled = true,
+        },
+      },
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 200,
+      },
+      ghost_text = {
+        enabled = true,
+      },
+      menu = {
+        draw = {
+          padding = { 0, 1 }, -- padding only on right side
+          components = {
+            kind_icon = {
+              text = function(ctx)
+                local icons = require('config.icons').kinds
+                if icons[ctx.kind] then
+                  ctx.kind_icon = icons[ctx.kind]
+                end
+                return ' ' .. ctx.kind_icon .. ctx.kind .. ctx.icon_gap .. ' '
+              end,
+            },
+          },
+        },
+      },
+    },
+
+    cmdline = { enabled = false },
 
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`

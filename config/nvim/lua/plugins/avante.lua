@@ -1,25 +1,5 @@
 local M = {
   {
-    -- AI-powered pair programming
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    build = ':Copilot auth',
-    event = 'InsertEnter',
-    opts = {
-      suggestion = {
-        -- enabled = not vim.g.ai_cmp,
-        hide_during_completion = vim.g.ai_cmp,
-        auto_trigger = true,
-        keymap = {
-          accept = false,
-          next = '<M-]>',
-          prev = '<M-[>',
-        },
-      },
-      panel = { enabled = false },
-    },
-  },
-  {
     'yetone/avante.nvim',
     event = 'VeryLazy',
     version = false, -- Never set this value to "*"! Never!
