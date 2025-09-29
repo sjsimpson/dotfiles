@@ -12,7 +12,6 @@ local M = {
     wk.add({
       {
         mode = { 'n', 'v' },
-        { '<leader>a', group = 'Avante AI' },
         { '<leader>[', group = 'previous' },
         { '<leader>]', group = 'next' },
         { '<leader>b', group = 'buffer' },

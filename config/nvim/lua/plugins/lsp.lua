@@ -1,8 +1,7 @@
 local M = {
   'neovim/nvim-lspconfig',
   dependencies = {
-    'hrsh7th/cmp-nvim-lsp',
-    -- 'saghen/blink.cmp',
+    'saghen/blink.cmp',
   },
   opts = {
     servers = {
@@ -18,6 +17,7 @@ local M = {
           diagnostics = { globals = { 'vim' } },
         },
       },
+      cspell_ls = {},
       cssls = {},
       tailwindcss = {
         tailwindCSS = {
@@ -64,7 +64,7 @@ local M = {
       nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
     end
 
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
 
     -- Setup required for ufo
     capabilities.textDocument.foldingRange = {

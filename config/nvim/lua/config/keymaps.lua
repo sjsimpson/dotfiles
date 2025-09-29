@@ -16,10 +16,10 @@ vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = 'Close tab' })
 -- Window
 vim.keymap.set('n', '<leader>w-', '<C-W>s <C-W><Down>', { desc = 'Split window horizontally' })
 vim.keymap.set('n', '<leader>w|', '<C-W>v <C-W><Right>', { desc = 'Split window vertically' })
-vim.keymap.set('n', '<leader>wn', '<C-W><Left>', { desc = 'Switch to left window' })
-vim.keymap.set('n', '<leader>we', '<C-W><Down>', { desc = 'Switch to below window' })
-vim.keymap.set('n', '<leader>wi', '<C-W><Up>', { desc = 'Switch to above window' })
-vim.keymap.set('n', '<leader>wo', '<C-W><Right>', { desc = 'Switch to right window' })
+vim.keymap.set('n', '<leader>wm', '<C-W><Left>', { desc = 'Switch to left window' })
+vim.keymap.set('n', '<leader>wn', '<C-W><Down>', { desc = 'Switch to below window' })
+vim.keymap.set('n', '<leader>we', '<C-W><Up>', { desc = 'Switch to above window' })
+vim.keymap.set('n', '<leader>wi', '<C-W><Right>', { desc = 'Switch to right window' })
 vim.keymap.set('n', '<leader>wd', '<cmd>q<cr>', { desc = 'Remove current window' })
 
 -- Explorer

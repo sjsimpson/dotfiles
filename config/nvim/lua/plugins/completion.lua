@@ -1,7 +1,7 @@
 local M = {
   'saghen/blink.cmp',
   -- optional: provides snippets for the snippet source
-  dependencies = { 'rafamadriz/friendly-snippets', 'folke/tokyonight.nvim' },
+  dependencies = { 'rafamadriz/friendly-snippets' },
 
   -- use a release tag to download pre-built binaries
   version = '1.*',
@@ -11,44 +11,22 @@ local M = {
   -- build = 'nix run .#build-plugin',
 
   opts = {
-    -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-    -- 'super-tab' for mappings similar to vscode (tab to accept)
-    -- 'enter' for enter to accept
-    -- 'none' for no mappings
-    --
-    -- All presets have the following mappings:
-    -- C-space: Open menu or open docs if already open
-    -- C-n/C-p or Up/Down: Select next/previous item
-    -- C-e: Hide menu
-    -- C-k: Toggle signature help (if signature.enabled = true)
-    --
-    -- See :h blink-cmp-config-keymap for defining your own keymap
     keymap = {
       preset = 'super-tab',
       ['<C-y>'] = { 'select_and_accept', 'fallback' },
     },
 
     appearance = {
-      -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
-      use_nvim_cmp_as_default = false,
       nerd_font_variant = 'mono',
     },
 
-    -- (Default) Only show the documentation popup when manually triggered
     completion = {
-      accept = {
-        -- experimental auto-brackets support
-        auto_brackets = {
-          enabled = true,
-        },
-      },
       documentation = {
         auto_show = true,
         auto_show_delay_ms = 200,
       },
       ghost_text = {
-        enabled = true,
+        enabled = false,
       },
       menu = {
         draw = {
@@ -81,7 +59,7 @@ local M = {
     -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
     --
     -- See the fuzzy documentation for more information
-    fuzzy = { implementation = 'prefer_rust_with_warning' },
+    -- fuzzy = { implementation = 'prefer_rust_with_warning' },
   },
   opts_extend = { 'sources.default' },
 }
