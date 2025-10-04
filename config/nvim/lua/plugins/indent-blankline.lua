@@ -5,14 +5,14 @@ local M = {
   opts = {
     indent = {
       char = '▏',
-      -- char = "│",
+      -- char = '│',
     },
     exclude = {
       filetypes = { 'help', 'alpha', 'dashboard', 'neo-tree', 'Trouble', 'lazy' },
     },
     scope = {
       char = '▏',
-      -- char = "│",
+      -- char = '│',
       enabled = false,
     },
   },

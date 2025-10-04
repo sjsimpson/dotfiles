@@ -42,6 +42,38 @@ vim.keymap.set('n', '<leader>L', '<cmd>:Lazy<cr>', { desc = 'Lazy' })
 -- Quit
 vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', { desc = 'Quit all' })
 
+-- Toggle format on save
+vim.keymap.set('n', '<leader>tf', function()
+  vim.g.disable_autoformat = not vim.g.disable_autoformat
+  local status = vim.g.disable_autoformat and 'disabled' or 'enabled'
+  vim.notify('Format on save ' .. status)
+end, { desc = '[T]oggle [F]ormat on save' })
+
+-- Quick edit global cspell config
+vim.keymap.set('n', '<leader>cw', function()
+  vim.cmd('vsplit ~/.cspell.json')
+  vim.fn.search('"words"')
+end, { desc = '[C]spell edit global [W]ords' })
+
+-- Or even simpler - add word under cursor
+vim.keymap.set('n', '<leader>ca', function()
+  local word = vim.fn.expand('<cword>')
+  local cspell_file = vim.fn.expand('~/.cspell.json')
+
+  -- Simple append (assumes words array exists)
+  vim.cmd('edit ' .. cspell_file)
+  vim.fn.search('"words"')
+  vim.fn.search(']', 'b') -- Find closing bracket
+  vim.cmd('normal! O"' .. word .. '",')
+  vim.cmd('write')
+  vim.cmd('bdelete')
+
+  vim.notify('Added "' .. word .. '" to global dictionary')
+  require('lint').try_lint()
+end, { desc = '[C]spell [A]dd word to dictionary' })
+
+----------------------------------------
+
 -- QWERTY Keymaps
 
 -- Window

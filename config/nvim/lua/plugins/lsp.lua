@@ -17,7 +17,6 @@ local M = {
           diagnostics = { globals = { 'vim' } },
         },
       },
-      cspell_ls = {},
       cssls = {},
       tailwindcss = {
         tailwindCSS = {
@@ -53,10 +52,10 @@ local M = {
       nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
       nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
       nmap('<leader>co', function()
-        vim.lsp.buf.execute_command({
+        vim.lsp.buf_request_sync(0, 'workspace/executeCommand', {
           command = '_typescript.organizeImports',
           arguments = { vim.api.nvim_buf_get_name(0) },
-        })
+        }, 1000)
       end, 'Organize Imports')
 
       -- See `:help K` for why this keymap
@@ -73,12 +72,14 @@ local M = {
     }
 
     for server_name, settings in pairs(opts.servers) do
-      require('lspconfig')[server_name].setup({
+      vim.lsp.config(server_name, {
         capabilities = capabilities,
         on_attach = on_attach,
         settings = settings,
       })
     end
+
+    vim.lsp.enable(vim.tbl_keys(opts.servers))
   end,
 }
 

@@ -1,14 +1,28 @@
 local M = {
   {
-    -- mason lsp-config plugin
+    'williamboman/mason.nvim',
+    cmd = 'Mason',
+    config = function()
+      require('mason').setup({})
+    end,
+  },
+  {
+    -- install LSP servers
     'williamboman/mason-lspconfig.nvim',
-    dependencies = {
-      'williamboman/mason.nvim',
-      'neovim/nvim-lspconfig',
-    },
+    dependencies = { 'williamboman/mason.nvim' },
     opts = {
+      ensure_installed = {
+        'astro',
+        'bashls',
+        'cspell',
+        'cssls',
+        'jsonls',
+        'lua_ls',
+        'prismals',
+        'tailwindcss',
+        'ts_ls',
+      },
       automatic_installation = true,
-      automatic_enable = false,
     },
     config = function(_, opts)
       require('mason').setup()
@@ -18,26 +32,18 @@ local M = {
   {
     -- install linters and formatters
     'WhoIsSethDaniel/mason-tool-installer.nvim',
-    dependencies = {
-      'williamboman/mason.nvim',
-    },
+    dependencies = { 'williamboman/mason.nvim' },
     opts = {
       ensure_installed = {
-        'astro',
-        'bashls',
-        'cspell_ls',
-        'shfmt',
-        'jsonls',
-        'ts_ls',
-        'lua_ls',
-        'cssls',
-        'tailwindcss',
-        'prismals',
-        'codespell',
-        -- 'shopify_theme_ls',
+        'cspell',
+        'eslint_d',
+        'prettier',
         'shellcheck',
+        'shfmt',
         'stylua',
       },
+      auto_update = false,
+      run_on_start = true,
     },
   },
 }
