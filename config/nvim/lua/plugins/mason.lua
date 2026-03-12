@@ -14,7 +14,6 @@ local M = {
       ensure_installed = {
         'astro',
         'bashls',
-        'cspell',
         'cssls',
         'jsonls',
         'lua_ls',
