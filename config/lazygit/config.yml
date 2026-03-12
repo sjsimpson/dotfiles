@@ -4,6 +4,6 @@ gui:
   mouseEvents: false
   showFileTree: false
 git:
-  paging:
-    colorArgs: always
-    pager: delta --dark --paging=never
+  pagers:
+    - colorArgs: always
+      pager: delta --dark --paging=never
