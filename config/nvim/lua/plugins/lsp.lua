@@ -7,8 +7,13 @@ local M = {
     servers = {
       astro = {},
       bashls = {},
+      eslint = {
+        workingDirectories = { mode = 'auto' },
+        experimental = { useFlatConfig = true },
+      },
       jsonls = {},
-      ts_ls = {},
+      rust_analyzer = {},
+      tsgo = {},
       lua_ls = {
         Lua = {
           runtime = { version = 'LuaJIT' },

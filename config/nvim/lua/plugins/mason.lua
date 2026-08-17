@@ -15,11 +15,12 @@ local M = {
         'astro',
         'bashls',
         'cssls',
+        'eslint',
         'jsonls',
         'lua_ls',
         'prismals',
+        'rust_analyzer',
         'tailwindcss',
-        'ts_ls',
       },
       automatic_installation = true,
     },
@@ -35,7 +36,6 @@ local M = {
     opts = {
       ensure_installed = {
         'cspell',
-        'eslint_d',
         'prettier',
         'shellcheck',
         'shfmt',

@@ -1,3 +1,4 @@
+-- linting and spellcheck
 return {
   'mfussenegger/nvim-lint',
   event = { 'BufReadPost', 'BufNewFile' },
@@ -5,28 +6,21 @@ return {
     local lint = require('lint')
 
     lint.linters_by_ft = {
-      javascript = { 'eslint_d', 'cspell' },
-      typescript = { 'eslint_d', 'cspell' },
-      javascriptreact = { 'eslint_d', 'cspell' },
-      typescriptreact = { 'eslint_d', 'cspell' },
+      javascript = { 'cspell' },
+      typescript = { 'cspell' },
+      javascriptreact = { 'cspell' },
+      typescriptreact = { 'cspell' },
       astro = { 'cspell' },
       lua = { 'cspell' },
       sh = { 'shellcheck' },
       markdown = { 'cspell' },
       text = { 'cspell' },
+      prisma = { 'cspell' },
+      rust = { 'cspell' },
 
       -- Optionally add wildcard for using linters in all file types
       -- ['*'] = { 'cspell' },
     }
-
-    -- Set working directory to file's directory (key for monorepos!)
-    lint.linters.eslint_d.cwd = function()
-      local fname = vim.api.nvim_buf_get_name(0)
-      if fname == '' then
-        return vim.fn.getcwd()
-      end
-      return vim.fs.dirname(fname)
-    end
 
     local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
 
