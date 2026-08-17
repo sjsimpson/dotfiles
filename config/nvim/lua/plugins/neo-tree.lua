@@ -1,3 +1,4 @@
+-- File explorer
 local M = {
   'nvim-neo-tree/neo-tree.nvim',
   keys = {
