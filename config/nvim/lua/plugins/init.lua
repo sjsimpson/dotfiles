@@ -2,7 +2,6 @@ return {
   'nvim-lua/plenary.nvim',
   'tpope/vim-rhubarb',
   'prisma/vim-prisma',
-  'tpope/vim-sleuth',
   { 'fladson/vim-kitty' },
 
   -- comments

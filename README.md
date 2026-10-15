@@ -38,12 +38,12 @@ nvim installs its plugins, LSPs, and formatters automatically.
 
 | Path               | Linked to                            | What                                             |
 | ------------------ | ------------------------------------ | ------------------------------------------------ |
-| `.zshrc`           | `~/.zshrc`                           | zsh via [zap](https://github.com/zap-zsh/zap), [starship](https://starship.rs) prompt, [mise](https://mise.jdx.dev) for runtimes |
-| `config/*`         | `~/.config/*`                        | nvim, kitty, ghostty, lazygit, starship, zsh, …  |
+| `.zshrc`           | `~/.zshrc`                           | zsh; details in [`config/zsh`](config/zsh/README.md) |
+| `config/*`         | `~/.config/*`                        | nvim ([README](config/nvim/README.md)), kitty, ghostty, herdr, lazygit, starship, zsh ([README](config/zsh/README.md)) |
 | `git/gitconfig`    | `~/.gitconfig`                       | git, [delta](https://github.com/dandavison/delta) pager |
 | `git/ignore`       | `~/.config/git/ignore`               | global gitignore                                 |
 | `bin/`             | on `$PATH`                           | scripts (e.g. `gh-review`)                       |
-| `claude/`          | `~/.claude/` (per file)              | Claude Code instructions, settings, agents, skills |
+| `claude/`          | `~/.claude/` (per file)              | Claude Code ([README](claude/README.md))          |
 
 ## Tools
 
@@ -102,18 +102,8 @@ I used tmux before herdr. The config lives on the
 
 ## Claude Code
 
-`claude/` holds my own Claude Code config. `install.sh` links **individual
-files and skill dirs** into `~/.claude/` rather than the whole directory,
-because other tools install into `~/.claude/skills` too.
-
-- `CLAUDE.md`: global instructions
-- `settings.json`: hooks, permissions, plugins
-- `agents/`: custom subagents
-- `skills/`: custom skills (`/claude-panel`)
-
-Third-party skills aren't vendored. They're listed in `claude/skills.txt`
-and installed with `install.sh --skills` (via [`npx skills`](https://github.com/vercel-labs/skills)).
-When you add one with `npx skills add`, add it to `skills.txt` too.
+`claude/` holds my Claude Code setup: global `CLAUDE.md`, settings and hooks,
+agents, and skills. See [`claude/README.md`](claude/README.md).
 
 ## macOS window management (optional)
 
@@ -133,3 +123,7 @@ project's install docs. `wm-start` / `wm-restart` aliases control yabai.
 - [ ] Skills: `address-pr-comments`, `start-ticket ENG-xxxx`
 - [ ] Skills: package my own skills as a Claude Code plugin so they install
   like third-party ones
+- [ ] Docs: keep per-area READMEs (`claude/`, `config/nvim`, `config/zsh`) in
+  sync with config (`audit` skill's drift mode)
+- [ ] Todos: rethink personal/house todo tracking (Linear feels heavy).
+  taskwarrior + my TUI project, maybe an app
