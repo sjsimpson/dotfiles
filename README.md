@@ -67,6 +67,9 @@ Font); theme is TokyoNight Storm everywhere.
 - [bat](https://github.com/sharkdp/bat): `cat` with syntax highlighting
 - [fzf](https://github.com/junegunn/fzf): fuzzy finder
 - [grc](https://github.com/garabik/grc): colorizes command output
+- [jq](https://jqlang.org): JSON on the command line
+- [httpie](https://httpie.io): friendlier `curl` for APIs
+- [taskwarrior](https://taskwarrior.org) (`task`): CLI todo list
 
 **Git**
 
@@ -86,7 +89,6 @@ Font); theme is TokyoNight Storm everywhere.
 
 - [mosh](https://mosh.org) + [moshi](https://github.com/rjyo/moshi): remote
   sessions and Claude Code hooks for them
-- [zellij](https://zellij.dev): another multiplexer
 
 ### tmux (retired)
 
@@ -107,7 +109,7 @@ because other tools install into `~/.claude/skills` too.
 - `CLAUDE.md`: global instructions
 - `settings.json`: hooks, permissions, plugins
 - `agents/`: custom subagents
-- `skills/`: custom skills (`/claude-panel`, `/review-pr`)
+- `skills/`: custom skills (`/claude-panel`)
 
 Third-party skills aren't vendored. They're listed in `claude/skills.txt`
 and installed with `install.sh --skills` (via [`npx skills`](https://github.com/vercel-labs/skills)).
@@ -125,8 +127,8 @@ project's install docs. `wm-start` / `wm-restart` aliases control yabai.
 
 - [ ] Agents: decide whether any custom subagents earn their keep; consider
   repo-specific `*-reviewer` agents that `claude-panel` picks up
-- [ ] Skills: consolidate review skills (`review-pr` vs `claude-panel` vs
-  built-in `/code-review`)
+- [ ] Skills: compare `claude-panel` vs built-in `/code-review` on a real PR;
+  drop the panel if it doesn't find meaningfully more
 - [ ] Skills: write `audit` (whole-repo review, plus a dotfiles drift mode)
 - [ ] Skills: `address-pr-comments`, `start-ticket ENG-xxxx`
 - [ ] Skills: package my own skills as a Claude Code plugin so they install

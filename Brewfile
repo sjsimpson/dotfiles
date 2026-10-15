@@ -12,6 +12,8 @@ brew "fd"
 brew "ripgrep"
 brew "grc"
 brew "jq"
+brew "httpie"
+brew "task"  # taskwarrior
 
 # Git
 brew "git"
@@ -35,7 +37,6 @@ brew "herdr"
 tap "rjyo/moshi"
 brew "mosh"
 brew "rjyo/moshi/moshi-hook"
-brew "zellij"
 
 # Fonts
 cask "font-iosevka-term-nerd-font"

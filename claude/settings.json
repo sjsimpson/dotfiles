@@ -17,17 +17,6 @@
         ]
       },
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      },
-      {
         "matcher": "permission_prompt",
         "hooks": [
           {
@@ -40,16 +29,6 @@
     ],
     "SessionStart": [
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",
@@ -61,17 +40,6 @@
     ],
     "SessionEnd": [
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",
@@ -81,31 +49,7 @@
         ]
       }
     ],
-    "SubagentStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
     "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      },
       {
         "hooks": [
           {
@@ -118,17 +62,6 @@
     ],
     "Stop": [
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",
@@ -140,48 +73,11 @@
     ],
     "PermissionRequest": [
       {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",
             "command": "'/opt/homebrew/bin/moshi-hook' claude-hook",
             "async": false
-          }
-        ]
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/spencer/.claude/hooks/peon-ping/peon.sh",
-            "timeout": 10,
-            "async": true
           }
         ]
       }
@@ -240,6 +136,7 @@
   "skipAutoPermissionPrompt": true,
   "remoteControlAtStartup": true,
   "attribution": {
-    "commit": ""
+    "commit": "",
+    "pr": ""
   }
 }
