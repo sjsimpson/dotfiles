@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "caveman",
-      "description": "caveman skills; auto-activate held off via CAVEMAN_DEFAULT_MODE=manual in settings.json",
+      "description": "Compressed output, on by default each session",
       "source": {
         "source": "github",
         "repo": "JuliusBrussee/caveman"

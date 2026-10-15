@@ -29,10 +29,10 @@ Global rules, in short:
 
 - **Permissions**: `auto` mode
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
-- **Env**:
-  - `CLAUDE_CODE_PLUGIN_DIRS`: loads `plugin/` and moshi straight from disk
-  - `CAVEMAN_DEFAULT_MODE=manual`: caveman's plugin turns itself on every
-    session by default; this keeps it off until `/caveman`
+- **Env**: `CLAUDE_CODE_PLUGIN_DIRS` loads `plugin/` and moshi straight from disk
+- **Marketplace path**: `~/.dotfiles/claude`, kept portable. `claude plugin
+  marketplace add` rewrites it to an absolute path, so `install.sh` restores
+  the file afterwards
 - **Hooks**:
   - Notification: macOS notification via `terminal-notifier`, only when the
     kitty window running Claude isn't focused (needs `jq`)
@@ -57,7 +57,7 @@ To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md
 
 | Plugin                    | Source                                                            | What                                                       |
 | ------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
-| `caveman`                 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | `caveman*` compressed output, `cavecrew` agents, plus `lean-build`, `surgical-patch`, `safe-refactor`, `migration`, `investigate-first`, `verify-and-stop` |
+| `caveman`                 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | Compressed output, on every session (`/caveman off` to stop); `caveman*` skills, `cavecrew` agents, plus `lean-build`, `surgical-patch`, `safe-refactor`, `migration`, `investigate-first`, `verify-and-stop` |
 | `gh-stack`                | [github/gh-stack](https://github.com/github/gh-stack)             | Stacked PRs with the `gh stack` extension                  |
 | `find-skills`             | [vercel-labs/skills](https://github.com/vercel-labs/skills)       | Search for and install skills                              |
 | `vercel`, `rust-analyzer-lsp` | official marketplace                                          | Vercel platform tools; Rust LSP                            |

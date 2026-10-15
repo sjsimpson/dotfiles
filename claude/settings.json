@@ -1,7 +1,6 @@
 {
   "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/moshi-plugin:~/.dotfiles/claude/plugin",
-    "CAVEMAN_DEFAULT_MODE": "manual"
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/moshi-plugin:~/.dotfiles/claude/plugin"
   },
   "attribution": {
     "commit": "",
@@ -143,7 +142,7 @@
     "dotfiles": {
       "source": {
         "source": "directory",
-        "path": "/Users/spencer/.dotfiles/claude"
+        "path": "~/.dotfiles/claude"
       }
     }
   },

@@ -66,8 +66,14 @@ link claude/settings.json "$HOME/.claude/settings.json"
 
 if command -v claude >/dev/null; then
   echo "claude plugins"
-  claude plugin marketplace list 2>/dev/null | grep -q '❯ dotfiles' ||
+  if ! claude plugin marketplace list 2>/dev/null | grep -q '❯ dotfiles'; then
+    # `marketplace add` rewrites settings.json with an absolute path; keep the
+    # portable `~/.dotfiles/claude` by restoring the file afterwards.
+    settings="$DOTFILES/claude/settings.json"
+    cp "$settings" "$settings.tmp"
     claude plugin marketplace add "$DOTFILES/claude" >/dev/null
+    mv "$settings.tmp" "$settings"
+  fi
   installed=$(claude plugin list 2>/dev/null)
   for p in $(jq -r '.enabledPlugins | keys[]' "$DOTFILES/claude/settings.json"); do
     if grep -q "❯ $p" <<<"$installed"; then
