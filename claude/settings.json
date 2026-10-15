@@ -238,5 +238,8 @@
   "tui": "fullscreen",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "remoteControlAtStartup": true
+  "remoteControlAtStartup": true,
+  "attribution": {
+    "commit": ""
+  }
 }

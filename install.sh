@@ -2,8 +2,9 @@
 #
 # install.sh — symlink dotfiles into place. Safe to re-run.
 #
-#   ./install.sh          link everything
-#   ./install.sh --brew   also run `brew bundle` first
+#   ./install.sh            link everything
+#   ./install.sh --brew     also run `brew bundle` first
+#   ./install.sh --skills   also install third-party Claude skills (claude/skills.txt)
 #
 # Existing files are moved to <name>.bak before linking.
 
@@ -26,7 +27,19 @@ link() {
   printf '  link    %s\n' "$dst"
 }
 
-if [[ "${1:-}" == "--brew" ]]; then
+brew=0 skills=0
+for arg in "$@"; do
+  case "$arg" in
+  --brew) brew=1 ;;
+  --skills) skills=1 ;;
+  *)
+    echo "unknown flag: $arg" >&2
+    exit 1
+    ;;
+  esac
+done
+
+if ((brew)); then
   command -v brew >/dev/null || {
     echo "install Homebrew first: https://brew.sh" >&2
     exit 1
@@ -36,15 +49,17 @@ fi
 
 echo "shell + git"
 link .zshrc "$HOME/.zshrc"
-link tmux/tmux.conf "$HOME/.tmux.conf"
 link git/gitconfig "$HOME/.gitconfig"
 link git/ignore "$HOME/.config/git/ignore"
 
 echo "config"
 for dir in "$DOTFILES"/config/*/; do
   name=$(basename "$dir")
+  # herdr keeps runtime state next to its config, so link just the file
+  [[ "$name" == herdr ]] && continue
   link "config/$name" "$HOME/.config/$name"
 done
+link config/herdr/config.toml "$HOME/.config/herdr/config.toml"
 
 # Claude: link individual files, never whole dirs — ~/.claude/{skills,agents}
 # also hold things installed by other tools.
@@ -59,9 +74,11 @@ for d in "$DOTFILES"/claude/skills/*/; do
   link "claude/skills/$name" "$HOME/.claude/skills/$name"
 done
 
-if [[ ! -d "$HOME/.tmux/plugins/tpm" ]]; then
-  echo "tmux plugin manager"
-  git clone --quiet https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+if ((skills)); then
+  echo "third-party skills"
+  grep -Ev '^\s*(#|$)' "$DOTFILES/claude/skills.txt" | while read -r source names; do
+    npx -y skills add "$source" -g -a claude-code -s "$names" -y </dev/null
+  done
 fi
 
 echo "done. ~/env.zsh (secrets) and ~/.gitconfig.local (machine-specific git) are yours to create."

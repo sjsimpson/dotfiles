@@ -3,7 +3,6 @@ cask_args appdir: "/Applications"
 # Terminal
 brew "starship"
 brew "neovim"
-brew "tmux"
 
 # Better Terminal Defaults
 brew "bat"
@@ -29,6 +28,15 @@ brew "mise"
 # brew "skhd"
 # brew "sketchybar"
 
+# Agents
+brew "herdr"
+
+# Provisional (trying out)
+tap "rjyo/moshi"
+brew "mosh"
+brew "rjyo/moshi/moshi-hook"
+brew "zellij"
+
 # Fonts
 cask "font-iosevka-term-nerd-font"
 
@@ -37,7 +45,6 @@ cask "claude-code"
 brew "terminal-notifier"
 
 # Applications
-cask "arc"
 cask "bitwarden"
 cask "discord"
 cask "httpie"

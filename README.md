@@ -1,6 +1,6 @@
 # sjsimpson dotfiles
 
-macOS dev environment: zsh, kitty, tmux, neovim, plus Claude Code config.
+macOS dev environment: zsh, kitty, herdr, neovim, plus Claude Code config.
 Originally based on [folke's dotfiles](https://github.com/folke/dot), since
 simplified. Older iteration lives on the [`old` branch](https://github.com/sjsimpson/dotfiles/tree/old).
 
@@ -19,15 +19,13 @@ git clone https://github.com/sjsimpson/dotfiles.git ~/.dotfiles
 ```
 
 `install.sh` is idempotent: it symlinks everything into place, moves any
-existing file to `<name>.bak`, and clones [tpm](https://github.com/tmux-plugins/tpm).
-`--brew` also runs `brew bundle` against the [`Brewfile`](Brewfile). To undo,
-delete the symlinks and restore the `.bak` files.
+existing file to `<name>.bak`. Flags:
 
-Afterwards:
+- `--brew`: run `brew bundle` against the [`Brewfile`](Brewfile)
+- `--skills`: install third-party Claude skills listed in [`claude/skills.txt`](claude/skills.txt)
 
-- Open tmux and press `prefix + I` to install tmux plugins
-- Open nvim; [lazy.nvim](https://github.com/folke/lazy.nvim) and Mason install
-  plugins, LSPs, and formatters on first launch
+To undo, delete the symlinks and restore the `.bak` files. On first launch,
+nvim installs its plugins, LSPs, and formatters automatically.
 
 ### Not in the repo
 
@@ -42,31 +40,65 @@ Afterwards:
 | ------------------ | ------------------------------------ | ------------------------------------------------ |
 | `.zshrc`           | `~/.zshrc`                           | zsh via [zap](https://github.com/zap-zsh/zap), [starship](https://starship.rs) prompt, [mise](https://mise.jdx.dev) for runtimes |
 | `config/*`         | `~/.config/*`                        | nvim, kitty, ghostty, lazygit, starship, zsh, …  |
-| `tmux/tmux.conf`   | `~/.tmux.conf`                       | tmux + tpm plugins, TokyoNight theme             |
 | `git/gitconfig`    | `~/.gitconfig`                       | git, [delta](https://github.com/dandavison/delta) pager |
 | `git/ignore`       | `~/.config/git/ignore`               | global gitignore                                 |
 | `bin/`             | on `$PATH`                           | scripts (e.g. `gh-review`)                       |
 | `claude/`          | `~/.claude/` (per file)              | Claude Code instructions, settings, agents, skills |
 
-### Terminal
+## Tools
 
-[kitty](https://sw.kovidgoyal.net/kitty/) is the main terminal
-([ghostty](https://ghostty.org) config kept for trying it out), with
-[tmux](https://github.com/tmux/tmux/wiki) and
-[lazygit](https://github.com/jesseduffield/lazygit). Font is Iosevka Term
-(Nerd Font), theme is TokyoNight Storm everywhere.
+Everything below is in the [`Brewfile`](Brewfile). Font is Iosevka Term (Nerd
+Font); theme is TokyoNight Storm everywhere.
 
-### Neovim
+**Terminal + agents**
 
-Config lives in `config/nvim`. Plugins managed by lazy.nvim, LSPs/linters/
-formatters by Mason. Telescope needs `fd` and `ripgrep` (both in the Brewfile).
+- [kitty](https://sw.kovidgoyal.net/kitty/): GPU-based terminal, main terminal
+- [ghostty](https://ghostty.org): config kept while I try it out
+- [herdr](https://herdr.dev): agent multiplexer for running Claude Code
+  sessions side by side. Replaces tmux; only `config.toml` is tracked
+  because herdr keeps runtime state in the same directory
 
-### `bin/`
+**Shell**
+
+- [zap](https://github.com/zap-zsh/zap): zsh plugin manager
+- [starship](https://starship.rs): prompt
+- [mise](https://mise.jdx.dev): runtime/version manager (replaced asdf, nvm)
+- [eza](https://github.com/eza-community/eza): `ls` replacement
+- [bat](https://github.com/sharkdp/bat): `cat` with syntax highlighting
+- [fzf](https://github.com/junegunn/fzf): fuzzy finder
+- [grc](https://github.com/garabik/grc): colorizes command output
+
+**Git**
+
+- [gh](https://cli.github.com): GitHub CLI (PRs, reviews, `gh stack`)
+- [delta](https://github.com/dandavison/delta): diff pager
+- [lazygit](https://github.com/jesseduffield/lazygit): git TUI (`lg`)
+
+**Editor**
+
+- [neovim](https://neovim.io): config in `config/nvim`. Plugins via
+  [lazy.nvim](https://github.com/folke/lazy.nvim); LSPs, linters, and
+  formatters via Mason
+- [fd](https://github.com/sharkdp/fd) + [ripgrep](https://github.com/BurntSushi/ripgrep):
+  fast search for Telescope
+
+**Provisional** (trying out, may drop)
+
+- [mosh](https://mosh.org) + [moshi](https://github.com/rjyo/moshi): remote
+  sessions and Claude Code hooks for them
+- [zellij](https://zellij.dev): another multiplexer
+
+### tmux (retired)
+
+I used tmux before herdr. The config lives on the
+[`tmux` branch](https://github.com/sjsimpson/dotfiles/tree/tmux).
+
+## `bin/`
 
 - `gh-review <pr|branch>`: throwaway git worktree for reviewing a PR; `--claude`
   launches Claude Code in it. `gh-review --help` for more.
 
-### Claude Code
+## Claude Code
 
 `claude/` holds my own Claude Code config. `install.sh` links **individual
 files and skill dirs** into `~/.claude/` rather than the whole directory,
@@ -77,12 +109,9 @@ because other tools install into `~/.claude/skills` too.
 - `agents/`: custom subagents
 - `skills/`: custom skills (`/claude-panel`, `/review-pr`)
 
-Third-party skills aren't vendored (see `~/.agents/.skill-lock.json`); reinstall with:
-
-```shell
-npx skills add JuliusBrussee/caveman   # caveman*, cavecrew, lean-build, surgical-patch, …
-npx skills add vercel-labs/skills      # find-skills
-```
+Third-party skills aren't vendored. They're listed in `claude/skills.txt`
+and installed with `install.sh --skills` (via [`npx skills`](https://github.com/vercel-labs/skills)).
+When you add one with `npx skills add`, add it to `skills.txt` too.
 
 ## macOS window management (optional)
 
@@ -91,3 +120,14 @@ npx skills add vercel-labs/skills      # find-skills
 [sketchybar](https://github.com/felixkratz/sketchybar) configs are in
 `config/`. Not installed by default (commented out in the Brewfile); see each
 project's install docs. `wm-start` / `wm-restart` aliases control yabai.
+
+## TODO
+
+- [ ] Agents: decide whether any custom subagents earn their keep; consider
+  repo-specific `*-reviewer` agents that `claude-panel` picks up
+- [ ] Skills: consolidate review skills (`review-pr` vs `claude-panel` vs
+  built-in `/code-review`)
+- [ ] Skills: write `audit` (whole-repo review, plus a dotfiles drift mode)
+- [ ] Skills: `address-pr-comments`, `start-ticket ENG-xxxx`
+- [ ] Skills: package my own skills as a Claude Code plugin so they install
+  like third-party ones

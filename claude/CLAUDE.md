@@ -19,17 +19,17 @@
 
 ## Coding
 
-- Before making any changes, commit any existing work. Subject should start
-  with `WIP`, e.g. `WIP: snapshot before refactor`
+- Before making any changes, commit any existing work as `WIP: <name>`, e.g.
+  `WIP: snapshot before refactor`. Deliberately NOT Conventional Commits, so it
+  must be reworded/squashed before merge
 
 ## Git
 
 - [IMPORTANT] Do not make comments, update pull requests, or push code changes unless
   I explicitly ask you to.
-- [IMPORTANT] Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
+- [IMPORTANT] Always use (except `WIP:` commits) [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
   `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
   build, ci, style, revert). Ticket ID as scope when known, e.g.
   `feat(ENG-6659): add supported locations page`
-- Omit "Co-Authored-By" and "Claude-Session" when making local commits
 - Comments should be shown locally for me to review and post
 - [IMPORTANT] Always use [Conventional Comments](https://conventionalcomments.org/) when giving PR feedback

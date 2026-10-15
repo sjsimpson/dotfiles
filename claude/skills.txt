@@ -1,0 +1,5 @@
+# Third-party skills, installed globally for Claude Code by `install.sh --skills`.
+# <source>  <comma-separated skills, or * for all>
+JuliusBrussee/caveman  cavecrew,caveman,caveman-commit,caveman-compress,caveman-discover,caveman-evidence-review,caveman-explore,caveman-help,caveman-learn,caveman-manage,caveman-optimize,caveman-review,caveman-setup,caveman-stats,investigate-first,lean-build,migration,safe-refactor,surgical-patch,verify-and-stop
+vercel-labs/skills     find-skills
+github/gh-stack        gh-stack
