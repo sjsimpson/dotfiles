@@ -62,7 +62,7 @@ Invoking this skill is the user's opt-in to the Workflow. Call:
 
 ```
 Workflow({
-  scriptPath: "~/.claude/skills/claude-panel/panel.workflow.js"  (expand ~ to absolute),
+  scriptPath: "<this skill's base directory>/panel.workflow.js"  (absolute; normally ~/.dotfiles/claude/plugin/skills/claude-panel),
   args: {
     number, title, intent: <PR body, comments/template boilerplate stripped>,
     workdir: <absolute WORKDIR>, base, headSha, diffPath: <absolute>,

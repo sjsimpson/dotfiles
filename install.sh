@@ -4,7 +4,6 @@
 #
 #   ./install.sh            link everything
 #   ./install.sh --brew     also run `brew bundle` first
-#   ./install.sh --skills   also install third-party Claude skills (claude/skills.txt)
 #
 # Existing files are moved to <name>.bak before linking.
 
@@ -27,11 +26,10 @@ link() {
   printf '  link    %s\n' "$dst"
 }
 
-brew=0 skills=0
+brew=0
 for arg in "$@"; do
   case "$arg" in
   --brew) brew=1 ;;
-  --skills) skills=1 ;;
   *)
     echo "unknown flag: $arg" >&2
     exit 1
@@ -61,23 +59,22 @@ for dir in "$DOTFILES"/config/*/; do
 done
 link config/herdr/config.toml "$HOME/.config/herdr/config.toml"
 
-# Claude: link individual files, never whole dirs — ~/.claude/{skills,agents}
-# also hold things installed by other tools.
+# Claude: link files only. Skills and agents load as plugins (see claude/README.md).
 echo "claude"
 link claude/CLAUDE.md "$HOME/.claude/CLAUDE.md"
 link claude/settings.json "$HOME/.claude/settings.json"
-for f in "$DOTFILES"/claude/agents/*.md; do
-  link "claude/agents/$(basename "$f")" "$HOME/.claude/agents/$(basename "$f")"
-done
-for d in "$DOTFILES"/claude/skills/*/; do
-  name=$(basename "$d")
-  link "claude/skills/$name" "$HOME/.claude/skills/$name"
-done
 
-if ((skills)); then
-  echo "third-party skills"
-  grep -Ev '^\s*(#|$)' "$DOTFILES/claude/skills.txt" | while read -r source names; do
-    npx -y skills add "$source" -g -a claude-code -s "$names" -y </dev/null
+if command -v claude >/dev/null; then
+  echo "claude plugins"
+  claude plugin marketplace list 2>/dev/null | grep -q '❯ dotfiles' ||
+    claude plugin marketplace add "$DOTFILES/claude" >/dev/null
+  installed=$(claude plugin list 2>/dev/null)
+  for p in $(jq -r '.enabledPlugins | keys[]' "$DOTFILES/claude/settings.json"); do
+    if grep -q "❯ $p" <<<"$installed"; then
+      printf '  ok      %s\n' "$p"
+    else
+      claude plugin install "$p" >/dev/null && printf '  install %s\n' "$p"
+    fi
   done
 fi
 

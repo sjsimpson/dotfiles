@@ -1,0 +1,41 @@
+{
+  "name": "dotfiles",
+  "owner": {
+    "name": "sjsimpson"
+  },
+  "description": "Third-party skills I use, pinned to just the parts I want",
+  "plugins": [
+    {
+      "name": "caveman",
+      "description": "caveman skills; auto-activate held off via CAVEMAN_DEFAULT_MODE=manual in settings.json",
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    {
+      "name": "gh-stack",
+      "description": "Stacked PRs with the gh stack extension",
+      "source": {
+        "source": "github",
+        "repo": "github/gh-stack"
+      },
+      "strict": false,
+      "skills": [
+        "./skills/"
+      ]
+    },
+    {
+      "name": "find-skills",
+      "description": "Search for and install skills",
+      "source": {
+        "source": "github",
+        "repo": "vercel-labs/skills"
+      },
+      "strict": false,
+      "skills": [
+        "./skills/find-skills"
+      ]
+    }
+  ]
+}

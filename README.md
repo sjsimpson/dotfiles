@@ -18,11 +18,11 @@ git clone https://github.com/sjsimpson/dotfiles.git ~/.dotfiles
 ~/.dotfiles/install.sh --brew
 ```
 
-`install.sh` is idempotent: it symlinks everything into place, moves any
-existing file to `<name>.bak`. Flags:
+`install.sh` is idempotent: it symlinks everything into place (moving any
+existing file to `<name>.bak`) and installs the Claude Code plugins listed in
+`claude/settings.json`. Flags:
 
 - `--brew`: run `brew bundle` against the [`Brewfile`](Brewfile)
-- `--skills`: install third-party Claude skills listed in [`claude/skills.txt`](claude/skills.txt)
 
 To undo, delete the symlinks and restore the `.bak` files. On first launch,
 nvim installs its plugins, LSPs, and formatters automatically.
@@ -121,8 +121,6 @@ project's install docs. `wm-start` / `wm-restart` aliases control yabai.
   drop the panel if it doesn't find meaningfully more
 - [ ] Skills: write `audit` (whole-repo review, plus a dotfiles drift mode)
 - [ ] Skills: `address-pr-comments`, `start-ticket ENG-xxxx`
-- [ ] Skills: package my own skills as a Claude Code plugin so they install
-  like third-party ones
 - [ ] Docs: keep per-area READMEs (`claude/`, `config/nvim`, `config/zsh`) in
   sync with config (`audit` skill's drift mode)
 - [ ] Todos: rethink personal/house todo tracking (Linear feels heavy).

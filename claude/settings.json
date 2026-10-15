@@ -1,6 +1,11 @@
 {
   "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "/Users/spencer/.claude/moshi-plugin"
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/moshi-plugin:~/.dotfiles/claude/plugin",
+    "CAVEMAN_DEFAULT_MODE": "manual"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
   },
   "permissions": {
     "defaultMode": "auto"
@@ -129,14 +134,21 @@
   },
   "enabledPlugins": {
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
+    "vercel@claude-plugins-official": true,
+    "caveman@dotfiles": true,
+    "gh-stack@dotfiles": true,
+    "find-skills@dotfiles": true
+  },
+  "extraKnownMarketplaces": {
+    "dotfiles": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/spencer/.dotfiles/claude"
+      }
+    }
   },
   "tui": "fullscreen",
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "remoteControlAtStartup": true,
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  }
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
