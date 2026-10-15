@@ -6,10 +6,10 @@ return {
     local lint = require('lint')
 
     lint.linters_by_ft = {
-      javascript = { 'cspell' },
-      typescript = { 'cspell' },
-      javascriptreact = { 'cspell' },
-      typescriptreact = { 'cspell' },
+      javascript = { 'oxlint', 'cspell' },
+      typescript = { 'oxlint', 'cspell' },
+      javascriptreact = { 'oxlint', 'cspell' },
+      typescriptreact = { 'oxlint', 'cspell' },
       astro = { 'cspell' },
       lua = { 'cspell' },
       sh = { 'shellcheck' },

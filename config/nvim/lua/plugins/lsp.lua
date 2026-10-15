@@ -7,10 +7,6 @@ local M = {
     servers = {
       astro = {},
       bashls = {},
-      eslint = {
-        workingDirectories = { mode = 'auto' },
-        experimental = { useFlatConfig = true },
-      },
       jsonls = {},
       rust_analyzer = {},
       tsgo = {},

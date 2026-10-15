@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+#
+# gh-review — spin up a throwaway git worktree for reviewing a PR or branch.
+#
+#   gh-review 1234                 review PR #1234
+#   gh-review https://…/pull/1234  same, from a URL
+#   gh-review feature/some-branch  review a branch
+#   gh-review --claude 1234        create it and launch claude immediately
+#   gh-review --print 1234         just print the path (for scripting)
+#   gh-review list                 list active review worktrees
+#   gh-review clean 1234           remove one
+#   gh-review clean --all          remove all of them for this repo
+#
+# Worktrees live under $GH_REVIEW_HOME (default ~/.cache/gh-review/<repo>) so
+# they never clutter the directory next to your actual repo.
+#
+# By default the script drops you into a subshell inside the worktree. Type
+# `exit` and you're back where you started, working tree untouched.
+
+set -euo pipefail
+
+die() {
+  printf '\033[31merror:\033[0m %s\n' "$*" >&2
+  exit 1
+}
+info() { printf '\033[2m%s\033[0m\n' "$*" >&2; }
+
+# ---------------------------------------------------------------- preflight
+
+command -v git >/dev/null || die "git not found"
+command -v gh >/dev/null || die "gh not found — see https://cli.github.com"
+git rev-parse --git-dir >/dev/null 2>&1 || die "not inside a git repository"
+gh auth status >/dev/null 2>&1 || die "gh is not authenticated — run: gh auth login"
+
+# Resolve the MAIN worktree even if we're currently sitting inside another one.
+common_dir=$(git rev-parse --git-common-dir)
+[[ "$common_dir" = /* ]] || common_dir="$PWD/$common_dir"
+main_root=$(cd "$common_dir/.." && pwd)
+cd "$main_root"
+
+repo_name=$(basename "$main_root")
+base_dir="${GH_REVIEW_HOME:-${XDG_CACHE_HOME:-$HOME/.cache}/gh-review}/$repo_name"
+
+# ------------------------------------------------------------------ actions
+
+do_list() {
+  local found=0
+  while read -r path; do
+    [[ "$path" == "$base_dir"/* ]] || continue
+    found=1
+    printf '  %-28s %s\n' "$(basename "$path")" "$path"
+  done < <(git worktree list --porcelain | awk '/^worktree /{print $2}')
+  ((found)) || info "no active review worktrees for $repo_name"
+}
+
+do_clean() {
+  local target="${1:-}"
+  [[ -n "$target" ]] || die "usage: gh-review clean <pr|branch|--all>"
+
+  local targets=()
+  if [[ "$target" == "--all" ]]; then
+    while read -r path; do
+      [[ "$path" == "$base_dir"/* ]] && targets+=("$path")
+    done < <(git worktree list --porcelain | awk '/^worktree /{print $2}')
+  else
+    targets=("$base_dir/$(slug_for "$target")")
+  fi
+
+  ((${#targets[@]})) || {
+    info "nothing to clean"
+    return 0
+  }
+
+  for path in "${targets[@]}"; do
+    local slug
+    slug=$(basename "$path")
+    git worktree remove --force "$path" 2>/dev/null || rm -rf "$path"
+    git branch -D "review/$slug" >/dev/null 2>&1 || true
+    info "removed $slug"
+  done
+  git worktree prune
+}
+
+# Turn "1234", "#1234", a PR URL, or a branch name into a filesystem-safe slug.
+slug_for() {
+  local arg="$1"
+  if [[ "$arg" =~ ^\#?([0-9]+)$ ]]; then
+    printf 'pr-%s' "${BASH_REMATCH[1]}"
+  elif [[ "$arg" =~ /pull/([0-9]+) ]]; then
+    printf 'pr-%s' "${BASH_REMATCH[1]}"
+  else
+    printf '%s' "${arg//\//-}"
+  fi
+}
+
+# ------------------------------------------------------------------ dispatch
+
+mode=shell
+args=()
+while (($#)); do
+  case "$1" in
+  --claude | -c) mode=claude ;;
+  --print | -p) mode=print ;;
+  -h | --help)
+    sed -n '3,20p' "$0" | sed 's/^# \{0,1\}//'
+    exit 0
+    ;;
+  list)
+    do_list
+    exit 0
+    ;;
+  clean)
+    shift
+    do_clean "${1:-}"
+    exit 0
+    ;;
+  -*) die "unknown flag: $1" ;;
+  *) args+=("$1") ;;
+  esac
+  shift
+done
+
+((${#args[@]})) || die "usage: gh-review <pr-number|branch> [--claude|--print]"
+target="${args[0]}"
+slug=$(slug_for "$target")
+wt_dir="$base_dir/$slug"
+branch="review/$slug"
+
+# ------------------------------------------------------- resolve the target
+
+if [[ "$slug" == pr-* ]]; then
+  pr="${slug#pr-}"
+  # A PR's head may live in a fork. refs/pull/N/head works either way.
+  fetch_ref="refs/pull/$pr/head"
+  meta=$(gh pr view "$pr" --json title,author,headRefName,baseRefName \
+    --jq '[.title, .author.login, .headRefName, .baseRefName] | @tsv') ||
+    die "could not read PR #$pr — valid number? right repo?"
+  # Split on tabs only: PR titles contain spaces and would otherwise shift fields.
+  IFS=$'\t' read -r title author head_ref base_ref <<<"$meta"
+  label="PR #$pr · $title"
+else
+  fetch_ref="refs/heads/$target"
+  head_ref="$target"
+  base_ref=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)
+  title=""
+  author=""
+  label="branch $target"
+fi
+
+# ------------------------------------------------------------ build/refresh
+
+if [[ -d "$wt_dir" ]]; then
+  info "refreshing existing worktree…"
+  git -C "$wt_dir" fetch --quiet origin "$fetch_ref"
+  git -C "$wt_dir" reset --hard --quiet FETCH_HEAD
+else
+  info "fetching $head_ref…"
+  git fetch --quiet --force origin "$fetch_ref:$branch"
+  mkdir -p "$base_dir"
+  git worktree add --quiet "$wt_dir" "$branch"
+fi
+
+# Fetch the base branch too, so `git diff base...HEAD` and any merge-base
+# reasoning is against current upstream rather than a stale local ref.
+git -C "$wt_dir" fetch --quiet origin "$base_ref:refs/remotes/origin/$base_ref" 2>/dev/null ||
+  git -C "$wt_dir" fetch --quiet origin "$base_ref" || true
+
+[[ "$mode" == print ]] && {
+  printf '%s\n' "$wt_dir"
+  exit 0
+}
+
+# ---------------------------------------------------------------- summary
+
+stat_line=$(git -C "$wt_dir" diff --shortstat "origin/$base_ref...HEAD" 2>/dev/null || true)
+
+printf '\n\033[1m%s\033[0m\n' "$label"
+[[ -n "$author" ]] && printf '  %-10s %s\n' author "$author"
+printf '  %-10s %s → %s\n' base "$base_ref" "$head_ref"
+[[ -n "$stat_line" ]] && printf '  %-10s%s\n' diff "$stat_line"
+if [[ "$slug" == pr-* ]]; then
+  checks=$(gh pr checks "${slug#pr-}" 2>/dev/null | awk '
+    /fail/ {f++} /pass/ {p++}
+    END { if (f) printf "%d failing, %d passing", f, p; else if (p) printf "%d passing", p }')
+  [[ -n "$checks" ]] && printf '  %-10s %s\n' checks "$checks"
+fi
+printf '  %-10s %s\n\n' worktree "$wt_dir"
+
+# ------------------------------------------------------------------- enter
+
+cd "$wt_dir"
+if [[ "$mode" == claude ]]; then
+  exec claude
+else
+  info "subshell in review worktree — 'exit' to return, 'gh-review clean $target' to remove"
+  exec "${SHELL:-/bin/bash}"
+fi

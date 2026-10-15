@@ -15,7 +15,6 @@ local M = {
         'astro',
         'bashls',
         'cssls',
-        'eslint',
         'jsonls',
         'lua_ls',
         'prismals',
@@ -36,7 +35,8 @@ local M = {
     opts = {
       ensure_installed = {
         'cspell',
-        'prettier',
+        'oxfmt',
+        'oxlint',
         'shellcheck',
         'shfmt',
         'stylua',

@@ -40,6 +40,8 @@ Now, make sure you have all dependencies installed:
 
 ...and some extras:
 
+- [`gh`](https://cli.github.com/) CLI for working with GitHub (pull requests,
+  comments, etc.)
 - [`bat`](https://github.com/sharkdp/bat) better version of `cat` for viewing file contents
 - [`exa`](https://the.exa.website) a modern replacement for `ls`
 - [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example

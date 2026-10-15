@@ -33,3 +33,12 @@ plug "zap-zsh/exa"
 # Load and initialise completion system
 autoload -Uz compinit
 compinit
+
+# This was added for work, and may not stay here
+# pnpm
+export PNPM_HOME="/Users/spencer/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

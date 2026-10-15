@@ -30,34 +30,29 @@ local M = {
       lua = { 'stylua' },
 
       -- JavaScript/TypeScript
-      javascript = { 'prettier' },
-      javascriptreact = { 'prettier' },
-      typescript = { 'prettier' },
-      typescriptreact = { 'prettier' },
+      javascript = { 'oxfmt' },
+      javascriptreact = { 'oxfmt' },
+      typescript = { 'oxfmt' },
+      typescriptreact = { 'oxfmt' },
 
       -- Web frameworks
-      astro = { 'prettier' },
-      vue = { 'prettier' },
-      svelte = { 'prettier' },
+      vue = { 'oxfmt' },
 
       -- Styles
-      css = { 'prettier' },
-      scss = { 'prettier' },
-      less = { 'prettier' },
+      css = { 'oxfmt' },
+      scss = { 'oxfmt' },
+      less = { 'oxfmt' },
 
       -- Markup
-      html = { 'prettier' },
-      markdown = { 'prettier' },
-      ['markdown.mdx'] = { 'prettier' },
+      markdown = { 'oxfmt' },
+      ['markdown.mdx'] = { 'oxfmt' },
 
       -- Data
-      json = { 'prettier' },
-      jsonc = { 'prettier' },
-      yaml = { 'prettier' },
+      json = { 'oxfmt' },
+      jsonc = { 'oxfmt' },
 
       -- Other
-      graphql = { 'prettier' },
-      handlebars = { 'prettier' },
+      graphql = { 'oxfmt' },
     },
 
     format_on_save = function()
@@ -72,14 +67,10 @@ local M = {
     end,
 
     formatters = {
-      prettier = {
-        prepend_args = function(_, ctx)
-          -- Use Astro parser for .astro files
-          if vim.bo[ctx.buf].filetype == 'astro' then
-            return { '--parser', 'astro' }
-          end
-          return {}
-        end,
+      oxfmt = {
+        command = 'oxfmt',
+        args = { '--stdin-filepath', '$FILENAME' },
+        stdin = true,
       },
     },
   },

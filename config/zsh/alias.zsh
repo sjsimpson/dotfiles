@@ -13,3 +13,6 @@ alias dcdown="docker compose down"
 # window management
 alias wm-start="yabai --start-service"
 alias wm-restart="yabai --restart-service"
+
+# lazygit
+alias lg="lazygit"
