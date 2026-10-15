@@ -1,154 +1,93 @@
 # sjsimpson dotfiles
 
-Config files for my coding environment in [neovim](https://neovim.io) and [tmux](https://github.com/tmux/tmux/wiki).
-Eventually will contain my configuration for Arch Linux using AwesomeWM (maybe).
+macOS dev environment: zsh, kitty, tmux, neovim, plus Claude Code config.
+Originally based on [folke's dotfiles](https://github.com/folke/dot), since
+simplified. Older iteration lives on the [`old` branch](https://github.com/sjsimpson/dotfiles/tree/old).
 
-These dotfiles are based on [dotfiles](https://github.com/folke/dot) created by [folke](https://github.com/folke).
-
-Obviously, these have been modified and simplified, but I will be adding to them over time.
-An older iteration of these doftiles (including a separate readme) can be found [`old` branch](https://github.com/sjsimpson/dotfiles/tree/old) of this project.
-
-## Installation
-
-### Dependencies
-
-Install [`brew`](https://brew.sh/) (if you're on a Mac):
+## Install
 
 ```shell
+# 1. Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
 
-Now, brew can install basically everything else that you need.
-
-- Anything listed as a dependency can be installed using brew unless otherwise stated
-- I'll provide a list of commands to run later
-
-Install `zsh` using `zap`:
-
-```shell
+# 2. zap (zsh plugin manager)
 zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1
+
+# 3. clone + install
+git clone https://github.com/sjsimpson/dotfiles.git ~/.dotfiles
+~/.dotfiles/install.sh --brew
 ```
 
-Things I use in `zsh`:
+`install.sh` is idempotent: it symlinks everything into place, moves any
+existing file to `<name>.bak`, and clones [tpm](https://github.com/tmux-plugins/tpm).
+`--brew` also runs `brew bundle` against the [`Brewfile`](Brewfile). To undo,
+delete the symlinks and restore the `.bak` files.
 
-- [`zap`](https://github.com/zap-zsh/zap)
-- [`starship`](https://starship.rs/)
+Afterwards:
 
-Now, make sure you have all dependencies installed:
+- Open tmux and press `prefix + I` to install tmux plugins
+- Open nvim; [lazy.nvim](https://github.com/folke/lazy.nvim) and Mason install
+  plugins, LSPs, and formatters on first launch
 
-- `git`: to clone the repo
+### Not in the repo
 
-...and some extras:
+| File                 | Purpose                                                |
+| -------------------- | ------------------------------------------------------ |
+| `~/env.zsh`          | Secrets / API keys, sourced by `.zshrc` if present     |
+| `~/.gitconfig.local` | Machine-specific git config (work email, tool IDs)     |
 
-- [`gh`](https://cli.github.com/) CLI for working with GitHub (pull requests,
-  comments, etc.)
-- [`bat`](https://github.com/sharkdp/bat) better version of `cat` for viewing file contents
-- [`exa`](https://the.exa.website) a modern replacement for `ls`
-- [`fzf`](https://github.com/junegunn/fzf) for a fuzzy-finder, used in `,t` on vim, for example
-- [`grc`](https://github.com/garabik/grc) for colorizing of output
+## Layout
+
+| Path               | Linked to                            | What                                             |
+| ------------------ | ------------------------------------ | ------------------------------------------------ |
+| `.zshrc`           | `~/.zshrc`                           | zsh via [zap](https://github.com/zap-zsh/zap), [starship](https://starship.rs) prompt, [mise](https://mise.jdx.dev) for runtimes |
+| `config/*`         | `~/.config/*`                        | nvim, kitty, ghostty, lazygit, starship, zsh, …  |
+| `tmux/tmux.conf`   | `~/.tmux.conf`                       | tmux + tpm plugins, TokyoNight theme             |
+| `git/gitconfig`    | `~/.gitconfig`                       | git, [delta](https://github.com/dandavison/delta) pager |
+| `git/ignore`       | `~/.config/git/ignore`               | global gitignore                                 |
+| `bin/`             | on `$PATH`                           | scripts (e.g. `gh-review`)                       |
+| `claude/`          | `~/.claude/` (per file)              | Claude Code instructions, settings, agents, skills |
+
+### Terminal
+
+[kitty](https://sw.kovidgoyal.net/kitty/) is the main terminal
+([ghostty](https://ghostty.org) config kept for trying it out), with
+[tmux](https://github.com/tmux/tmux/wiki) and
+[lazygit](https://github.com/jesseduffield/lazygit). Font is Iosevka Term
+(Nerd Font), theme is TokyoNight Storm everywhere.
+
+### Neovim
+
+Config lives in `config/nvim`. Plugins managed by lazy.nvim, LSPs/linters/
+formatters by Mason. Telescope needs `fd` and `ripgrep` (both in the Brewfile).
+
+### `bin/`
+
+- `gh-review <pr|branch>`: throwaway git worktree for reviewing a PR; `--claude`
+  launches Claude Code in it. `gh-review --help` for more.
+
+### Claude Code
+
+`claude/` holds my own Claude Code config. `install.sh` links **individual
+files and skill dirs** into `~/.claude/` rather than the whole directory,
+because other tools install into `~/.claude/skills` too.
+
+- `CLAUDE.md`: global instructions
+- `settings.json`: hooks, permissions, plugins
+- `agents/`: custom subagents
+- `skills/`: custom skills (`/claude-panel`, `/review-pr`)
+
+Third-party skills aren't vendored (see `~/.agents/.skill-lock.json`); reinstall with:
 
 ```shell
-brew install starship git bat exa fzf grc
+npx skills add JuliusBrussee/caveman   # caveman*, cavecrew, lean-build, surgical-patch, …
+npx skills add vercel-labs/skills      # find-skills
 ```
 
-#### Terminal
+## macOS window management (optional)
 
-I use `kitty` as my termial, and `tmux` as a multiplexer:
-
-```shell
-brew install kitty tmux lazygit
-```
-
-- [`kitty`](https://sw.kovidgoyal.net/kitty/): GPU-based terminal emulator
-- [`tmux`](https://github.com/tmux/tmux/wiki): terminal multiplexer
-- [`lazygit`](https://github.com/jesseduffield/lazygit/): Git GUI for terminal
-
-#### Coding Environment
-
-Neovim is my prefered code editor these days:
-
-- [`nvim`](https://neovim.io/): text/code editor
-
-Dependencies for our `neovim` setup:
-
-- [`fd`](https://github.com/sharkdp/fd) a simple, fast and user-friendly alternative to `find` (package name is `fd-find`;
-- [`ripgrep`](https://github.com/BurntSushi/ripgrep) find description there, mostly installing to help Telescope play nice and ignore `node_modules`
-
-```shell
-brew install nvim fd ripgrep
-```
-
-We also need to install our nerd fonts. As far as icons go, I typically use the [Font Awesome](https://fontawesome.com/) icons if I can:
-
-```shell
-brew install --cask font-hack-nerd-font font-inconsolata-nerd-font
-```
-
-> This will install the following 2 fonts:
->
-> - Hack Nerd Font
-> - Inconsolata Nerd Font Mono
-
-#### MacOS Remastered (optional)
-
-You can completely skip this step if you would like, but these are tools I have used to get more out of MacOS features:
-
-- [`yabai`](https://github.com/koekeishiya/yabai): tiling window manager for MacOS (install from github)
-- [`skhd`](https://github.com/koekeishiya/skhd): shortcut manager for MacOS (install from github)
-- [`sketchybar`](https://github.com/felixkratz/sketchybar): custom toolbar for MacOS (install using `brew`)
-
-### Install
-
-First, clone this repo:
-
-```shell
-git clone https://github.com/sjsimpson/dotfiles.git
-```
-
-Then, make sure you are in the folder where you cloned dotfiles. I usually clone mine into `~/.dotfiles`:
-
-```shell
-cd ~/.dotfiles
-```
-
-Then, for `nvim`, we will:
-
-```shell
-# ~/.dotfiles
-mv ~/.config/nvim ~/.config/nvim.bak   # if you already have a config
-ln -s (pwd)/config/nvim ~/.config/
-```
-
-> **_NOTE:_** This flow applies to things like `kitty`, `starship`, and basically everything in the config folder.
-
-Others will need to be installed in other places:
-
-zshrc:
-
-```shell
-# ~/.dotfiles
-mv ~/.zshrc ~/.zshrc.bak
-ln -s (pwd)/.zshrc ~/.zshrc
-```
-
-tmux:
-
-```shell
-# ~/.dotfiles
-mv ~/.tmux.conf ~/.tmux.conf.bak
-ln -s (pwd)/tmux/.tmux.conf ~/
-```
-
-gitconfig:
-
-```shell
-# ~/.dotfiles
-mv ~/.gitconfig ~/.gitconfig.bak
-ln -s (pwd)/git/gitconfig ~/.gitconfig
-```
-
-That should do it! Now you'll need to install plugins as you open apps, but for the most part that should happen automatically.
-
-To revert these changes, simply delete the files/folders (mostly symlinks) you created, and rename your `*.bak` files/folders.
-
-USE rcm https://github.com/thoughtbot/rcm
+[yabai](https://github.com/koekeishiya/yabai),
+[skhd](https://github.com/koekeishiya/skhd), and
+[sketchybar](https://github.com/felixkratz/sketchybar) configs are in
+`config/`. Not installed by default (commented out in the Brewfile); see each
+project's install docs. `wm-start` / `wm-restart` aliases control yabai.

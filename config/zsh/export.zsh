@@ -8,7 +8,7 @@ export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
 
 
 # pnpm config (for work)
-export PNPM_HOME="/Users/spencer/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 # pnpm end
 
 typeset -U path PATH

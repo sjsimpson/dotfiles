@@ -1,5 +1,7 @@
 #!/bin/sh
-export PATH=/opt/homebrew/bin:/Users/spencer/.local/bin:/Users/spencer/.cargo/bin:/Users/spencer/.local/bin:/Users/spencer/.local/bin:/Users/spencer/.cargo/bin:/Users/spencer/.local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Applications/kitty.app/Contents/MacOS
+
+#homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 #zap
 [ -f "$HOME/.local/share/zap/zap.zsh" ] && source "$HOME/.local/share/zap/zap.zsh"
@@ -10,11 +12,8 @@ export PATH=/opt/homebrew/bin:/Users/spencer/.local/bin:/Users/spencer/.cargo/bi
 #mise
 eval "$(mise activate zsh)"
 
-#history
-HISTFILE=/.zsh_history
-
 # env variables, should never be committed
-source "$HOME/env.zsh"
+[ -f "$HOME/env.zsh" ] && source "$HOME/env.zsh"
 
 # source
 plug "$HOME/.config/zsh/alias.zsh"
@@ -30,15 +29,3 @@ plug "zap-zsh/supercharge"
 plug "zap-zsh/exa"
 # plug "lukechilds/zsh-nvm" --> using `asdf` now --> using `mise` now (see 11)
 
-# Load and initialise completion system
-autoload -Uz compinit
-compinit
-
-# This was added for work, and may not stay here
-# pnpm
-export PNPM_HOME="/Users/spencer/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end

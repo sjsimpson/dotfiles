@@ -1,15 +1,13 @@
 local M = {
   {
-    'williamboman/mason.nvim',
+    'mason-org/mason.nvim',
     cmd = 'Mason',
-    config = function()
-      require('mason').setup({})
-    end,
+    opts = {},
   },
   {
     -- install LSP servers
-    'williamboman/mason-lspconfig.nvim',
-    dependencies = { 'williamboman/mason.nvim' },
+    'mason-org/mason-lspconfig.nvim',
+    dependencies = { 'mason-org/mason.nvim' },
     opts = {
       ensure_installed = {
         'astro',
@@ -23,15 +21,11 @@ local M = {
       },
       automatic_installation = true,
     },
-    config = function(_, opts)
-      require('mason').setup()
-      require('mason-lspconfig').setup(opts)
-    end,
   },
   {
     -- install linters and formatters
     'WhoIsSethDaniel/mason-tool-installer.nvim',
-    dependencies = { 'williamboman/mason.nvim' },
+    dependencies = { 'mason-org/mason.nvim' },
     opts = {
       ensure_installed = {
         'cspell',

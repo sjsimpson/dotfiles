@@ -1,14 +1,22 @@
 [user]
     name = sjsimpson
     email = spencerjsimpson@gmail.com
-[include]
-    path = ~/.gitconfig.local
 [core]
-    excludesfile = ~/.gitignore
     pager = delta
+[init]
+    defaultBranch = main
+[push]
+    autoSetupRemote = true
+[fetch]
+    prune = true
+[merge]
+    conflictstyle = zdiff3
+[rerere]
+    enabled = true
 [dotfiles]
     managed = true
 [delta]
+    navigate                      = true
     minus-style                   = syntax "#3f2d3d"
     minus-non-emph-style          = syntax "#3f2d3d"
     minus-emph-style              = syntax "#763842"
@@ -24,5 +32,7 @@
     diffFilter = delta --color-only
 [diff]
     colorMoved = default
-[fetch]
-	prune = true
+
+# machine-specific overrides (work email, tool ids); last so it wins
+[include]
+    path = ~/.gitconfig.local
