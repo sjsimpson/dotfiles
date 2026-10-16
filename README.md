@@ -113,15 +113,3 @@ agents, and skills. See [`claude/README.md`](claude/README.md).
 `config/`. Not installed by default (commented out in the Brewfile); see each
 project's install docs. `wm-start` / `wm-restart` aliases control yabai.
 
-## TODO
-
-- [ ] Agents: decide whether any custom subagents earn their keep; consider
-  repo-specific `*-reviewer` agents that `claude-panel` picks up
-- [ ] Skills: compare `claude-panel` vs built-in `/code-review` on a real PR;
-  drop the panel if it doesn't find meaningfully more
-- [ ] Skills: write `audit` (whole-repo review, plus a dotfiles drift mode)
-- [ ] Skills: `address-pr-comments`, `start-ticket ENG-xxxx`
-- [ ] Docs: keep per-area READMEs (`claude/`, `config/nvim`, `config/zsh`) in
-  sync with config (`audit` skill's drift mode)
-- [ ] Todos: rethink personal/house todo tracking (Linear feels heavy).
-  taskwarrior + my TUI project, maybe an app
