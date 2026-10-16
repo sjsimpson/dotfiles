@@ -84,4 +84,14 @@ if command -v claude >/dev/null; then
   done
 fi
 
+echo "macos"
+# Native screenshots out of ~/Desktop
+shots="$HOME/screenshots/macos"
+mkdir -p "$shots"
+if [[ "$(defaults read com.apple.screencapture location 2>/dev/null)" != "$shots" ]]; then
+  defaults write com.apple.screencapture location "$shots"
+  killall SystemUIServer 2>/dev/null || true
+fi
+printf "  ok      screenshots -> %s\n" "$shots"
+
 echo "done. ~/env.zsh (secrets) and ~/.gitconfig.local (machine-specific git) are yours to create."
