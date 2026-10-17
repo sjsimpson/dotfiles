@@ -56,7 +56,9 @@ Font); theme is TokyoNight Storm everywhere.
 - [ghostty](https://ghostty.org): config kept while I try it out
 - [herdr](https://herdr.dev): agent multiplexer for running Claude Code
   sessions side by side. Replaces tmux; only `config.toml` is tracked
-  because herdr keeps runtime state in the same directory
+  because herdr keeps runtime state in the same directory. Plugins in
+  `config/herdr/plugins/` are linked by `install.sh`; `wt-env` runs a repo's
+  `scripts/wt-setup` / `wt-teardown` (if present) on worktree create/remove
 
 **Shell**
 

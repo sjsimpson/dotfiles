@@ -58,6 +58,16 @@ for dir in "$DOTFILES"/config/*/; do
   link "config/$name" "$HOME/.config/$name"
 done
 link config/herdr/config.toml "$HOME/.config/herdr/config.toml"
+if command -v herdr >/dev/null; then
+  for plugin in "$DOTFILES"/config/herdr/plugins/*/; do
+    id=$(sed -n 's/^id = "\(.*\)"/\1/p' "$plugin/herdr-plugin.toml")
+    if herdr plugin list 2>/dev/null | grep -q "$id"; then
+      printf '  ok      herdr plugin %s\n' "$id"
+    else
+      herdr plugin link "$plugin" >/dev/null && printf '  link    herdr plugin %s\n' "$id"
+    fi
+  done
+fi
 
 # Claude: link files only. Skills and agents load as plugins (see claude/README.md).
 echo "claude"

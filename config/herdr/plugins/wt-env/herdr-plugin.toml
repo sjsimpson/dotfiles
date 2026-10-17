@@ -1,0 +1,19 @@
+id = "sjsimpson.wt-env"
+name = "Worktree env"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Run a repo's scripts/wt-setup and scripts/wt-teardown on herdr worktree events"
+platforms = ["linux", "macos"]
+
+[[events]]
+on = "worktree.created"
+command = ["bash", "wt-env.sh"]
+
+# also covers worktrees made outside herdr or before this plugin; wt-setup is idempotent
+[[events]]
+on = "worktree.opened"
+command = ["bash", "wt-env.sh"]
+
+[[events]]
+on = "worktree.removed"
+command = ["bash", "wt-env.sh"]
