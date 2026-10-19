@@ -64,7 +64,8 @@ Font); theme is TokyoNight Storm everywhere.
   sessions side by side. Replaces tmux; only `config.toml` is tracked
   because herdr keeps runtime state in the same directory. Plugins in
   `config/herdr/plugins/` are linked by `install.sh`; `wt-env` runs a repo's
-  `scripts/wt-setup` / `wt-teardown` (if present) on worktree create/remove,
+  `scripts/wt-setup` / `wt-teardown` (or private ones in
+  `~/.config/wt-env/<repo>/`) on worktree create/remove,
   and `prefix+d` opens its runtimes dashboard: per workspace, agents and their
   state, pane processes with CPU/mem and listening ports, and the docker
   compose containers started from that checkout

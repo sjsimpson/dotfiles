@@ -104,7 +104,8 @@ def env_local(path):
                 for line in f:
                     m = re.match(r"\s*(APP_URL|DATABASE_URL)\s*=\s*(.*)", line)
                     if m:
-                        vals[m.group(1)] = m.group(2).strip().strip("\"'")
+                        # never show credentials embedded in URLs
+                        vals[m.group(1)] = re.sub(r"//([^:/@]+):[^@]*@", r"//\1:***@", m.group(2).strip().strip("\"'"))
         except OSError:
             pass
     return vals
