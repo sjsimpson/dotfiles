@@ -1,0 +1,148 @@
+---
+name: address-pr-comments
+description: Work through review feedback on your own PR or gh stack: human/bot threads plus claude-panel findings. Skeptically decides fix / ticket / skip / reply per item, shows a decision table and waits for approval, then applies fixes in the branch that owns the code (bottom of the stack first), verifies each layer, and updates tickets with dated comments or sub-issues. Never pushes or posts PR replies unless asked. Use when the user asks to address, resolve, or work through PR comments or review findings.
+argument-hint: "[pr-number | pr-url | stack] [panel result .json ...]"
+---
+
+# Address PR comments
+
+Feedback in, approved changes out, in the right branch, with a paper trail.
+
+## Rules
+
+- **Your PRs only.** The PR author must be `gh api user -q .login`; otherwise stop
+- **Gate before changing anything.** Edits, commits, and ticket writes happen
+  only after the user approves the decision table (Step 3). Approval covers
+  exactly what's in the table
+- **Never push** (`git push`, `gh stack push|submit|sync`) and never post PR
+  replies, resolve threads, or re-request review unless asked. Draft replies
+  are shown locally
+- **Ticket paper trail.** Never edit an existing ticket's title, description,
+  or comments. Updates are new comments starting `**Update YYYY-MM-DD:**`
+- Follow the user's global git rules (WIP commit of existing work first,
+  Conventional Commits with the ticket ID as scope)
+
+## Step 0: Scope
+
+Arg: PR number/URL, `stack`, or none (current branch). Then:
+
+```bash
+gh api user -q .login
+gh stack view --json 2>/dev/null   # exit 2 = not a stack: single-PR mode
+git status --porcelain
+```
+
+- **Layers**: stack mode = `branches[]` bottom to top (skip `isMerged`); single
+  mode = the one branch. For each: name, head, parent (previous layer or
+  trunk), PR number if `pr` exists
+- **Commit mode**: if *no* layer has a PR yet (unsubmitted stack) → `fixup`
+  (fold fixes into the commit that introduced the code). Otherwise →
+  `commit` (new commits on the owning branch)
+- **Ticket**: from the branch name or PR title (`ENG-1234`-style), per layer
+- Dirty tree → WIP commit per the global rule on the current branch, or ask if
+  that branch isn't part of the stack
+
+## Step 1: Collect feedback
+
+Per layer with a PR, unresolved only:
+
+```bash
+gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{id isResolved isOutdated path line comments(first:20){nodes{author{login} body url}}}} reviews(last:50){nodes{author{login} state body url}}}}}' -F o=<owner> -F r=<repo> -F n=<pr>
+gh api 'repos/{owner}/{repo}/issues/<pr>/comments' --paginate --jq '[.[] | {user: .user.login, body, url: .html_url}]'
+```
+
+Plus any claude-panel results passed in (result `.json` files or findings
+already in this conversation). Panel findings arrive pre-tagged with
+`action`/`reason`/`note`; keep their call unless thread context changes it.
+
+Drop: resolved threads, bot walkthroughs/CI summaries, comments by the user
+that aren't requests, outdated threads whose code is gone. One item per
+distinct request: `id · source (author) · layer · path:line · ask`.
+
+## Step 2: Decide (skeptically)
+
+Treat every item as suspect, including humans and the panel. Read the code
+around each `path:line` before deciding.
+
+| Action | When |
+|---|---|
+| **fix** | Real, reachable (name the trigger), and the fix is proportionate |
+| **skip · not-worth-it** | Churn or risk outweighs benefit; taste; nit on code about to change |
+| **skip · unrealistic** | Implausible trigger, or impractical to execute in this PR |
+| **pattern-conflict** | Request or fix goes against how the codebase already does it. Grep and cite the pattern (`path:line`). Weigh changing it *here only* (inconsistency) vs *everywhere* (scope). Usually: follow the pattern here → skip; pattern is wrong → ticket |
+| **ticket · codebase-wide** | Real improvement that belongs everywhere. Optionally fix here first, then propagate via ticket |
+| **reply** | A question or discussion, not a code change; draft an answer |
+
+**Holistic pass** across all layers: merge duplicates (same problem raised on
+several PRs), and spot fixes that cascade (a signature change in layer 1 that
+upper layers call).
+
+**Owner layer** for each fix: the lowest layer that introduced the code.
+
+```bash
+git blame -L <line>,<line> <layer-branch> -- <path>   # introducing commit
+git branch --contains <sha>                            # lowest stack branch containing it = owner
+```
+
+If the right fix belongs lower than where it was raised (a shared helper from
+layer 1 misused in layer 3), the owner is the lower layer. In `fixup` mode,
+also record the target commit SHA (must be in the owner's
+`parent..branch` range; otherwise plain commit).
+
+## Step 3: Decision table → wait
+
+Print, grouped by layer bottom to top:
+
+```
+Layer 1 · eng-1234-foo · PR #101 · mode: commit
+| id | from | path:line | ask | action · reason | plan (owner / commit target) |
+```
+
+Then **Skips** (one line each with the reason, so the user can override),
+**Tickets** (existing ticket to comment on, or new sub-issue under which
+parent), **Draft replies** (Conventional Comments style), and the verification
+commands you'll run. Stop and wait. The user may approve all, edit actions, or
+approve per layer.
+
+## Step 4: Apply, bottom up
+
+For each layer with approved fixes, lowest first:
+
+1. `gh stack checkout <branch>` (single mode: `git checkout <branch>`)
+2. Edit. Keep each fix minimal and in this layer's concern
+3. Verify on this branch: the repo's typecheck/lint/tests for touched packages
+   (find commands in CLAUDE.md, AGENTS.md, or `package.json` scripts; scope to
+   affected packages/files). Failing → fix or stop and report; never commit red
+4. Commit:
+   - `fixup`: `git commit --fixup=<target-sha>` per fix, then
+     `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash <parent>` on this branch
+   - `commit`: `git commit -m "fix(<TICKET>): <what changed>"`, one per logical
+     fix (group trivial ones)
+5. `gh stack rebase --upstack`. Conflicts: resolve if mechanical (`git add`,
+   `gh stack rebase --continue`); otherwise `gh stack rebase --abort` and stop
+   with the conflict summary
+6. Upper layers touched by the cascade: re-run their typecheck before moving up
+
+Return to the original branch (`gh stack top` or the starting branch) at the
+end.
+
+## Step 5: Tickets
+
+Linear, for approved ticket items:
+
+- **Existing ticket fits** (the layer's ticket, or one found via search):
+  `save_comment` with `**Update YYYY-MM-DD:**` + what and why + PR link
+- **Otherwise**: `save_issue` as a sub-issue (`parentId` = the layer's ticket,
+  same team), title = the improvement, description = pattern, where it
+  applies (`path:line` list), origin PR link. Dated, no edits to the parent
+- Also add a dated comment on the layer's ticket for any scope change made in
+  this pass (e.g., "fixed X here; propagation tracked in ENG-1240")
+
+## Step 6: Report
+
+- Per layer: commits (SHA · subject), verification result
+- Tickets: created/commented, with links
+- Skipped: reason each
+- Draft replies: ready to paste, per thread URL
+- Not done: push (`gh stack push` / `gh stack submit`) and posting replies,
+  waiting on the user. Offer them in one line

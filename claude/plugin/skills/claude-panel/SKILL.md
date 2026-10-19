@@ -75,7 +75,7 @@ Workflow({
 })
 ```
 
-Lenses: `correctness`, `security`, `conventions`, `tests` (Sonnet unless `escalate`), `skeptic` (session model, diff-only), plus each repo agent. All forced into one JSON schema. Then one merge agent (dedup + already-raised filter + neutral question per finding), then blind validators (≤4 findings/file-group, see only the neutral question). Repo-agent rule violations skip validation.
+Lenses: `correctness`, `security`, `conventions`, `tests` (Sonnet unless `escalate`), `skeptic` (session model, diff-only), plus each repo agent. All forced into one JSON schema. Then one merge agent (dedup + already-raised filter + neutral question per finding), then blind validators (≤4 findings/file-group, see only the neutral question; CONFIRMED needs a concrete reachable trigger). Repo-agent rule violations skip validation. Last, one skeptical adjudicator tags each surviving finding `action` fix / ticket / skip with `reason` (worth-it, not-worth-it, unrealistic, pattern-conflict, codebase-wide) and a `note`.
 
 While it runs, don't poll — the completion notification wakes you. If it dies, re-invoke with `resumeFromRunId`; finished agents return cached.
 
@@ -86,8 +86,10 @@ Re-pin head (`gh api .../pulls/<n> --jq .head.sha`). Moved → `git diff --name-
 Print, in chat:
 
 1. Banner (sensitive / large / conflicted / head moved), if any.
-2. **Findings** (confirmed + codified), severity then confidence:
-   `**path:line** [sources · severity · conf] — claim` + one-line evidence + `fix` as a code block when present.
+2. **Findings** (confirmed + codified), grouped by `action`, then severity, then confidence:
+   - **Fix**: `**path:line** [sources · severity · conf] — claim` + one-line evidence + `fix` as a code block when present
+   - **Ticket** (codebase-wide): same line + `note` (the pattern and where else it applies)
+   - **Skip**: one line each with `reason` and `note`, so the user can override
 3. **Uncertain** (major+ only, one-liners) — worth a human look.
 4. **Refuted** — one line each with evidence, so the user can override.
 5. Already on thread — one line each.
@@ -126,7 +128,7 @@ cmp -s "$SCRATCH/pr-<n>-body.md" "$SCRATCH/pr-<n>-body-ticked.md" \
 
 No match → say so; never inject the line.
 
-**Apply fixes** (own PR): edit in the user's real checkout, not the review worktree; normal commit rules apply.
+**Apply fixes** (own PR): hand off to `/address-pr-comments` with this run's result file; it gates on a decision table, fixes in the owning branch, and handles tickets. For a whole stack, use `/review-stack`.
 
 ## Step 5: Cleanup
 
