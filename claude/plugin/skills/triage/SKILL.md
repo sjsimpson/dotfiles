@@ -1,7 +1,7 @@
 ---
 name: triage
 description: Ranked "what needs me" brief across every configured source (issue tracker, PRs, calendar, error alerts, email, meeting notes, blocked Claude agents, personal tasks). Writes a dated brief to the assistant home and prints the short version. Read-only. Use when the user asks for a triage, brief, catch-up, or "what should I look at".
-argument-hint: "[quick] (quick = chat only, no brief file)"
+argument-hint: "[quick] (quick = changes first + compact list, no brief file)"
 ---
 
 # Triage
@@ -17,7 +17,10 @@ Assistant home: `$ASSISTANT_HOME`, else `~/notes/assistant`. Read:
   **Rules** (what may be written to the brief). Sources and identifiers come
   only from there; this skill stays generic
 - `priorities.md`: used for ranking
-- The latest file in `briefs/`: so you can mark items **new** since then
+- The latest file in `briefs/` and its last timestamp (the `_HH:MM_` line or
+  last `## HH:MM update` heading): the cutoff for 🆕
+- `snoozed.md`, if present: one line per item,
+  `- <ID or URL> · until YYYY-MM-DD · reason · added YYYY-MM-DD`
 
 No home or no Sources table: say so and stop.
 
@@ -31,7 +34,19 @@ Query every source in parallel (one message, many tool calls). Per source:
   when you can't rank without it
 - A source that fails or isn't connected: note it under **Gaps**, keep going
 
-## 3. Rank
+## 3. Snoozes
+
+An item matching a `snoozed.md` line (by ID or URL) is hidden until its
+`until` date, unless it has new activity since the snooze was written
+(comment, review, status change, new event after `added`): then show it, marked
+`⏰ woke early: <what>`. No `until` means 3 business days after `added`. Expired lines get removed when the brief is written (not in
+`quick`).
+
+The user snoozes in chat ("snooze X", "snooze X until Friday"); write the line
+with the resolved `until` (default 3 business days), reason, and today as
+`added`.
+
+## 4. Rank
 
 Buckets, in order:
 
@@ -46,22 +61,31 @@ Buckets, in order:
 4. **FYI**: status changes, others' updates, noise worth knowing exists
 
 Within a bucket: priorities.md match > waiting longest > newest. Collapse
-duplicates (a PR in both GitHub and the tracker is one item). Mark items new
-since the last brief with 🆕.
+duplicates (a PR in both GitHub and the tracker is one item). 🆕 = created or
+last active after the last brief's timestamp. Never use unread state (Linear
+notifications are never marked read, so unread means nothing).
 
 End with **Focus**: the one thing to start next and the free calendar gap to
 do it in.
 
-## 4. Output
+## 5. Output
 
 Each item, one line: `- [ID/title](link) · why it's here · suggested action`.
 Follow the home's Rules on what may be written (links and titles only, no
 bodies, PII, amounts, or secrets).
 
-- Write `briefs/YYYY-MM-DD.md` (heading `# Brief YYYY-MM-DD`). If it exists,
-  append `## HH:MM update` with only what changed. Skip with `quick`
+- Write `briefs/YYYY-MM-DD.md` (heading `# Brief YYYY-MM-DD`, then a
+  `_HH:MM_` line). If it exists, append `## HH:MM update` with only what
+  changed. Then prune expired `snoozed.md` lines
 - Print a short version in chat: **Now** and **Today** in full, counts for the
   rest, then **Focus**, then **Gaps**
+
+**`quick`**: same gathering and ranking, no file writes. Print:
+
+1. **Changed since HH:MM** (last brief's timestamp): 🆕 and ⏰ items first
+2. Everything else, compact and ranked: Now/Today one line each; Soon/FYI as
+   one line or a count per group
+3. **Focus**, then **Gaps**
 
 ## Never
 
