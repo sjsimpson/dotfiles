@@ -41,6 +41,7 @@ supercharge already runs `compinit` and sets `HISTFILE`, so `.zshrc` doesn't.
 | -------------------------- | ------------------------------------ |
 | `dotfiles`                 | `cd ~/.dotfiles` and open nvim       |
 | `notes`                    | `cd ~/notes` and open nvim           |
+| `assist`                   | Claude assistant session in `~/notes/assistant` (see [claude](../../claude/README.md#assistant)) |
 | `change` / `update`        | Edit / re-source `~/.zshrc`          |
 | `lg`                       | lazygit                              |
 | `dcup` / `dcdown`          | `docker compose up -d` / `down`      |

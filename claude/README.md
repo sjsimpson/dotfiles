@@ -53,6 +53,7 @@ ever clashes).
 | Kind  | Name               | What                                                                    |
 | ----- | ------------------ | ----------------------------------------------------------------------- |
 | Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, report in chat. Posts nothing unless asked |
+| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, blocked agents, personal tasks. Read-only; sources come from the assistant home |
 | Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Read-only on code; won't start servers or touch production |
 | MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots` |
 
@@ -112,6 +113,23 @@ for reviews. Free and local; no account needed.
 - **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older
   than 30 days (keeps `macos/`). `.playwright-mcp/` is globally git-ignored in
   case anything lands in a repo
+
+## Assistant
+
+One Claude Code session as a chief of staff across work and personal.
+
+- **Behavior** lives here (`plugin/skills/triage`, more to come); generic, no
+  work specifics
+- **State and config** live in a private, synced Obsidian vault at
+  `~/notes/assistant/` (`$ASSISTANT_HOME`): `CLAUDE.md` (rules + sources
+  table), `priorities.md`, `briefs/`, `log/`. Swapping jobs = new sources
+  table + connectors
+- **Start**: `assist` (alias) opens `claude -n assistant` there; reachable from
+  the phone via Remote Control
+- **Sources**: claude.ai connectors (Linear, Calendar, Gmail, Sentry, Granola)
+  plus `gh`, `herdr api snapshot`, and Obsidian tasks
+- **Safety**: read-only; never posts, sends, or marks anything read. Briefs
+  hold titles and links only
 
 ## Related
 
