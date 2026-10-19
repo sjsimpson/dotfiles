@@ -94,6 +94,16 @@ if command -v claude >/dev/null; then
   done
 fi
 
+if command -v npx >/dev/null; then
+  echo "playwright"
+  # video recording in the Playwright MCP needs its matching ffmpeg build
+  if npx -y -p @playwright/mcp@latest playwright install ffmpeg >/dev/null 2>&1; then
+    printf '  ok      ffmpeg\n'
+  else
+    printf '  FAILED  ffmpeg (npx playwright install ffmpeg)\n'
+  fi
+fi
+
 echo "macos"
 # Native screenshots out of ~/Desktop
 shots="$HOME/screenshots/macos"

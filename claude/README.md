@@ -6,7 +6,7 @@ My [Claude Code](https://claude.com/claude-code) config.
 | ------------------------------- | ------------------------------------------------ | ---------------------------------------- |
 | `CLAUDE.md`                     | linked to `~/.claude/CLAUDE.md`                  | Global instructions for every session    |
 | `settings.json`                 | linked to `~/.claude/settings.json`              | Hooks, permissions, plugins, attribution |
-| `plugin/`                       | live via `CLAUDE_CODE_PLUGIN_DIRS`               | My skills and agents (plugin `sjsimpson`) |
+| `plugin/`                       | live via `CLAUDE_CODE_PLUGIN_DIRS`               | My skills and MCP servers (plugin `sjsimpson`) |
 | `.claude-plugin/marketplace.json` | local marketplace `dotfiles` (`extraKnownMarketplaces`) | Third-party plugins I use          |
 
 `settings.json` is the source of truth for what's installed: `enabledPlugins`
@@ -24,6 +24,8 @@ Global rules, in short:
   (`feat(ENG-1234): …`)
 - Never push, comment, or update PRs unless asked. Review comments use
   Conventional Comments and are shown locally first
+- Playwright screenshots and videos go to `~/screenshots/<repo>/<branch>/`
+  (see [Playwright](#playwright))
 
 ## settings.json
 
@@ -50,8 +52,10 @@ ever clashes).
 | Kind  | Name               | What                                                                    |
 | ----- | ------------------ | ----------------------------------------------------------------------- |
 | Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, report in chat. Posts nothing unless asked |
+| MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots` |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
+MCP server: `plugin/.mcp.json`.
 
 ### Third-party (`.claude-plugin/marketplace.json`)
 
@@ -74,6 +78,34 @@ To add one:
 
 `claude plugin details <name>@<marketplace>` shows what a plugin loads (skills,
 agents, hooks) and its token cost.
+
+## Playwright
+
+Browser automation for verifying UI changes and capturing screenshots or videos
+for reviews. Free and local; no account needed.
+
+- **Server**: [Playwright MCP](https://github.com/microsoft/playwright-mcp),
+  shipped in `plugin/.mcp.json`, so every machine gets the same config
+  - `--isolated`: browser profile in memory, so parallel sessions don't fight
+    over one profile. Each session starts logged out; for authed apps, pass
+    `--storage-state <file>` with a saved login
+  - `--caps=devtools`: adds video (`browser_start_video`, chapter cards, action
+    callouts) and tracing
+  - `--output-dir=${HOME}/screenshots`: where unnamed files go
+- **Output**: `~/screenshots/<repo>/<branch>/`, one folder per branch so
+  parallel worktrees don't overwrite each other. The MCP only writes inside the
+  repo or its output dir, so `CLAUDE.md` tells Claude to always use absolute
+  filenames there. macOS screenshots go to `~/screenshots/macos`
+  (set by `install.sh`)
+- **Access**: `~/screenshots` is in `permissions.additionalDirectories`, so no
+  prompts
+- **Video**: needs Playwright's own ffmpeg build; `install.sh` installs it
+  (manual: `npx -p @playwright/mcp@latest playwright install ffmpeg`). Start
+  recording after the first navigation; a recording started on a blank page
+  saves nothing
+- **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older
+  than 30 days (keeps `macos/`). `.playwright-mcp/` is globally git-ignored in
+  case anything lands in a repo
 
 ## Related
 

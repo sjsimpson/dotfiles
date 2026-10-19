@@ -9,7 +9,8 @@
   "permissions": {
     "defaultMode": "auto",
     "additionalDirectories": [
-      "~/.dotfiles/claude/plugin"
+      "~/.dotfiles/claude/plugin",
+      "~/screenshots"
     ]
   },
   "hooks": {

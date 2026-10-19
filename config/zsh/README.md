@@ -45,3 +45,4 @@ supercharge already runs `compinit` and sets `HISTFILE`, so `.zshrc` doesn't.
 | `lg`                       | lazygit                              |
 | `dcup` / `dcdown`          | `docker compose up -d` / `down`      |
 | `wm-start` / `wm-restart`  | Start / restart yabai                |
+| `shots` / `shots-prune`    | Open `~/screenshots` / delete files older than 30 days (keeps `macos/`) |

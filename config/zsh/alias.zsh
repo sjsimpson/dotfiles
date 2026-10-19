@@ -16,3 +16,7 @@ alias wm-restart="yabai --restart-service"
 
 # lazygit
 alias lg="lazygit"
+
+# screenshots (macOS + Playwright); prune keeps macOS ones
+alias shots="open ~/screenshots"
+alias shots-prune="find ~/screenshots -type f -mtime +30 -not -path '*/macos/*' -print -delete"

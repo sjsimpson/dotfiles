@@ -18,9 +18,15 @@ git clone https://github.com/sjsimpson/dotfiles.git ~/.dotfiles
 ~/.dotfiles/install.sh --brew
 ```
 
-`install.sh` is idempotent: it symlinks everything into place (moving any
-existing file to `<name>.bak`) and installs the Claude Code plugins listed in
-`claude/settings.json`. Flags:
+`install.sh` is idempotent. It:
+
+- symlinks everything into place (moving any existing file to `<name>.bak`)
+- installs the Claude Code plugins listed in `claude/settings.json`
+- links the herdr plugins in `config/herdr/plugins/`
+- installs Playwright's ffmpeg (video recording in the Playwright MCP)
+- points macOS screenshots at `~/screenshots/macos`
+
+Flags:
 
 - `--brew`: run `brew bundle` against the [`Brewfile`](Brewfile)
 

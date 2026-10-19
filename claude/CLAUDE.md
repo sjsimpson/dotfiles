@@ -33,3 +33,11 @@
   `feat(ENG-6659): add supported locations page`
 - Comments should be shown locally for me to review and post
 - [IMPORTANT] Always use [Conventional Comments](https://conventionalcomments.org/) when giving PR feedback
+
+## Playwright
+
+- Screenshots/videos: absolute `filename` under
+  `$HOME/screenshots/<repo>/<branch>/` (branch `/` → `-`). Relative names land
+  in the repo; paths outside `~/screenshots` are rejected
+- Video: navigate first, then `browser_start_video` (starting on a blank page
+  records nothing)
