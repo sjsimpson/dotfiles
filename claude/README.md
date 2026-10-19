@@ -6,7 +6,7 @@ My [Claude Code](https://claude.com/claude-code) config.
 | ------------------------------- | ------------------------------------------------ | ---------------------------------------- |
 | `CLAUDE.md`                     | linked to `~/.claude/CLAUDE.md`                  | Global instructions for every session    |
 | `settings.json`                 | linked to `~/.claude/settings.json`              | Hooks, permissions, plugins, attribution |
-| `plugin/`                       | live via `CLAUDE_CODE_PLUGIN_DIRS`               | My skills and MCP servers (plugin `sjsimpson`) |
+| `plugin/`                       | live via `CLAUDE_CODE_PLUGIN_DIRS`               | My skills, agents, and MCP servers (plugin `sjsimpson`) |
 | `.claude-plugin/marketplace.json` | local marketplace `dotfiles` (`extraKnownMarketplaces`) | Third-party plugins I use          |
 
 `settings.json` is the source of truth for what's installed: `enabledPlugins`
@@ -52,6 +52,7 @@ ever clashes).
 | Kind  | Name               | What                                                                    |
 | ----- | ------------------ | ----------------------------------------------------------------------- |
 | Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, report in chat. Posts nothing unless asked |
+| Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Read-only on code; won't start servers or touch production |
 | MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots` |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
@@ -103,6 +104,10 @@ for reviews. Free and local; no account needed.
   (manual: `npx -p @playwright/mcp@latest playwright install ffmpeg`). Start
   recording after the first navigation; a recording started on a blank page
   saves nothing
+- **Agent**: `qa-tester` does the browser work in its own context, so page
+  snapshots don't flood the main session. Ask the main session to "use
+  qa-tester on <flow> at <url>"; it returns `PASS`/`FAIL`/`BLOCKED` plus
+  findings with repro steps and evidence paths
 - **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older
   than 30 days (keeps `macos/`). `.playwright-mcp/` is globally git-ignored in
   case anything lands in a repo
