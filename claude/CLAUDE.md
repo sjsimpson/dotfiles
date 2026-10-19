@@ -36,6 +36,8 @@
 
 ## Playwright
 
+- For in-app/browser testing, delegate to `qa-tester`; don't drive Playwright in
+  the main session unless I ask
 - Screenshots/videos: absolute `filename` under
   `$HOME/screenshots/<repo>/<branch>/` (branch `/` → `-`). Relative names land
   in the repo; paths outside `~/screenshots` are rejected

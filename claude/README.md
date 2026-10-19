@@ -24,6 +24,7 @@ Global rules, in short:
   (`feat(ENG-1234): …`)
 - Never push, comment, or update PRs unless asked. Review comments use
   Conventional Comments and are shown locally first
+- Browser testing is delegated to `qa-tester`
 - Playwright screenshots and videos go to `~/screenshots/<repo>/<branch>/`
   (see [Playwright](#playwright))
 
