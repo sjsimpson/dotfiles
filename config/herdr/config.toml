@@ -9,3 +9,9 @@ status_indicators = "dots"
 [theme]
 name = "tokyo-night"
 auto_switch = false
+
+[[keys.command]]
+key = "prefix+d"
+type = "plugin_action"
+command = "sjsimpson.wt-env.runtimes"
+description = "runtimes dashboard"

@@ -2,7 +2,7 @@ id = "sjsimpson.wt-env"
 name = "Worktree env"
 version = "0.1.0"
 min_herdr_version = "0.9.0"
-description = "Run a repo's scripts/wt-setup and scripts/wt-teardown on herdr worktree events"
+description = "Per-worktree setup/teardown hooks and a runtimes dashboard"
 platforms = ["linux", "macos"]
 
 [[events]]
@@ -17,3 +17,15 @@ command = ["bash", "wt-env.sh"]
 [[events]]
 on = "worktree.removed"
 command = ["bash", "wt-env.sh"]
+
+# Runtimes dashboard: everything each workspace is running (bind with keys.command)
+[[actions]]
+id = "runtimes"
+title = "Runtimes dashboard"
+command = ["sh", "-c", "\"${HERDR_BIN_PATH:-herdr}\" plugin pane open --plugin sjsimpson.wt-env --entrypoint runtimes --focus"]
+
+[[panes]]
+id = "runtimes"
+title = "Runtimes"
+placement = "overlay"
+command = ["python3", "runtimes.py"]
