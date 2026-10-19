@@ -53,6 +53,7 @@ cask "google-drive"
 cask "kitty"
 # cask "ghostty"  # trying out
 cask "linear-linear"
+cask "obsidian"
 cask "postico"
 cask "redisinsight"
 cask "slack"
