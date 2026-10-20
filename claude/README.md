@@ -132,6 +132,13 @@ One Claude Code session as a chief of staff across work and personal.
   plus `gh`, `herdr api snapshot`, and Obsidian tasks
 - **Safety**: read-only; never posts, sends, or marks anything read. Briefs
   hold titles and links only
+- **Scheduled brief**: launchd runs [`bin/assistant-brief`](../bin/assistant-brief)
+  daily at 08:30 (on wake if asleep; skipped if off, or if today's brief
+  exists). Headless `claude -p` in `--permission-mode dontAsk` with an
+  allow list: read-only tools plus writes to `briefs/` only. Opus, capped at
+  $5. Weekends run `/triage personal`. Pings by iMessage to self + Mac
+  notification, both linking the brief in Obsidian. Log:
+  `~/Library/Logs/assistant-brief.log`
 
 ## Related
 

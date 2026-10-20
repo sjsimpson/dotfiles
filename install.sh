@@ -104,6 +104,21 @@ if command -v npx >/dev/null; then
   fi
 fi
 
+echo "launchd"
+# copied, not linked: launchd skips symlinked agents at login
+for plist in "$DOTFILES"/launchd/*.plist; do
+  label=$(basename "$plist" .plist)
+  dst="$HOME/Library/LaunchAgents/$label.plist"
+  if cmp -s "$plist" "$dst"; then
+    printf '  ok      %s\n' "$label"
+    continue
+  fi
+  mkdir -p "$(dirname "$dst")"
+  cp "$plist" "$dst"
+  launchctl bootout "gui/$UID/$label" 2>/dev/null || true
+  launchctl bootstrap "gui/$UID" "$dst" && printf '  load    %s\n' "$label"
+done
+
 echo "macos"
 # Native screenshots out of ~/Desktop
 shots="$HOME/screenshots/macos"

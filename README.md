@@ -50,6 +50,7 @@ nvim installs its plugins, LSPs, and formatters automatically.
 | `git/ignore`       | `~/.config/git/ignore`               | global gitignore                                 |
 | `bin/`             | on `$PATH`                           | scripts (e.g. `gh-review`)                       |
 | `claude/`          | `~/.claude/` (per file)              | Claude Code ([README](claude/README.md))          |
+| `launchd/`         | copied to `~/Library/LaunchAgents`   | scheduled jobs (`assistant-brief` daily 08:30)   |
 
 ## Tools
 
@@ -111,6 +112,10 @@ I used tmux before herdr. The config lives on the
 
 - `gh-review <pr|branch>`: throwaway git worktree for reviewing a PR; `--claude`
   launches Claude Code in it. `gh-review --help` for more.
+- `assistant-brief [--force|--dry]`: headless `/triage` into the assistant
+  home, then an iMessage to yourself (`ASSISTANT_IMESSAGE_TO` in `~/env.zsh`)
+  and a Mac notification, counts only. Weekends: personal tasks only. Run daily
+  at 08:30 by launchd; see [Assistant](claude/README.md#assistant).
 
 ## Claude Code
 

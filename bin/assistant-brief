@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+#
+# assistant-brief — scheduled /triage in the assistant home, then a ping.
+# Run daily by launchd (launchd/com.sjsimpson.assistant-brief.plist).
+#
+#   assistant-brief           brief, unless today's already exists
+#   assistant-brief --force   run anyway (appends an update)
+#   assistant-brief --dry     print the claude command, run nothing
+#
+# Weekends: personal tasks only. Headless and read-only: tools not allowed
+# below are denied; writes only to briefs/. Ping = iMessage to
+# $ASSISTANT_IMESSAGE_TO (set in ~/env.zsh) + macOS notification. Counts only.
+# Log: ~/Library/Logs/assistant-brief.log
+
+set -euo pipefail
+
+export PATH="$HOME/.local/share/mise/shims:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$HOME/.dotfiles/bin"
+home="${ASSISTANT_HOME:-$HOME/notes/assistant}"
+today=$(date +%F)
+brief="$home/briefs/$today.md"
+log="$HOME/Library/Logs/assistant-brief.log"
+
+force=0 dry=0
+for arg in "$@"; do
+  case "$arg" in
+  --force) force=1 ;;
+  --dry) dry=1 ;;
+  *)
+    echo "unknown flag: $arg" >&2
+    exit 1
+    ;;
+  esac
+done
+
+# launchd has no terminal: log everything
+[[ -t 1 ]] || exec >>"$log" 2>&1
+echo "== $(date '+%F %T')"
+
+if [[ -f "$brief" ]] && ((!force && !dry)); then
+  echo "skip: $brief exists"
+  exit 0
+fi
+
+if (($(date +%u) >= 6)); then
+  mode=personal
+  summary='SUMMARY: <n> due · <n> high'
+else
+  mode=''
+  summary='SUMMARY: <n> Now · <n> Today'
+fi
+
+prompt="Run the triage skill${mode:+ in $mode mode}. Scheduled headless run:
+don't touch snoozed.md (no pruning), write only the brief. Bash: one plain
+command per call (no pipes, &&, ;, redirects, or subshells; use gh's --jq and
+--json flags instead), or it's denied. Your final line must
+be exactly: $summary"
+
+allowed=(
+  Skill Read Glob Grep
+  "Write(./briefs/**)" "Edit(./briefs/**)"
+  "Bash(gh search prs:*)" "Bash(gh pr view:*)" "Bash(gh pr list:*)"
+  "Bash(herdr api snapshot:*)" "Bash(obsidian tasks:*)"
+  "Bash(grep -rn:*)" "Bash(date:*)" "Bash(ls:*)"
+  mcp__claude_ai_Linear__get_notifications mcp__claude_ai_Linear__list_issues
+  mcp__claude_ai_Linear__get_issue
+  mcp__claude_ai_Google_Calendar__list_events
+  mcp__claude_ai_Gmail__search_threads mcp__claude_ai_Gmail__get_thread
+  mcp__claude_ai_Sentry__search_issues
+  mcp__claude_ai_Granola__list_meetings
+)
+# belt and braces: dontAsk already denies anything not allowed
+denied=(
+  mcp__claude_ai_Gmail__send_message mcp__claude_ai_Gmail__reply
+  mcp__claude_ai_Gmail__forward mcp__claude_ai_Gmail__create_draft
+  mcp__claude_ai_Gmail__trash_thread mcp__claude_ai_Gmail__trash_message
+  mcp__claude_ai_Gmail__label_thread mcp__claude_ai_Gmail__label_message
+  mcp__claude_ai_Gmail__update_message_labels
+  mcp__claude_ai_Linear__save_issue mcp__claude_ai_Linear__save_comment
+  mcp__claude_ai_Linear__mark_notification
+  mcp__claude_ai_Sentry__update_issue
+  "Edit(./snoozed.md)" "Write(./snoozed.md)"
+)
+cmd=(claude -p "$prompt" --model opus --permission-mode dontAsk
+  --allowedTools "${allowed[@]}" --disallowedTools "${denied[@]}"
+  --add-dir "$HOME/notes" --output-format json --no-session-persistence
+  --max-budget-usd 5)
+
+if ((dry)); then
+  printf '%q ' "${cmd[@]}"
+  echo
+  exit 0
+fi
+
+cd "$home"
+out=$("${cmd[@]}" </dev/null) || true
+result=$(jq -r '.result // ""' <<<"$out" 2>/dev/null || true)
+echo "cost: $(jq -r '.total_cost_usd // "?"' <<<"$out" 2>/dev/null)"
+jq -r '.permission_denials[]? | "denied: \(.tool_name) \(.tool_input.command // .tool_input.file_path // "")"' <<<"$out" 2>/dev/null || true
+
+if [[ -f "$brief" ]]; then
+  counts=$(grep -o 'SUMMARY: .*' <<<"$result" | tail -1 | sed 's/^SUMMARY: //')
+  msg="Brief ${today#*-}: ${counts:-ready}"
+else
+  msg="Brief ${today#*-} failed; see $log"
+  echo "$result" | tail -20
+fi
+url="obsidian://open?vault=notes&file=assistant%2Fbriefs%2F$today"
+echo "$msg"
+
+terminal-notifier -title Assistant -message "$msg" -open "$url" >/dev/null 2>&1 || true
+
+# recipient lives in ~/env.zsh (zsh), never in this repo
+to=$(zsh -c 'source ~/env.zsh 2>/dev/null; print -r -- "${ASSISTANT_IMESSAGE_TO:-}"')
+if [[ -n "$to" ]]; then
+  osascript - "$to" "$msg"$'\n'"$url" <<'EOF' || echo "imessage failed"
+on run argv
+  tell application "Messages"
+    set svc to 1st account whose service type = iMessage
+    send (item 2 of argv) to participant (item 1 of argv) of svc
+  end tell
+end run
+EOF
+else
+  echo "no ASSISTANT_IMESSAGE_TO in ~/env.zsh; skipped iMessage"
+fi

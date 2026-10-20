@@ -1,7 +1,7 @@
 ---
 name: triage
 description: Ranked "what needs me" brief across every configured source (issue tracker, PRs, calendar, error alerts, email, meeting notes, blocked Claude agents, personal tasks). Writes a dated brief to the assistant home and prints the short version. Read-only. Use when the user asks for a triage, brief, catch-up, or "what should I look at".
-argument-hint: "[quick] (quick = changes first + compact list, no brief file)"
+argument-hint: "[quick] [personal] (quick = changes first + compact list, no brief file; personal = personal tasks only)"
 ---
 
 # Triage
@@ -23,6 +23,9 @@ Assistant home: `$ASSISTANT_HOME`, else `~/notes/assistant`. Read:
   `- <ID or URL> · until YYYY-MM-DD · reason · added YYYY-MM-DD`
 
 No home or no Sources table: say so and stop.
+
+**`personal`** (weekends, or on request): use only the Personal source. Skip
+work sources entirely; don't list them under Gaps.
 
 ## 2. Gather
 
@@ -75,7 +78,7 @@ Follow the home's Rules on what may be written (links and titles only, no
 bodies, PII, amounts, or secrets).
 
 - Write `briefs/YYYY-MM-DD.md` (heading `# Brief YYYY-MM-DD`, then a
-  `_HH:MM_` line). If it exists, append `## HH:MM update` with only what
+  `_HH:MM_` line, plus ` · personal` in that mode). If it exists, append `## HH:MM update` with only what
   changed. Then prune expired `snoozed.md` lines
 - Print a short version in chat: **Now** and **Today** in full, counts for the
   rest, then **Focus**, then **Gaps**
