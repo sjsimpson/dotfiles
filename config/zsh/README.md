@@ -18,7 +18,7 @@ linked to `~/.config/zsh` and loaded by it. Plugins are managed by
 | File           | What                                                              |
 | -------------- | ----------------------------------------------------------------- |
 | `alias.zsh`    | Aliases                                                           |
-| `export.zsh`   | `EDITOR`, `BROWSER`, XDG, `PATH` (deduped with `typeset -U path`) |
+| `export.zsh`   | `EDITOR`, `BROWSER`, XDG, `PATH` incl. `~/.dotfiles/bin` (deduped with `typeset -gU path`: global, since zap sources it in a function) |
 | `starship.zsh` | [starship](https://starship.rs) prompt; config in `config/starship` |
 
 Machine- or work-specific settings go in `~/env.zsh`, not here.

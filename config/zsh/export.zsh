@@ -11,7 +11,9 @@ export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
 export PNPM_HOME="$HOME/Library/pnpm"
 # pnpm end
 
-typeset -U path PATH
+# -g: zap's `plug` sources this inside a function; plain typeset would make
+# path local and drop everything below
+typeset -gU path PATH
 
 path=(
   "$HOME/.local/bin"
