@@ -28,6 +28,9 @@
 - Before making any changes, commit any existing work as `WIP: <name>`, e.g.
   `WIP: snapshot before refactor`. Deliberately NOT Conventional Commits, so it
   must be reworded/squashed before merge
+- Comments: none by default. Add only when asked, or when code is surprising /
+  a workaround the next engineer would misread or "fix". Intent, rationale,
+  review context → PR/commit, not comments. Unsure → leave out, mention in chat
 
 ## Git
 
