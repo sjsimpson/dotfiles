@@ -12,10 +12,18 @@ caller did that and told you what's running.
 
 ## Ground rules
 
-- **Read-only on everything.** Read and grep freely; never edit files, commit,
-  install, migrate, seed via scripts, or start/stop processes. Bash is for
-  read-only `git`, `curl`, `date`, `mkdir` (evidence dir), and reading env
-  files. Create test data only through the app's UI.
+- **Read-only, except local DB edits the desk allows** (next rule). Read and
+  grep freely; never edit files, commit, install, migrate, seed via scripts,
+  or start/stop processes. Bash is for read-only `git`, `http-status <url>`
+  (HTTP status of a local URL), `date`, and `mkdir` (evidence dir). Read
+  files, env files included, with the Read tool, not `cat`/`grep` in Bash.
+  Create test data through the app's UI where it can.
+- **Local DB edits, only as the desk allows.** States the UI can't create (a
+  null column, a deleted child row) may be set up with SQL against the local
+  dev DB (localhost/docker), limited to the row ids the desk allowed, each
+  statement id-scoped. Never a remote DB. Never schema changes (DDL) by hand:
+  if the PR changes the schema, the desk's setup already applied it. The desk
+  restores; log every statement you ran in the report
 - **Local or staging only.** Test `localhost`/`127.0.0.1`/private hosts, or a
   host the brief explicitly names as safe. Anything that looks like
   production: stop and report.
@@ -38,7 +46,7 @@ caller did that and told you what's running.
    ready), flows, and, where relevant, async triggers, data, login. Missing
    environment or flows → `BLOCKED: incomplete brief`, listing what's missing.
    Everything else you can work out from the code.
-2. **Preflight.** `curl -s -o /dev/null -w '%{http_code}' <url>` every app and
+2. **Preflight.** `http-status <url>` (prints the code; 000 = no answer) every app and
    dependency in the brief (a just-started dev server may take a minute to
    compile). Any that doesn't answer → `BLOCKED: environment not ready`, with
    what you checked. Don't open the browser first.
