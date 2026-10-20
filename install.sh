@@ -48,9 +48,9 @@ fi
 echo "env"
 # Personal values the dotfiles read but must never commit. Asked for here and
 # written to ~/env.zsh (not linked, not in git). Add one line per new value:
-#   NAME|prompt|secret (input hidden) or plain
+#   NAME|prompt|secret (input hidden), plain, or topic (blank = random)
 env_vars=(
-  "ASSISTANT_IMESSAGE_TO|iMessage address for assistant-brief pings (+15551234567 or Apple ID email)|plain"
+  "ASSISTANT_NTFY_TOPIC|ntfy topic for assistant phone pings|topic"
 )
 env_file="$HOME/env.zsh"
 touch "$env_file"
@@ -65,7 +65,13 @@ for entry in "${env_vars[@]}"; do
       read -rs -p "  $name: $prompt (blank skips): " value || value=""
       echo
     else
-      read -r -p "  $name: $prompt (blank skips): " value || value=""
+      hint="blank skips"
+      [[ "$kind" == topic ]] && hint="blank generates one"
+      read -r -p "  $name: $prompt ($hint): " value || value=""
+      if [[ -z "$value" && "$kind" == topic ]]; then
+        value="assistant-$(openssl rand -hex 12)"
+        printf '  topic   %s (subscribe to it in the ntfy app)\n' "$value"
+      fi
     fi
     if [[ -n "$value" ]]; then
       printf 'export %s=%q\n' "$name" "$value" >>"$env_file"

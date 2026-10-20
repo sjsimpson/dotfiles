@@ -145,8 +145,9 @@ One Claude Code session as a chief of staff across work and personal.
     it. Drafts are never posted
   - Headless `claude -p` in `--permission-mode dontAsk` with an allow list:
     read-only tools plus writes to `briefs/` and `weekly/` only. Sonnet
-    (`ASSISTANT_MODEL` overrides), capped at $5. Pings by iMessage to self +
-    Mac notification, linking the file in Obsidian. Log:
+    (`ASSISTANT_MODEL` overrides), capped at $5. Pings by [ntfy](https://ntfy.sh)
+    push (count line + link only) + Mac notification, linking the file in
+    Obsidian. Log:
     `~/Library/Logs/assistant-brief.log`
 
 ## Related

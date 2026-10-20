@@ -17,7 +17,7 @@
 # personal-only; no wind-down.
 #
 # Headless and read-only: tools not allowed below are denied; writes only to
-# briefs/ and weekly/. Ping = iMessage to $ASSISTANT_IMESSAGE_TO (~/env.zsh) +
+# briefs/ and weekly/. Ping = ntfy push to $ASSISTANT_NTFY_TOPIC (~/env.zsh) +
 # macOS notification. Counts only. Model: $ASSISTANT_MODEL (default sonnet).
 # Log: ~/Library/Logs/assistant-brief.log
 
@@ -109,21 +109,16 @@ denied=(
 
 notify() {
   terminal-notifier -title Assistant -message "$1" -open "$2" >/dev/null 2>&1 || true
-  # recipient lives in ~/env.zsh (zsh), never in this repo
-  local to
-  to=$(zsh -c 'source ~/env.zsh 2>/dev/null; print -r -- "${ASSISTANT_IMESSAGE_TO:-}"')
-  if [[ -z "$to" ]]; then
-    echo "no ASSISTANT_IMESSAGE_TO in ~/env.zsh; skipped iMessage"
+  # phone push via ntfy; topic lives in ~/env.zsh, never in this repo.
+  # Payload is the count line + link only: nothing sensitive leaves the Mac.
+  local topic
+  topic=$(zsh -c 'source ~/env.zsh 2>/dev/null; print -r -- "${ASSISTANT_NTFY_TOPIC:-}"')
+  if [[ -z "$topic" ]]; then
+    echo "no ASSISTANT_NTFY_TOPIC in ~/env.zsh; skipped phone push"
     return 0
   fi
-  osascript - "$to" "$1"$'\n'"$2" <<'APPLESCRIPT' || echo "imessage failed"
-on run argv
-  tell application "Messages"
-    set svc to 1st account whose service type = iMessage
-    send (item 2 of argv) to participant (item 1 of argv) of svc
-  end tell
-end run
-APPLESCRIPT
+  curl -fsS -o /dev/null -H "Title: Assistant" -H "Click: $2" -d "$1" \
+    "${ASSISTANT_NTFY_SERVER:-https://ntfy.sh}/$topic" || echo "ntfy failed"
 }
 
 need_main=1 need_prep=$with_prep
@@ -165,8 +160,8 @@ if ((need_prep)); then
   label="$label + 1:1 prep"
 fi
 
-prompt="Run the triage skill in $mode mode. Scheduled headless
-run: don't touch snoozed.md (no pruning). Bash: one plain command per call (no
+prompt="Run the triage skill in $mode mode. Unattended run: don't touch
+snoozed.md (no pruning); don't mention the run itself in the output. Bash: one plain command per call (no
 pipes, &&, ;, redirects, or subshells; use gh's --jq and --json flags instead),
 or it's denied. Your final line must be exactly: $summary"
 cmd=(claude -p "$prompt" --model "$model" --permission-mode dontAsk
@@ -190,7 +185,7 @@ if [[ -f "$file" ]] && { ((!need_prep)) || done_already prep; }; then
   counts=$(grep -o 'SUMMARY: .*' <<<"$result" | tail -1 | sed 's/^SUMMARY: //')
   msg="$label: ${counts:-ready}"
 else
-  msg="$label failed; see $log"
+  msg="$label failed; see ~/Library/Logs/assistant-brief.log"
   echo "$result" | tail -20
 fi
 rel=${file#"$home"/}

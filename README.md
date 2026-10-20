@@ -113,9 +113,9 @@ I used tmux before herdr. The config lives on the
 - `gh-review <pr|branch>`: throwaway git worktree for reviewing a PR; `--claude`
   launches Claude Code in it. `gh-review --help` for more.
 - `assistant-brief [brief|winddown|prep] [--force|--dry]`: headless
-  `/triage` into the assistant home, then an iMessage to yourself
-  (`ASSISTANT_IMESSAGE_TO` in `~/env.zsh`, prompted by `install.sh`) and a Mac
-  notification, counts only. launchd runs the brief at 08:30 daily and the
+  `/triage` into the assistant home, then an [ntfy](https://ntfy.sh)
+  phone push (`ASSISTANT_NTFY_TOPIC` in `~/env.zsh`, prompted by `install.sh`)
+  and a Mac notification, counts only. launchd runs the brief at 08:30 daily and the
   wind-down at 16:45 weekdays (Thu adds 1:1 prep); see
   [Assistant](claude/README.md#assistant).
 
