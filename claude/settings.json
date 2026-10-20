@@ -8,6 +8,7 @@
   },
   "permissions": {
     "defaultMode": "auto",
+    "allow": ["Bash(http-status:*)"],
     "additionalDirectories": ["~/.dotfiles/claude/plugin", "~/screenshots"]
   },
   "hooks": {

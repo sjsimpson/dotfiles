@@ -110,7 +110,9 @@ for reviews. Free and local; no account needed.
   filenames there. macOS screenshots go to `~/screenshots/macos`
   (set by `install.sh`)
 - **Access**: `~/screenshots` is in `permissions.additionalDirectories`, so no
-  prompts
+  prompts. Health checks use [`bin/http-status`](../bin/http-status)
+  (localhost only), the one allowlisted Bash command, since auto mode denies
+  plain `curl`
 - **Video**: needs Playwright's own ffmpeg build; `install.sh` installs it
   (manual: `npx -p @playwright/mcp@latest playwright install ffmpeg`). Start
   recording after the first navigation; a recording started on a blank page

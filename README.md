@@ -123,6 +123,8 @@ I used tmux before herdr. The config lives on the
   wind-down at 16:45 weekdays (Thu adds 1:1 prep); see
   [Assistant](claude/README.md#assistant).
 
+- `http-status <url>`: HTTP status of a localhost URL only (no redirects, no
+  body); allowlisted for agents' health checks (`Bash(http-status:*)`)
 - `qa-login <url>`: log in by hand once; `qa-tester`'s browsers reuse the
   session
 

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# http-status <url> [timeout-sec]   HTTP status code of a *local* URL.
+#
+# For agents' health checks: safe to allowlist (Bash(http-status:*)) because
+# it only talks to this machine, never follows redirects, and prints only the
+# status code, never the body. Prints 000 when nothing answers.
+# Hosts: localhost, 127.0.0.1, [::1]. Exit: 0 got a response · 1 no
+# response · 2 usage / refused URL.
+
+set -euo pipefail
+
+url=${1:-}
+timeout=${2:-90}
+# path/query: unreserved chars, %-escapes, and & + , ; = : / ? # only
+local_url='^https?://(localhost|127\.0\.0\.1|\[::1\])(:[0-9]{1,5})?(/[A-Za-z0-9._~%&+,;=:/?#-]*)?$'
+
+if [[ -z "$url" || ! "$url" =~ $local_url || ! "$timeout" =~ ^[0-9]{1,3}$ ]]; then
+  echo "usage: http-status <http://localhost[:port]/path> [timeout-sec]" >&2
+  echo "only localhost, 127.0.0.1, [::1]" >&2
+  exit 2
+fi
+
+code=$(curl -s -o /dev/null -w '%{http_code}' --max-redirs 0 -m "$timeout" \
+  --proto '=http,https' -- "$url" || true)
+echo "${code:-000}"
+[[ "${code:-000}" != 000 ]]
