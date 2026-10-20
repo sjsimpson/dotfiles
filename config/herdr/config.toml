@@ -7,7 +7,7 @@ delivery = "system"
 status_indicators = "dots"
 
 [theme]
-name = "tokyo-night"
+name = "terminal"
 auto_switch = false
 
 [[keys.command]]
