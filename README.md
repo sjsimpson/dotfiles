@@ -50,7 +50,7 @@ nvim installs its plugins, LSPs, and formatters automatically.
 | `git/ignore`       | `~/.config/git/ignore`               | global gitignore                                 |
 | `bin/`             | on `$PATH`                           | scripts (e.g. `gh-review`)                       |
 | `claude/`          | `~/.claude/` (per file)              | Claude Code ([README](claude/README.md))          |
-| `launchd/`         | copied to `~/Library/LaunchAgents`   | scheduled jobs (`assistant-brief` daily 08:30)   |
+| `launchd/`         | copied to `~/Library/LaunchAgents`   | scheduled jobs (`assistant-brief`: 08:30 brief, 16:45 wind-down/weekly) |
 
 ## Tools
 
@@ -112,10 +112,12 @@ I used tmux before herdr. The config lives on the
 
 - `gh-review <pr|branch>`: throwaway git worktree for reviewing a PR; `--claude`
   launches Claude Code in it. `gh-review --help` for more.
-- `assistant-brief [--force|--dry]`: headless `/triage` into the assistant
-  home, then an iMessage to yourself (`ASSISTANT_IMESSAGE_TO` in `~/env.zsh`, prompted by `install.sh`)
-  and a Mac notification, counts only. Weekends: personal tasks only. Run daily
-  at 08:30 by launchd; see [Assistant](claude/README.md#assistant).
+- `assistant-brief [brief|winddown|weekly] [--force|--dry]`: headless
+  `/triage` into the assistant home, then an iMessage to yourself
+  (`ASSISTANT_IMESSAGE_TO` in `~/env.zsh`, prompted by `install.sh`) and a Mac
+  notification, counts only. launchd runs the brief at 08:30 daily and the
+  wind-down (Fri: weekly review) at 16:45; see
+  [Assistant](claude/README.md#assistant).
 
 ## Claude Code
 

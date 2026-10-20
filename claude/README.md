@@ -132,13 +132,20 @@ One Claude Code session as a chief of staff across work and personal.
   plus `gh`, `herdr api snapshot`, and Obsidian tasks
 - **Safety**: read-only; never posts, sends, or marks anything read. Briefs
   hold titles and links only
-- **Scheduled brief**: launchd runs [`bin/assistant-brief`](../bin/assistant-brief)
-  daily at 08:30 (on wake if asleep; skipped if off, or if today's brief
-  exists). Headless `claude -p` in `--permission-mode dontAsk` with an
-  allow list: read-only tools plus writes to `briefs/` only. Opus, capped at
-  $5. Weekends run `/triage personal`. Pings by iMessage to self + Mac
-  notification, both linking the brief in Obsidian. Log:
-  `~/Library/Logs/assistant-brief.log`
+- **Scheduled runs** ([`bin/assistant-brief`](../bin/assistant-brief), via
+  launchd; missed runs fire on wake, skipped if off or already done):
+  - 08:30 daily: brief (`/triage`; weekends `/triage personal` + weekly
+    catch-up if Friday's was missed)
+  - 16:45 Mon-Thu: wind-down (`/triage winddown`: shipped, still open,
+    tomorrow), appended to the day's brief. Only fires 16:00-22:00, so a
+    missed run doesn't land the next morning. `assistant-brief winddown`
+    wraps up early by hand
+  - 16:45 Fri: weekly review (`/triage weekly`) → `weekly/YYYY-Www.md`
+  - Headless `claude -p` in `--permission-mode dontAsk` with an allow list:
+    read-only tools plus writes to `briefs/` and `weekly/` only. Sonnet
+    (`ASSISTANT_MODEL` overrides), capped at $5. Pings by iMessage to self +
+    Mac notification, linking the file in Obsidian. Log:
+    `~/Library/Logs/assistant-brief.log`
 
 ## Related
 

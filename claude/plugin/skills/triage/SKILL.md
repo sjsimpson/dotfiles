@@ -1,7 +1,7 @@
 ---
 name: triage
 description: Ranked "what needs me" brief across every configured source (issue tracker, PRs, calendar, error alerts, email, meeting notes, blocked Claude agents, personal tasks). Writes a dated brief to the assistant home and prints the short version. Read-only. Use when the user asks for a triage, brief, catch-up, or "what should I look at".
-argument-hint: "[quick] [personal] (quick = changes first + compact list, no brief file; personal = personal tasks only)"
+argument-hint: "[quick | personal | winddown | weekly] (quick = no file; personal = personal tasks only; winddown = end of day; weekly = week review)"
 ---
 
 # Triage
@@ -18,7 +18,7 @@ Assistant home: `$ASSISTANT_HOME`, else `~/notes/assistant`. Read:
   only from there; this skill stays generic
 - `priorities.md`: used for ranking
 - The latest file in `briefs/` and its last timestamp (the `_HH:MM_` line or
-  last `## HH:MM update` heading): the cutoff for 🆕
+  last `## HH:MM …` heading: update or wind-down): the cutoff for 🆕
 - `snoozed.md`, if present: one line per item,
   `- <ID or URL> · until YYYY-MM-DD · reason · added YYYY-MM-DD`
 
@@ -89,6 +89,29 @@ bodies, PII, amounts, or secrets).
 2. Everything else, compact and ranked: Now/Today one line each; Soon/FYI as
    one line or a count per group
 3. **Focus**, then **Gaps**
+
+**`winddown`**: same gathering, plus what the user finished today (PRs merged,
+approved, or reviewed; issues moved to done; meetings held). Append
+`## HH:MM wind-down` to today's brief (create it if missing). No snooze
+pruning. Sections, also printed in chat:
+
+1. **Shipped**
+2. **Still open**: today's Now/Today items not done, plus 🆕 items needed
+   before tomorrow's first meeting
+3. **Tomorrow**: meetings with prep links, then **Focus** with its calendar gap
+
+**`weekly`**: gather over the past 7 days (Mon-Fri briefs, merged PRs, done
+issues). Write `weekly/YYYY-Www.md` (ISO week, heading `# Week YYYY-Www`);
+never in `briefs/` (would break the 🆕 cutoff). Sections:
+
+1. **Wins**
+2. **Slipped**: items in Now/Today across 2+ briefs, overdue updates, reviews
+   waiting 3+ days
+3. **Next week**: meetings needing prep, `priorities.md` items with no
+   progress, suggested priority changes (suggest only; never edit
+   `priorities.md`)
+4. Today's wind-down sections (Shipped / Still open / Tomorrow), if run on a
+   workday
 
 ## Never
 

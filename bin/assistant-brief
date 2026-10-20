@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
 #
-# assistant-brief — scheduled /triage in the assistant home, then a ping.
-# Run daily by launchd (launchd/com.sjsimpson.assistant-brief.plist).
+# assistant-brief — headless /triage in the assistant home, then a ping.
+# Run by launchd: launchd/com.sjsimpson.assistant-{brief,winddown}.plist.
 #
-#   assistant-brief           brief, unless today's already exists
-#   assistant-brief --force   run anyway (appends an update)
-#   assistant-brief --dry     print the claude command, run nothing
+#   assistant-brief [brief]      morning brief (08:30 daily)
+#   assistant-brief winddown     end of day (16:45 Mon-Thu); Fri → weekly
+#   assistant-brief weekly       weekly review → weekly/YYYY-Www.md
+#   --force      run even if already done   --dry   print command only
+#   --scheduled  launchd only: skip winddown/weekly outside 16:00-22:00, so a
+#                run missed while asleep doesn't fire the next morning
 #
-# Weekends: personal tasks only. Headless and read-only: tools not allowed
-# below are denied; writes only to briefs/. Ping = iMessage to
-# $ASSISTANT_IMESSAGE_TO (set in ~/env.zsh) + macOS notification. Counts only.
+# Manual runs work any time (e.g. `assistant-brief winddown` to wrap up
+# early; the 16:45 run then skips). Weekends: brief is personal-only, plus a
+# weekly catch-up if Friday's was missed; no wind-down.
+#
+# Headless and read-only: tools not allowed below are denied; writes only to
+# briefs/ and weekly/. Ping = iMessage to $ASSISTANT_IMESSAGE_TO (~/env.zsh) +
+# macOS notification. Counts only. Model: $ASSISTANT_MODEL (default sonnet).
 # Log: ~/Library/Logs/assistant-brief.log
 
 set -euo pipefail
@@ -17,16 +24,22 @@ set -euo pipefail
 export PATH="$HOME/.local/share/mise/shims:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$HOME/.dotfiles/bin"
 home="${ASSISTANT_HOME:-$HOME/notes/assistant}"
 today=$(date +%F)
+week=$(date +%G-W%V)
+dow=$(date +%u)
 brief="$home/briefs/$today.md"
+weekly="$home/weekly/$week.md"
 log="$HOME/Library/Logs/assistant-brief.log"
+model="${ASSISTANT_MODEL:-sonnet}"
 
-force=0 dry=0
+kind=brief force=0 dry=0 scheduled=0
 for arg in "$@"; do
   case "$arg" in
+  brief | winddown | weekly) kind=$arg ;;
   --force) force=1 ;;
   --dry) dry=1 ;;
+  --scheduled) scheduled=1 ;;
   *)
-    echo "unknown flag: $arg" >&2
+    echo "unknown arg: $arg" >&2
     exit 1
     ;;
   esac
@@ -34,30 +47,35 @@ done
 
 # launchd has no terminal: log everything
 [[ -t 1 ]] || exec >>"$log" 2>&1
-echo "== $(date '+%F %T')"
+echo "== $(date '+%F %T') $kind"
 
-if [[ -f "$brief" ]] && ((!force && !dry)); then
-  echo "skip: $brief exists"
-  exit 0
+if [[ $kind == winddown ]]; then
+  if ((dow >= 6)); then
+    echo "skip: no wind-down on weekends"
+    exit 0
+  fi
+  ((dow == 5)) && kind=weekly
+fi
+if [[ $kind != brief ]] && ((scheduled)); then
+  hour=$((10#$(date +%H)))
+  if ((hour < 16 || hour >= 22)); then
+    echo "skip: $kind outside 16:00-22:00 (missed while asleep)"
+    exit 0
+  fi
 fi
 
-if (($(date +%u) >= 6)); then
-  mode=personal
-  summary='SUMMARY: <n> due · <n> high'
-else
-  mode=''
-  summary='SUMMARY: <n> Now · <n> Today'
-fi
-
-prompt="Run the triage skill${mode:+ in $mode mode}. Scheduled headless run:
-don't touch snoozed.md (no pruning), write only the brief. Bash: one plain
-command per call (no pipes, &&, ;, redirects, or subshells; use gh's --jq and
---json flags instead), or it's denied. Your final line must
-be exactly: $summary"
+done_already() {
+  case "$1" in
+  brief) [[ -f "$brief" ]] ;;
+  winddown) grep -qE '^## [0-9:]+ wind-down' "$brief" 2>/dev/null ;;
+  weekly) [[ -f "$weekly" ]] ;;
+  esac
+}
 
 allowed=(
   Skill Read Glob Grep
   "Write(./briefs/**)" "Edit(./briefs/**)"
+  "Write(./weekly/**)" "Edit(./weekly/**)"
   "Bash(gh search prs:*)" "Bash(gh pr view:*)" "Bash(gh pr list:*)"
   "Bash(herdr api snapshot:*)" "Bash(obsidian tasks:*)"
   "Bash(grep -rn:*)" "Bash(date:*)" "Bash(ls:*)"
@@ -79,47 +97,91 @@ denied=(
   mcp__claude_ai_Linear__mark_notification
   mcp__claude_ai_Sentry__update_issue
   "Edit(./snoozed.md)" "Write(./snoozed.md)"
+  "Edit(./priorities.md)" "Write(./priorities.md)"
 )
-cmd=(claude -p "$prompt" --model opus --permission-mode dontAsk
-  --allowedTools "${allowed[@]}" --disallowedTools "${denied[@]}"
-  --add-dir "$HOME/notes" --output-format json --no-session-persistence
-  --max-budget-usd 5)
 
-if ((dry)); then
-  printf '%q ' "${cmd[@]}"
-  echo
-  exit 0
-fi
-
-cd "$home"
-out=$("${cmd[@]}" </dev/null) || true
-result=$(jq -r '.result // ""' <<<"$out" 2>/dev/null || true)
-echo "cost: $(jq -r '.total_cost_usd // "?"' <<<"$out" 2>/dev/null)"
-jq -r '.permission_denials[]? | "denied: \(.tool_name) \(.tool_input.command // .tool_input.file_path // "")"' <<<"$out" 2>/dev/null || true
-
-if [[ -f "$brief" ]]; then
-  counts=$(grep -o 'SUMMARY: .*' <<<"$result" | tail -1 | sed 's/^SUMMARY: //')
-  msg="Brief ${today#*-}: ${counts:-ready}"
-else
-  msg="Brief ${today#*-} failed; see $log"
-  echo "$result" | tail -20
-fi
-url="obsidian://open?vault=notes&file=assistant%2Fbriefs%2F$today"
-echo "$msg"
-
-terminal-notifier -title Assistant -message "$msg" -open "$url" >/dev/null 2>&1 || true
-
-# recipient lives in ~/env.zsh (zsh), never in this repo
-to=$(zsh -c 'source ~/env.zsh 2>/dev/null; print -r -- "${ASSISTANT_IMESSAGE_TO:-}"')
-if [[ -n "$to" ]]; then
-  osascript - "$to" "$msg"$'\n'"$url" <<'EOF' || echo "imessage failed"
+notify() {
+  terminal-notifier -title Assistant -message "$1" -open "$2" >/dev/null 2>&1 || true
+  # recipient lives in ~/env.zsh (zsh), never in this repo
+  local to
+  to=$(zsh -c 'source ~/env.zsh 2>/dev/null; print -r -- "${ASSISTANT_IMESSAGE_TO:-}"')
+  if [[ -z "$to" ]]; then
+    echo "no ASSISTANT_IMESSAGE_TO in ~/env.zsh; skipped iMessage"
+    return 0
+  fi
+  osascript - "$to" "$1"$'\n'"$2" <<'APPLESCRIPT' || echo "imessage failed"
 on run argv
   tell application "Messages"
     set svc to 1st account whose service type = iMessage
     send (item 2 of argv) to participant (item 1 of argv) of svc
   end tell
 end run
-EOF
-else
-  echo "no ASSISTANT_IMESSAGE_TO in ~/env.zsh; skipped iMessage"
+APPLESCRIPT
+}
+
+run() {
+  local kind=$1 mode summary label file
+  if done_already "$kind" && ((!force && !dry)); then
+    echo "skip: $kind already done"
+    return 0
+  fi
+  case "$kind" in
+  brief)
+    file=$brief label="Brief ${today#*-}"
+    if ((dow >= 6)); then
+      mode=personal summary='SUMMARY: <n> due · <n> high'
+    else
+      mode='' summary='SUMMARY: <n> Now · <n> Today'
+    fi
+    ;;
+  winddown)
+    file=$brief label="Wind-down ${today#*-}"
+    mode=winddown summary='SUMMARY: <n> shipped · <n> open'
+    ;;
+  weekly)
+    file=$weekly label="Week ${week#*-W}"
+    mode=weekly summary='SUMMARY: <n> wins · <n> slipped'
+    ;;
+  esac
+
+  local prompt="Run the triage skill${mode:+ in $mode mode}. Scheduled headless
+run: don't touch snoozed.md (no pruning). Bash: one plain command per call (no
+pipes, &&, ;, redirects, or subshells; use gh's --jq and --json flags instead),
+or it's denied. Your final line must be exactly: $summary"
+  local cmd=(claude -p "$prompt" --model "$model" --permission-mode dontAsk
+    --allowedTools "${allowed[@]}" --disallowedTools "${denied[@]}"
+    --add-dir "$HOME/notes" --output-format json --no-session-persistence
+    --max-budget-usd 5)
+
+  if ((dry)); then
+    printf '%q ' "${cmd[@]}"
+    echo
+    return 0
+  fi
+
+  cd "$home"
+  local out result msg counts rel url
+  out=$("${cmd[@]}" </dev/null) || true
+  result=$(jq -r '.result // ""' <<<"$out" 2>/dev/null || true)
+  echo "cost: $(jq -r '.total_cost_usd // "?"' <<<"$out" 2>/dev/null)"
+  jq -r '.permission_denials[]? | "denied: \(.tool_name) \(.tool_input.command // .tool_input.file_path // "")"' <<<"$out" 2>/dev/null || true
+
+  if done_already "$kind"; then
+    counts=$(grep -o 'SUMMARY: .*' <<<"$result" | tail -1 | sed 's/^SUMMARY: //')
+    msg="$label: ${counts:-ready}"
+  else
+    msg="$label failed; see $log"
+    echo "$result" | tail -20
+  fi
+  rel=${file#"$home"/}
+  url="obsidian://open?vault=notes&file=assistant%2F${rel//\//%2F}"
+  url=${url%.md}
+  echo "$msg"
+  notify "$msg" "$url"
+}
+
+run "$kind"
+# weekend morning: catch up a weekly review missed on Friday
+if [[ $kind == brief ]] && ((dow >= 6)); then
+  run weekly
 fi
