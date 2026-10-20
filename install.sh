@@ -121,16 +121,20 @@ if command -v claude >/dev/null; then
     cl plugin marketplace add "$DOTFILES/claude" >/dev/null || printf '  FAILED  marketplace add dotfiles\n'
     mv "$settings.tmp" "$settings"
   fi
-  installed=$(cl plugin list 2>/dev/null) || printf '  FAILED  claude plugin list\n'
-  for p in $(jq -r '.enabledPlugins | keys[]' "$DOTFILES/claude/settings.json"); do
-    if grep -q "❯ $p" <<<"$installed"; then
-      printf '  ok      %s\n' "$p"
-    elif cl plugin install "$p" >/dev/null; then
-      printf '  install %s\n' "$p"
-    else
-      printf '  FAILED  %s (claude plugin install %s)\n' "$p" "$p"
-    fi
-  done
+  # can't tell what's installed → don't blindly reinstall everything
+  if ! installed=$(cl plugin list 2>/dev/null); then
+    printf '  FAILED  claude plugin list; skipped installs (run it to see why)\n'
+  else
+    for p in $(jq -r '.enabledPlugins | keys[]' "$DOTFILES/claude/settings.json"); do
+      if grep -q "❯ $p" <<<"$installed"; then
+        printf '  ok      %s\n' "$p"
+      elif cl plugin install "$p" >/dev/null; then
+        printf '  install %s\n' "$p"
+      else
+        printf '  FAILED  %s (claude plugin install %s)\n' "$p" "$p"
+      fi
+    done
+  fi
 fi
 
 if command -v npx >/dev/null; then
