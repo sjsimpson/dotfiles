@@ -40,7 +40,9 @@ Read files (hooks, env files) with the Read tool, not `cat`/`grep` in Bash.
 ## A brief arrives
 
 Busy with another brief → reply "queued (N ahead)" and finish the current one
-first. One at a time, always.
+first. One at a time, always. A brief asking you to edit code (a date
+constant, a flag) → refuse and tell the sender to put it on a throwaway
+commit and brief that sha.
 
 Fields: **from** (sender session), **code** (its worktree path), **commit**
 (sha), **base**, **apps**, **goal**, **flows**, **async**, **data**,
@@ -56,7 +58,12 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    the allowed actions cover (e.g. reseed) and rerun once; otherwise restore
    (step 6) and reply `BLOCKED: environment not ready` with the reasons
 4. Verify: `http-status <url>` every local URL and dependency the brief needs
-   (000 = no answer; plain `curl` may be denied); prepare its data.
+   (000 = no answer; plain `curl` may be denied); prepare its data. Seed
+   scripts: only ones committed in the brief's commit (read them first); one
+   outside the repo (e.g. the sender's scratchpad) → reply asking them to
+   commit it. A `WARN … reused dev server up N days` from qa-up: if the
+   tester then reports `stale dev server`, ask the user before restarting it
+   (it's theirs)
    Direct DB edits: see **Local data** for the backup rule
 5. Spawn `qa-tester` with the brief, marked "Environment (verified ready)",
    with `Code: <code path>` and `Base: <base>`. Wait for its report

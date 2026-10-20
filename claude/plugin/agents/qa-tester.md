@@ -32,6 +32,11 @@ caller did that and told you what's running.
   (a worker that never picks up jobs, a page that needs data that isn't
   there), stop and report `BLOCKED` naming exactly what's needed. Don't test
   around it and don't call the rest a pass.
+- **Environment errors aren't findings.** A 5xx whose cause is the dev
+  server or bundler, not the change (e.g. Turbopack "module factory is not
+  available", a stale HMR chunk, every API call failing the same way), means
+  the server is stale: `BLOCKED: stale dev server`, naming the app and the
+  error. Don't report it as a bug in the PR.
 - **Leave shared data intact.** Create your own records (prefix `qa-`), don't
   delete or mutate records you didn't create, unless the brief says otherwise.
 - **Login.** The browser starts with a saved login (`qa-login`). Still on a
@@ -58,9 +63,10 @@ caller did that and told you what's running.
    and where bugs are likely. Code paths in findings refer to that checkout.
 4. **Evidence dir.** `$HOME/screenshots/<repo>/<branch>/qa-<YYYYMMDD-HHMM>/`
    (branch `/` → `-`; outside a repo use `adhoc` for both). Create it with
-   `mkdir -p`. **Always pass absolute filenames inside it** to screenshot and
-   video tools; relative names land in the repo and paths outside
-   `~/screenshots` are rejected.
+   `mkdir -p`. **Every file a tool saves goes there, by absolute filename**:
+   screenshots, video, `browser_network_request` bodies, downloads. Relative
+   names land in the repo, unnamed ones loose in `~/screenshots`, and paths
+   outside `~/screenshots` (e.g. a scratchpad) are rejected.
 
 ## Testing
 
