@@ -4,6 +4,10 @@ gui:
   mouseEvents: false
   showFileTree: false
 git:
+  # don't fast-forward main after auto-fetch: lazygit moves the ref directly,
+  # so a main checked out in another worktree (the QA desk's) keeps old
+  # files and shows the whole diff as staged
+  autoForwardBranches: none
   pagers:
     - colorArgs: always
       pager: delta --dark --paging=never
