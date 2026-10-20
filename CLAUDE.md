@@ -14,6 +14,16 @@ Public repo. Anything committed is world-readable.
 - Machine-specific git → `~/.gitconfig.local`
 - Plans, ideas, work notes → `~/notes` (private vault), not here
 
+## Layout
+
+- `./install.sh` applies everything and must stay safe to re-run. Every
+  `config/<name>/` is auto-linked to `~/.config/<name>` (herdr: only
+  `config.toml`); `launchd/*.plist` is copied, not linked
+- New CLI tools go in the `Brewfile`
+- `claude/plugin/` (skills, agents, MCP) loads live; keep it generic
+- Docs are part of the change: update the matching README table/section
+  (`README.md`, `claude/README.md`, `config/*/README.md`) in the same commit
+
 ## Commits
 
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: the user often has

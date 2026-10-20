@@ -3,6 +3,12 @@
 - [IMPORTANT] In all interactions and commit messages, be extremely concise and sacrifice
   grammar for the sake of concision.
 
+## Project CLAUDE.md
+
+- When reading or writing a project's CLAUDE.md, pitch rules worth adopting
+  globally (one line each + why) for my review. Never edit this file without
+  my approval
+
 ## File Path Preferences
 
 - Use relative paths from the project root instead of `~/` or absolute paths when working within a project
