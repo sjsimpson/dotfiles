@@ -7,7 +7,6 @@
     "pr": ""
   },
   "permissions": {
-    "allow": ["Bash(qa-lease:*)"],
     "defaultMode": "auto",
     "additionalDirectories": ["~/.dotfiles/claude/plugin", "~/screenshots"]
   },

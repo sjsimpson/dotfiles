@@ -89,12 +89,11 @@ why in the report, when:
   outside tests and stories (`git -C "$WORKDIR" diff --name-only origin/<base>...<headSha>`)
 
 Otherwise follow the `qa` skill from `WORKDIR` (already at `headSha`, so
-committed): decide apps (each touched app plus its runtime deps: workers,
-queues, realtime), data, and async triggers from the diff and intent;
-`qa-lease acquire --apps …` there; verify; brief `qa-tester` in the
-background with base `origin/<base>`. `NOT READY` you can't fix → QA is
-`BLOCKED` in the report, don't brief the tester. After its verdict,
-`qa-lease release` from `WORKDIR`. Don't poll; notifications wake you.
+committed): apps (each touched app plus its runtime deps: workers, queues,
+realtime), flows, async triggers and data from the diff and intent; base
+`origin/<base>`; `Code:` is `WORKDIR`. No QA desk running → QA is "skipped:
+desk not running" in the report. Wait for the desk's verdict before Step 3;
+don't poll, its message wakes you.
 
 ## Step 3: Report (local)
 
@@ -150,4 +149,4 @@ No match → say so; never inject the line.
 
 ## Step 5: Cleanup
 
-If `qa-lease status` (from `WORKDIR`) still shows this worktree holding the lease, `qa-lease release` there first: removing the worktree strands the main worktree. Then `git worktree remove` this run's `pr-<n>-<RUN>-wt` only (never the repo root), then `git worktree prune`. Mention other `claude-panel/pr-*-wt` leftovers; remove only on confirmation.
+If a QA brief for this run is still with the desk, wait for its reply first: the tester reads code from `WORKDIR`. Then `git worktree remove` this run's `pr-<n>-<RUN>-wt` only (never the repo root), then `git worktree prune`. Mention other `claude-panel/pr-*-wt` leftovers; remove only on confirmation.

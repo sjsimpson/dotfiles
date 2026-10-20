@@ -53,13 +53,13 @@
 
 ## Playwright
 
-- For in-app/browser testing, use the `qa` skill: you prepare the environment
-  (`qa-lease`, apps, data), `qa-tester` tests. Don't drive Playwright in the
-  main session unless I ask
+- For in-app/browser testing, use the `qa` skill: you brief the repo's QA
+  desk (`/qa-desk`), which sets up the main worktree and runs `qa-tester`.
+  Don't drive Playwright in the main session unless I ask
 - UI change → commit (WIP ok), run the `qa` skill before saying done, report
   its verdict
-- In a repo's main worktree, never switch branches or edit while `qa-lease
-  status` shows it leased; wait or work in a linked worktree
+- A repo's main worktree belongs to its QA desk while one runs: never switch
+  branches or edit there; work in a linked worktree
 - Screenshots/videos: absolute `filename` under
   `$HOME/screenshots/<repo>/<branch>/` (branch `/` → `-`). Relative names land
   in the repo; paths outside `~/screenshots` are rejected
