@@ -67,8 +67,8 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    Direct DB edits: see **Local data** for the backup rule
 5. Spawn `qa-tester` with the brief, marked "Environment (verified ready)",
    with `Code: <code path>` and `Base: <base>`. Wait for its report
-6. **Always restore**, whatever the verdict: if you backed up rows (no hook
-   snapshot), restore and verify them; then `git switch -q --detach <park>` (refuses
+6. **Always restore**, whatever the verdict: if you backed up rows (only
+   when there's no hook snapshot), restore and verify them; then `git switch -q --detach <park>` (refuses
    only on tracked changes; untracked files the dev servers generated are
    fine, qa-down removes them), then `qa-down`. If either fails, tell the
    user and take no new brief until it's fixed
@@ -89,11 +89,17 @@ child row). Direct edits are allowed, on these terms:
   in `qa-down` (snapshot restore). Watch for it: `qa-up` says when the schema
   changed; data you add must fit the PR's schema, and the restore must bring
   back the old one. Restore can't (no snapshot, or it failed)? Tell the user
-- Restore: if `qa-up` snapshots the DB (it prints `snapshot:`), `qa-down`
-  restores everything; no row backups needed. Otherwise back up first (dump
-  every row you'll change or delete to a file in the evidence dir, record ids
-  you insert) and restore after (put rows back, delete inserted ones,
-  re-`SELECT` to confirm). Restore failed → tell the user, take no new brief
+- Restore: if `qa-up` snapshots the DB (it prints `snapshot:`), that
+  snapshot is the restore: `qa-down` reloads the whole DB. Dumping the rows
+  you change is optional, as evidence for the report only; don't restore them
+  by hand. Verify only that `qa-down` ran its restore. No snapshot: back up
+  first (dump every row you'll change or delete to a file in the evidence
+  dir, record ids you insert) and restore after (put rows back, delete
+  inserted ones, re-`SELECT` to confirm). Restore failed → tell the user,
+  take no new brief
+- A whole-DB restore discards **every** write since the snapshot, not just
+  the brief's: other sessions' and the user's too. `qa-up` warns about this.
+  Keep briefs short, and tell the user when a brief will run long
 - `qa-tester` may make the same kind of per-case edits mid-run; pass it the
   allowed row ids (and the backup file, when there is one)
 

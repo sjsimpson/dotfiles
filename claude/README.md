@@ -133,7 +133,8 @@ for reviews. Free and local; no account needed.
   `qa-up <from-sha>` snapshots the dev DB, installs/migrates if needed,
   starts + health-checks every app in `QA_APPS` (progress while waiting; exit
   1 with reasons); `qa-down` stops what it started, removes generated files,
-  restores the DB. `QA_CHECK=1 qa-up` shows app states read-only. Seed scripts and
+  restores the DB (the whole dev DB: anyone's writes during a brief are
+  discarded). `QA_CHECK=1 qa-up` shows app states read-only. Seed scripts and
   code toggles (a fixed date, a flag) ride in the tested commit (a throwaway
   commit is fine); the desk never edits code. Start the desk in the same
   permission mode as other sessions, or their messages wait for approval
