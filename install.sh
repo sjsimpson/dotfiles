@@ -129,4 +129,34 @@ if [[ "$(defaults read com.apple.screencapture location 2>/dev/null)" != "$shots
 fi
 printf "  ok      screenshots -> %s\n" "$shots"
 
-echo "done. ~/env.zsh (secrets) and ~/.gitconfig.local (machine-specific git) are yours to create."
+echo "env"
+# Personal values the dotfiles read but must never commit. Asked for here and
+# written to ~/env.zsh (not linked, not in git). Add one line per new value:
+#   NAME|prompt|secret (input hidden) or plain
+env_vars=(
+  "ASSISTANT_IMESSAGE_TO|iMessage address for assistant-brief pings (phone or Apple ID email)|plain"
+)
+env_file="$HOME/env.zsh"
+touch "$env_file"
+chmod 600 "$env_file"
+for entry in "${env_vars[@]}"; do
+  IFS='|' read -r name prompt kind <<<"$entry"
+  if grep -q "^export $name=" "$env_file"; then
+    printf '  ok      %s\n' "$name"
+  elif [[ -t 0 ]]; then
+    flag=()
+    [[ "$kind" == secret ]] && flag=(-s)
+    read -r "${flag[@]}" -p "  $name: $prompt (blank skips): " value
+    [[ "$kind" == secret ]] && echo
+    if [[ -n "$value" ]]; then
+      printf 'export %s=%q\n' "$name" "$value" >>"$env_file"
+      printf '  set     %s\n' "$name"
+    else
+      printf '  skip    %s\n' "$name"
+    fi
+  else
+    printf '  missing %s (re-run ./install.sh in a terminal)\n' "$name"
+  fi
+done
+
+echo "done. ~/.gitconfig.local (machine-specific git) is yours to create."

@@ -37,7 +37,7 @@ nvim installs its plugins, LSPs, and formatters automatically.
 
 | File                 | Purpose                                                |
 | -------------------- | ------------------------------------------------------ |
-| `~/env.zsh`          | Secrets / API keys, sourced by `.zshrc` if present     |
+| `~/env.zsh`          | Secrets / personal values, sourced by `.zshrc`; `install.sh` prompts for missing ones |
 | `~/.gitconfig.local` | Machine-specific git config (work email, tool IDs)     |
 
 ## Layout
@@ -113,7 +113,7 @@ I used tmux before herdr. The config lives on the
 - `gh-review <pr|branch>`: throwaway git worktree for reviewing a PR; `--claude`
   launches Claude Code in it. `gh-review --help` for more.
 - `assistant-brief [--force|--dry]`: headless `/triage` into the assistant
-  home, then an iMessage to yourself (`ASSISTANT_IMESSAGE_TO` in `~/env.zsh`)
+  home, then an iMessage to yourself (`ASSISTANT_IMESSAGE_TO` in `~/env.zsh`, prompted by `install.sh`)
   and a Mac notification, counts only. Weekends: personal tasks only. Run daily
   at 08:30 by launchd; see [Assistant](claude/README.md#assistant).
 
