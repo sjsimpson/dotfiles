@@ -4,15 +4,17 @@
 # Run by launchd: launchd/com.sjsimpson.assistant-{brief,winddown}.plist.
 #
 #   assistant-brief [brief]      morning brief (08:30 daily)
-#   assistant-brief winddown     end of day (16:45 Mon-Thu); Fri → weekly
-#   assistant-brief weekly       weekly review → weekly/YYYY-Www.md
+#   assistant-brief winddown     end of day (16:45 Mon-Fri)
+#   assistant-brief prep         1:1 prep + project update drafts →
+#                                weekly/YYYY-Www.md
 #   --force      run even if already done   --dry   print command only
-#   --scheduled  launchd only: skip winddown/weekly outside 16:00-22:00, so a
-#                run missed while asleep doesn't fire the next morning
+#   --scheduled  launchd only: skip winddown outside 16:00-22:00, so a run
+#                missed while asleep doesn't fire the next morning
 #
-# Manual runs work any time (e.g. `assistant-brief winddown` to wrap up
-# early; the 16:45 run then skips). Weekends: brief is personal-only, plus a
-# weekly catch-up if Friday's was missed; no wind-down.
+# Prep rides along: Thursday's wind-down adds it; Friday's brief adds it if
+# Thursday's was missed. Manual runs work any time (e.g. `assistant-brief
+# winddown` to wrap up early; the 16:45 run then skips). Weekends: brief is
+# personal-only; no wind-down.
 #
 # Headless and read-only: tools not allowed below are denied; writes only to
 # briefs/ and weekly/. Ping = iMessage to $ASSISTANT_IMESSAGE_TO (~/env.zsh) +
@@ -34,7 +36,7 @@ model="${ASSISTANT_MODEL:-sonnet}"
 kind=brief force=0 dry=0 scheduled=0
 for arg in "$@"; do
   case "$arg" in
-  brief | winddown | weekly) kind=$arg ;;
+  brief | winddown | prep) kind=$arg ;;
   --force) force=1 ;;
   --dry) dry=1 ;;
   --scheduled) scheduled=1 ;;
@@ -49,17 +51,14 @@ done
 [[ -t 1 ]] || exec >>"$log" 2>&1
 echo "== $(date '+%F %T') $kind"
 
-if [[ $kind == winddown ]]; then
-  if ((dow >= 6)); then
-    echo "skip: no wind-down on weekends"
-    exit 0
-  fi
-  ((dow == 5)) && kind=weekly
+if [[ $kind == winddown ]] && ((dow >= 6)); then
+  echo "skip: no wind-down on weekends"
+  exit 0
 fi
-if [[ $kind != brief ]] && ((scheduled)); then
+if [[ $kind == winddown ]] && ((scheduled)); then
   hour=$((10#$(date +%H)))
   if ((hour < 16 || hour >= 22)); then
-    echo "skip: $kind outside 16:00-22:00 (missed while asleep)"
+    echo "skip: winddown outside 16:00-22:00 (missed while asleep)"
     exit 0
   fi
 fi
@@ -68,9 +67,14 @@ done_already() {
   case "$1" in
   brief) [[ -f "$brief" ]] ;;
   winddown) grep -qE '^## [0-9:]+ wind-down' "$brief" 2>/dev/null ;;
-  weekly) [[ -f "$weekly" ]] ;;
+  prep) [[ -f "$weekly" ]] ;;
   esac
 }
+
+# prep rides along on Thu wind-down, or Fri brief if Thursday's was missed
+with_prep=0
+if [[ $kind == winddown ]] && ((dow == 4)); then with_prep=1; fi
+if [[ $kind == brief ]] && ((dow == 5)); then with_prep=1; fi
 
 allowed=(
   Skill Read Glob Grep
@@ -81,6 +85,8 @@ allowed=(
   "Bash(grep -rn:*)" "Bash(date:*)" "Bash(ls:*)"
   mcp__claude_ai_Linear__get_notifications mcp__claude_ai_Linear__list_issues
   mcp__claude_ai_Linear__get_issue
+  mcp__claude_ai_Linear__list_projects mcp__claude_ai_Linear__get_project
+  mcp__claude_ai_Linear__get_status_updates
   mcp__claude_ai_Google_Calendar__list_events
   mcp__claude_ai_Gmail__search_threads mcp__claude_ai_Gmail__get_thread
   mcp__claude_ai_Sentry__search_issues
@@ -94,6 +100,7 @@ denied=(
   mcp__claude_ai_Gmail__label_thread mcp__claude_ai_Gmail__label_message
   mcp__claude_ai_Gmail__update_message_labels
   mcp__claude_ai_Linear__save_issue mcp__claude_ai_Linear__save_comment
+  mcp__claude_ai_Linear__save_status_update mcp__claude_ai_Linear__save_project
   mcp__claude_ai_Linear__mark_notification
   mcp__claude_ai_Sentry__update_issue
   "Edit(./snoozed.md)" "Write(./snoozed.md)"
@@ -119,69 +126,75 @@ end run
 APPLESCRIPT
 }
 
-run() {
-  local kind=$1 mode summary label file
-  if done_already "$kind" && ((!force && !dry)); then
-    echo "skip: $kind already done"
-    return 0
-  fi
-  case "$kind" in
-  brief)
-    file=$brief label="Brief ${today#*-}"
-    if ((dow >= 6)); then
-      mode=personal summary='SUMMARY: <n> due · <n> high'
-    else
-      mode='' summary='SUMMARY: <n> Now · <n> Today'
-    fi
-    ;;
-  winddown)
-    file=$brief label="Wind-down ${today#*-}"
-    mode=winddown summary='SUMMARY: <n> shipped · <n> open'
-    ;;
-  weekly)
-    file=$weekly label="Week ${week#*-W}"
-    mode=weekly summary='SUMMARY: <n> wins · <n> slipped'
-    ;;
-  esac
+need_main=1 need_prep=$with_prep
+if ((!force && !dry)); then
+  done_already "$kind" && need_main=0
+  ((with_prep)) && done_already prep && need_prep=0
+fi
+if ((!need_main && !need_prep)); then
+  echo "skip: $kind already done"
+  exit 0
+fi
+[[ $kind == prep ]] && need_prep=0 # prep is the main run
 
-  local prompt="Run the triage skill${mode:+ in $mode mode}. Scheduled headless
+case "$kind" in
+brief)
+  file=$brief label="Brief ${today#*-}"
+  if ((dow >= 6)); then
+    mode=personal summary='SUMMARY: <n> due · <n> high'
+  else
+    mode=default summary='SUMMARY: <n> Now · <n> Today'
+  fi
+  ;;
+winddown)
+  file=$brief label="Wind-down ${today#*-}"
+  mode=winddown summary='SUMMARY: <n> shipped · <n> open'
+  ;;
+prep)
+  file=$weekly label="1:1 prep W${week#*-W}"
+  mode=prep summary='SUMMARY: <n> wins · <n> slipped'
+  ;;
+esac
+# main already done but prep missing (e.g. manual wind-down earlier): prep only
+if ((!need_main)); then
+  file=$weekly label="1:1 prep W${week#*-W}" mode=prep need_prep=0
+  summary='SUMMARY: <n> wins · <n> slipped'
+fi
+if ((need_prep)); then
+  mode="$mode + prep"
+  label="$label + 1:1 prep"
+fi
+
+prompt="Run the triage skill in $mode mode. Scheduled headless
 run: don't touch snoozed.md (no pruning). Bash: one plain command per call (no
 pipes, &&, ;, redirects, or subshells; use gh's --jq and --json flags instead),
 or it's denied. Your final line must be exactly: $summary"
-  local cmd=(claude -p "$prompt" --model "$model" --permission-mode dontAsk
-    --allowedTools "${allowed[@]}" --disallowedTools "${denied[@]}"
-    --add-dir "$HOME/notes" --output-format json --no-session-persistence
-    --max-budget-usd 5)
+cmd=(claude -p "$prompt" --model "$model" --permission-mode dontAsk
+  --allowedTools "${allowed[@]}" --disallowedTools "${denied[@]}"
+  --add-dir "$HOME/notes" --output-format json --no-session-persistence
+  --max-budget-usd 5)
 
-  if ((dry)); then
-    printf '%q ' "${cmd[@]}"
-    echo
-    return 0
-  fi
-
-  cd "$home"
-  local out result msg counts rel url
-  out=$("${cmd[@]}" </dev/null) || true
-  result=$(jq -r '.result // ""' <<<"$out" 2>/dev/null || true)
-  echo "cost: $(jq -r '.total_cost_usd // "?"' <<<"$out" 2>/dev/null)"
-  jq -r '.permission_denials[]? | "denied: \(.tool_name) \(.tool_input.command // .tool_input.file_path // "")"' <<<"$out" 2>/dev/null || true
-
-  if done_already "$kind"; then
-    counts=$(grep -o 'SUMMARY: .*' <<<"$result" | tail -1 | sed 's/^SUMMARY: //')
-    msg="$label: ${counts:-ready}"
-  else
-    msg="$label failed; see $log"
-    echo "$result" | tail -20
-  fi
-  rel=${file#"$home"/}
-  url="obsidian://open?vault=notes&file=assistant%2F${rel//\//%2F}"
-  url=${url%.md}
-  echo "$msg"
-  notify "$msg" "$url"
-}
-
-run "$kind"
-# weekend morning: catch up a weekly review missed on Friday
-if [[ $kind == brief ]] && ((dow >= 6)); then
-  run weekly
+if ((dry)); then
+  printf '%q ' "${cmd[@]}"
+  echo
+  exit 0
 fi
+
+cd "$home"
+out=$("${cmd[@]}" </dev/null) || true
+result=$(jq -r '.result // ""' <<<"$out" 2>/dev/null || true)
+echo "cost: $(jq -r '.total_cost_usd // "?"' <<<"$out" 2>/dev/null)"
+jq -r '.permission_denials[]? | "denied: \(.tool_name) \(.tool_input.command // .tool_input.file_path // "")"' <<<"$out" 2>/dev/null || true
+
+if [[ -f "$file" ]] && { ((!need_prep)) || done_already prep; }; then
+  counts=$(grep -o 'SUMMARY: .*' <<<"$result" | tail -1 | sed 's/^SUMMARY: //')
+  msg="$label: ${counts:-ready}"
+else
+  msg="$label failed; see $log"
+  echo "$result" | tail -20
+fi
+rel=${file#"$home"/}
+url="obsidian://open?vault=notes&file=assistant%2F${rel//\//%2F}"
+url=${url%.md}
+echo "$msg"
+notify "$msg" "$url"

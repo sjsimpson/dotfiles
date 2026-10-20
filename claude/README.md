@@ -134,13 +134,15 @@ One Claude Code session as a chief of staff across work and personal.
   hold titles and links only
 - **Scheduled runs** ([`bin/assistant-brief`](../bin/assistant-brief), via
   launchd; missed runs fire on wake, skipped if off or already done):
-  - 08:30 daily: brief (`/triage`; weekends `/triage personal` + weekly
-    catch-up if Friday's was missed)
-  - 16:45 Mon-Thu: wind-down (`/triage winddown`: shipped, still open,
+  - 08:30 daily: brief (`/triage`; weekends `/triage personal`)
+  - 16:45 Mon-Fri: wind-down (`/triage winddown`: shipped, still open,
     tomorrow), appended to the day's brief. Only fires 16:00-22:00, so a
     missed run doesn't land the next morning. `assistant-brief winddown`
     wraps up early by hand
-  - 16:45 Fri: weekly review (`/triage weekly`) → `weekly/YYYY-Www.md`
+  - Thursday's wind-down adds 1:1 prep (`/triage prep`: talking points,
+    draft project updates for led Linear projects, next week) →
+    `weekly/YYYY-Www.md`, ahead of Friday's 1:1. Missed → Friday's brief adds
+    it. Drafts are never posted
   - Headless `claude -p` in `--permission-mode dontAsk` with an allow list:
     read-only tools plus writes to `briefs/` and `weekly/` only. Sonnet
     (`ASSISTANT_MODEL` overrides), capped at $5. Pings by iMessage to self +

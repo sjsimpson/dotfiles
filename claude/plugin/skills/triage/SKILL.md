@@ -1,7 +1,7 @@
 ---
 name: triage
 description: Ranked "what needs me" brief across every configured source (issue tracker, PRs, calendar, error alerts, email, meeting notes, blocked Claude agents, personal tasks). Writes a dated brief to the assistant home and prints the short version. Read-only. Use when the user asks for a triage, brief, catch-up, or "what should I look at".
-argument-hint: "[quick | personal | winddown | weekly] (quick = no file; personal = personal tasks only; winddown = end of day; weekly = week review)"
+argument-hint: "[quick | personal | winddown | prep | <mode> + prep] (quick = no file; personal = personal tasks only; winddown = end of day; prep = 1:1 prep + project update drafts)"
 ---
 
 # Triage
@@ -100,18 +100,23 @@ pruning. Sections, also printed in chat:
    before tomorrow's first meeting
 3. **Tomorrow**: meetings with prep links, then **Focus** with its calendar gap
 
-**`weekly`**: gather over the past 7 days (Mon-Fri briefs, merged PRs, done
-issues). Write `weekly/YYYY-Www.md` (ISO week, heading `# Week YYYY-Www`);
-never in `briefs/` (would break the 🆕 cutoff). Sections:
+**`prep`** (1:1 prep, weekly): gather over the past 7 days (briefs, merged
+PRs, done issues, Linear projects the user leads + their latest status
+updates). Write `weekly/YYYY-Www.md` (ISO week, heading
+`# Week YYYY-Www · 1:1 prep`); never in `briefs/` (would break the 🆕 cutoff).
+Sections:
 
-1. **Wins**
-2. **Slipped**: items in Now/Today across 2+ briefs, overdue updates, reviews
-   waiting 3+ days
+1. **Talking points**: wins (shipped, merged, closed), blockers, asks for the
+   manager, slipped (in Now/Today across 2+ briefs, reviews waiting 3+ days)
+2. **Project updates**: one draft per led project: status (on track / at
+   risk / off track), progress, next, risks. Drafts only; never post
 3. **Next week**: meetings needing prep, `priorities.md` items with no
    progress, suggested priority changes (suggest only; never edit
    `priorities.md`)
-4. Today's wind-down sections (Shipped / Still open / Tomorrow), if run on a
-   workday
+
+**`<mode> + prep`** (e.g. `winddown + prep`): one gathering pass, both
+outputs: the mode's usual output plus the prep file. Mention the prep file in
+the chat summary.
 
 ## Never
 
