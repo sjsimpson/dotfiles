@@ -27,8 +27,9 @@ From the change and the code:
 - **Async**: how background work gets triggered, and the states to watch
   (e.g. queued → done | failed)
 - **Data**: the records/accounts/states needed, and how to create them. A
-  seed script must be committed (a throwaway commit is fine) so the desk runs
-  it from the tested commit; give the exact command. Using an env var in
+  seed script can live anywhere (your scratchpad is fine); give its absolute
+  path and the exact command. The desk reads it first and runs it only if it
+  sticks to id-scoped local dev DB writes. Using an env var in
   the command's own arguments needs `export X=…; cmd $X/…`: in `X=… cmd
   $X/…` (or `env X=…`), `$X` expands before the assignment applies
 - **Code toggles** (a fixed "today" date, a feature flag in code): never ask

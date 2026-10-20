@@ -134,9 +134,10 @@ for reviews. Free and local; no account needed.
   starts + health-checks every app in `QA_APPS` (progress while waiting; exit
   1 with reasons); `qa-down` stops what it started, removes generated files,
   restores the DB (the whole dev DB: anyone's writes during a brief are
-  discarded). `QA_CHECK=1 qa-up` shows app states read-only. Seed scripts and
-  code toggles (a fixed date, a flag) ride in the tested commit (a throwaway
-  commit is fine); the desk never edits code. Start the desk in the same
+  discarded). `QA_CHECK=1 qa-up` shows app states read-only. Code toggles (a
+  fixed date, a flag) ride in the tested commit (a throwaway commit is fine);
+  the desk never edits code. Seed scripts can live anywhere; the desk reads
+  each one first and runs only local, id-scoped DB writes. Start the desk in the same
   permission mode as other sessions, or their messages wait for approval
 - **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older
   than 30 days (keeps `macos/`). `.playwright-mcp/` is globally git-ignored in

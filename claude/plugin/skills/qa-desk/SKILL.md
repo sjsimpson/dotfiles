@@ -22,7 +22,9 @@ commands) and say so in the reply.
 2. This session should be named `qa-desk-<repo>` (repo = the main worktree's
    directory name), the address senders look for. The `qa-desk` shell
    function names it; if the name is different, tell the user
-3. Tree clean (`git status --porcelain`)? Record **home branch**
+3. Tree clean (`git status --porcelain --untracked-files=no`: tracked
+   changes only; untracked files dev servers generate, like `AGENTS.md`,
+   don't count)? Record **home branch**
    (`git symbolic-ref -q --short HEAD`, may be empty) and park: `git switch
    -q --detach` (stays on the same commit). **park** = `git rev-parse HEAD`.
    While the desk runs, the main worktree stays detached: other sessions
@@ -50,7 +52,7 @@ Fields: **from** (sender session), **code** (its worktree path), **commit**
 commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
 `incomplete brief: <what's missing>`.
 
-1. Main clean? If not, don't touch it. Tell the user, and reply `BLOCKED:
+1. Main clean (tracked changes only, as in Start)? If not, don't touch it. Tell the user, and reply `BLOCKED:
    main worktree has local changes`
 2. `from=$(git rev-parse HEAD)` then `git switch -q --detach <commit>`
 3. Run bare (no pipes; Bash timeout 600000): `QA_APPS=<apps> qa-up "$from"`.
@@ -59,9 +61,11 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    (step 6) and reply `BLOCKED: environment not ready` with the reasons
 4. Verify: `http-status <url>` every local URL and dependency the brief needs
    (000 = no answer; plain `curl` may be denied); prepare its data. Seed
-   scripts: only ones committed in the brief's commit (read them first); one
-   outside the repo (e.g. the sender's scratchpad) → reply asking them to
-   commit it. A `WARN … reused dev server up N days` from qa-up: if the
+   scripts can live anywhere (the brief's commit, the sender's scratchpad):
+   read the whole script before running it, and run it only if everything it
+   does fits **Local data** (local dev DB, id-scoped, no DDL). Anything else
+   in it (network calls, remote hosts, file writes outside the evidence dir)
+   → don't run it; reply saying why. A `WARN … reused dev server up N days` from qa-up: if the
    tester then reports `stale dev server`, ask the user before restarting it
    (it's theirs)
    Direct DB edits: see **Local data** for the backup rule
