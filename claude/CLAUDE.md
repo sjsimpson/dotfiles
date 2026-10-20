@@ -39,6 +39,14 @@
   `feat(ENG-6659): add supported locations page`
 - Comments should be shown locally for me to review and post
 - [IMPORTANT] Always use [Conventional Comments](https://conventionalcomments.org/) when giving PR feedback
+- Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
+  unrelated uncommitted changes
+
+## Secrets
+
+- Never ask me to paste secrets or personal values (keys, tokens, phone
+  numbers) into chat; chat is logged. Point me to a local file or a prompt I
+  run in my terminal
 
 ## Playwright
 
