@@ -50,7 +50,7 @@ echo "env"
 # written to ~/env.zsh (not linked, not in git). Add one line per new value:
 #   NAME|prompt|secret (input hidden) or plain
 env_vars=(
-  "ASSISTANT_IMESSAGE_TO|iMessage address for assistant-brief pings (phone or Apple ID email)|plain"
+  "ASSISTANT_IMESSAGE_TO|iMessage address for assistant-brief pings (+15551234567 or Apple ID email)|plain"
 )
 env_file="$HOME/env.zsh"
 touch "$env_file"
