@@ -5,6 +5,9 @@
 #   ./install.sh            link everything
 #   ./install.sh --brew     also run `brew bundle` first
 #
+# Order: prompt for missing personal values (→ ~/env.zsh), link shell/git/
+# config/claude, install Claude plugins, load launchd jobs (assistant jobs only
+# when the vault's assistant home exists), macOS defaults.
 # Existing files are moved to <name>.bak before linking.
 
 set -euo pipefail
@@ -157,6 +160,11 @@ echo "launchd"
 # copied, not linked: launchd skips symlinked agents at login
 for plist in "$DOTFILES"/launchd/*.plist; do
   label=$(basename "$plist" .plist)
+  # assistant jobs need the synced vault; skip on machines without it
+  if [[ "$label" == *assistant* && ! -d "${ASSISTANT_HOME:-$HOME/notes/assistant}" ]]; then
+    printf '  skip    %s (no ~/notes/assistant; sync the vault, re-run)\n' "$label"
+    continue
+  fi
   dst="$HOME/Library/LaunchAgents/$label.plist"
   if cmp -s "$plist" "$dst"; then
     printf '  ok      %s\n' "$label"

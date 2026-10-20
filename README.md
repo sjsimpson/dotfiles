@@ -20,10 +20,14 @@ git clone https://github.com/sjsimpson/dotfiles.git ~/.dotfiles
 
 `install.sh` is idempotent. It:
 
+- asks for missing personal values (e.g. the ntfy topic for assistant pings;
+  blank generates one) and writes them to `~/env.zsh`
 - symlinks everything into place (moving any existing file to `<name>.bak`)
 - installs the Claude Code plugins listed in `claude/settings.json`
 - links the herdr plugins in `config/herdr/plugins/`
 - installs Playwright's ffmpeg (video recording in the Playwright MCP)
+- loads the `launchd/` jobs (assistant brief/wind-down only if
+  `~/notes/assistant` exists)
 - points macOS screenshots at `~/screenshots/macos`
 
 Flags:
