@@ -45,6 +45,39 @@ if ((brew)); then
   brew bundle --file "$DOTFILES/Brewfile"
 fi
 
+echo "env"
+# Personal values the dotfiles read but must never commit. Asked for here and
+# written to ~/env.zsh (not linked, not in git). Add one line per new value:
+#   NAME|prompt|secret (input hidden) or plain
+env_vars=(
+  "ASSISTANT_IMESSAGE_TO|iMessage address for assistant-brief pings (phone or Apple ID email)|plain"
+)
+env_file="$HOME/env.zsh"
+touch "$env_file"
+chmod 600 "$env_file"
+for entry in "${env_vars[@]}"; do
+  IFS='|' read -r name prompt kind <<<"$entry"
+  if grep -q "^export $name=" "$env_file"; then
+    printf '  ok      %s\n' "$name"
+  elif [[ -t 0 ]]; then
+    # no empty arrays: macOS bash 3.2 + `set -u` treats them as unbound
+    if [[ "$kind" == secret ]]; then
+      read -rs -p "  $name: $prompt (blank skips): " value || value=""
+      echo
+    else
+      read -r -p "  $name: $prompt (blank skips): " value || value=""
+    fi
+    if [[ -n "$value" ]]; then
+      printf 'export %s=%q\n' "$name" "$value" >>"$env_file"
+      printf '  set     %s\n' "$name"
+    else
+      printf '  skip    %s\n' "$name"
+    fi
+  else
+    printf '  missing %s (re-run ./install.sh in a terminal)\n' "$name"
+  fi
+done
+
 echo "shell + git"
 link .zshrc "$HOME/.zshrc"
 link git/gitconfig "$HOME/.gitconfig"
@@ -74,22 +107,28 @@ echo "claude"
 link claude/CLAUDE.md "$HOME/.claude/CLAUDE.md"
 link claude/settings.json "$HOME/.claude/settings.json"
 
+# Never let claude/git wait on a hidden prompt: no stdin, no git credential
+# prompts, 2 min cap per call (perl alarm: macOS has no `timeout`).
+cl() { GIT_TERMINAL_PROMPT=0 perl -e 'alarm shift; exec @ARGV' 120 claude "$@" </dev/null; }
+
 if command -v claude >/dev/null; then
   echo "claude plugins"
-  if ! claude plugin marketplace list 2>/dev/null | grep -q '❯ dotfiles'; then
+  if ! cl plugin marketplace list 2>/dev/null | grep -q '❯ dotfiles'; then
     # `marketplace add` rewrites settings.json with an absolute path; keep the
     # portable `~/.dotfiles/claude` by restoring the file afterwards.
     settings="$DOTFILES/claude/settings.json"
     cp "$settings" "$settings.tmp"
-    claude plugin marketplace add "$DOTFILES/claude" >/dev/null
+    cl plugin marketplace add "$DOTFILES/claude" >/dev/null || printf '  FAILED  marketplace add dotfiles\n'
     mv "$settings.tmp" "$settings"
   fi
-  installed=$(claude plugin list 2>/dev/null)
+  installed=$(cl plugin list 2>/dev/null) || printf '  FAILED  claude plugin list\n'
   for p in $(jq -r '.enabledPlugins | keys[]' "$DOTFILES/claude/settings.json"); do
     if grep -q "❯ $p" <<<"$installed"; then
       printf '  ok      %s\n' "$p"
+    elif cl plugin install "$p" >/dev/null; then
+      printf '  install %s\n' "$p"
     else
-      claude plugin install "$p" >/dev/null && printf '  install %s\n' "$p"
+      printf '  FAILED  %s (claude plugin install %s)\n' "$p" "$p"
     fi
   done
 fi
@@ -97,7 +136,7 @@ fi
 if command -v npx >/dev/null; then
   echo "playwright"
   # video recording in the Playwright MCP needs its matching ffmpeg build
-  if npx -y -p @playwright/mcp@latest playwright install ffmpeg >/dev/null 2>&1; then
+  if npx -y -p @playwright/mcp@latest playwright install ffmpeg </dev/null >/dev/null 2>&1; then
     printf '  ok      ffmpeg\n'
   else
     printf '  FAILED  ffmpeg (npx playwright install ffmpeg)\n'
@@ -128,38 +167,5 @@ if [[ "$(defaults read com.apple.screencapture location 2>/dev/null)" != "$shots
   killall SystemUIServer 2>/dev/null || true
 fi
 printf "  ok      screenshots -> %s\n" "$shots"
-
-echo "env"
-# Personal values the dotfiles read but must never commit. Asked for here and
-# written to ~/env.zsh (not linked, not in git). Add one line per new value:
-#   NAME|prompt|secret (input hidden) or plain
-env_vars=(
-  "ASSISTANT_IMESSAGE_TO|iMessage address for assistant-brief pings (phone or Apple ID email)|plain"
-)
-env_file="$HOME/env.zsh"
-touch "$env_file"
-chmod 600 "$env_file"
-for entry in "${env_vars[@]}"; do
-  IFS='|' read -r name prompt kind <<<"$entry"
-  if grep -q "^export $name=" "$env_file"; then
-    printf '  ok      %s\n' "$name"
-  elif [[ -t 0 ]]; then
-    # no empty arrays: macOS bash 3.2 + `set -u` treats them as unbound
-    if [[ "$kind" == secret ]]; then
-      read -rs -p "  $name: $prompt (blank skips): " value
-      echo
-    else
-      read -r -p "  $name: $prompt (blank skips): " value
-    fi
-    if [[ -n "$value" ]]; then
-      printf 'export %s=%q\n' "$name" "$value" >>"$env_file"
-      printf '  set     %s\n' "$name"
-    else
-      printf '  skip    %s\n' "$name"
-    fi
-  else
-    printf '  missing %s (re-run ./install.sh in a terminal)\n' "$name"
-  fi
-done
 
 echo "done. ~/.gitconfig.local (machine-specific git) is yours to create."
