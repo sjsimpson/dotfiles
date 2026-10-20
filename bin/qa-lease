@@ -6,7 +6,9 @@
 # server. A QA agent in a linked worktree leases the main worktree, which is
 # switched (detached) to the worktree's HEAD, tested, then switched back.
 #
-#   qa-lease acquire [--wait <sec>]   from the worktree under test (default 540)
+#   qa-lease acquire [--wait <sec>] [--apps a,b]
+#                                     from the worktree under test (wait default
+#                                     540; apps: what the test needs, default all)
 #   qa-lease release [--force]        holder only, unless --force
 #   qa-lease status
 #   qa-lease guard                    Claude PreToolUse hook: deny edits in a
@@ -19,13 +21,19 @@
 # Repo hooks, looked up in order (same as wt-env):
 #   1. <main>/scripts/qa-up, qa-down          (shared with the team)
 #   2. ~/.config/qa-lease/<repo-name>/...      (private, never in a repo)
-# qa-up runs after the switch (snapshot DB, install, migrate, start servers);
+# qa-up runs after the switch (snapshot DB, install, migrate, start servers)
+# and must exit non-zero unless every app in QA_APPS is up and healthy;
 # qa-down after switching back (restore DB, reinstall, stop what qa-up started).
 # Env: QA_MAIN QA_FROM QA_TO QA_STATE (per-repo dir) QA_CHANGED (file: one
-# changed path per line). Hooks must not print secrets.
+# changed path per line) QA_APPS (comma list, empty = all). Hooks must not
+# print secrets. Output is also appended to $QA_STATE/log.
 #
-# Exit: 0 ok · 2 usage · 3 worktree dirty · 4 main busy/dirty · 5 hook failed
-#       · 75 lease held by someone else (timed out waiting)
+# acquire's last line is `qa-lease: READY …` or `qa-lease: NOT READY …`. On
+# NOT READY (qa-up failed) the lease is already released and main restored.
+#
+# Exit: 0 ready · 2 usage · 3 worktree dirty · 4 main busy/dirty
+#       · 5 environment not ready (qa-up failed; restored) · 75 lease held by
+#       someone else (timed out waiting)
 
 set -euo pipefail
 
@@ -60,9 +68,9 @@ hook() { # name
     f="$private/$repo/$1"
   fi
   [[ -n "$f" ]] || return 0
-  echo "== $1 ($f)"
+  echo "== $1 ($f)" | tee -a "$state/log"
   (cd "$main" && QA_MAIN="$main" QA_FROM="$(get from)" QA_TO="$(get sha)" \
-    QA_STATE="$state" QA_CHANGED="$state/changed" "$f")
+    QA_STATE="$state" QA_CHANGED="$state/changed" QA_APPS="${apps:-}" "$f") 2>&1 | tee -a "$state/log"
 }
 
 # agents herdr reports as working inside the main worktree
@@ -94,9 +102,11 @@ restore() { # switch main back, run qa-down, drop lock
 
 acquire() {
   local wait=540
+  apps=
   while (($#)); do
     case "$1" in
     --wait) wait=$2 && shift 2 ;;
+    --apps) apps=$2 && shift 2 ;;
     *) die 2 "unknown arg: $1" ;;
     esac
   done
@@ -152,12 +162,16 @@ EOF
     git -C "$main" switch -q --detach "$sha"
   fi
   echo "leased $main at ${sha:0:10} (${branch:-detached}); was $prev"
+  echo "$(date '+%F %T') acquire ${branch:-detached} ${sha:0:10} from $top" >>"$state/log"
   grep -E '(^|/)(package\.json|pnpm-lock\.yaml|package-lock\.json|yarn\.lock|bun\.lockb?)$|migrations?/|schema|\.prisma$' \
     "$state/changed" | sed 's/^/WARN changed vs main: /' | head -20 || true
-  hook qa-up || {
-    echo "qa-lease: qa-up failed; still leased. Run 'qa-lease release' when done" >&2
+  if ! hook qa-up; then
+    echo "qa-up failed; restoring main worktree"
+    restore || true
+    echo "qa-lease: NOT READY: environment setup failed (see output above or $state/log); lease released"
     exit 5
-  }
+  fi
+  echo "qa-lease: READY $main at ${sha:0:10}${apps:+ (apps: $apps)}"
 }
 
 release() {
@@ -171,6 +185,7 @@ release() {
   if ((!force)) && [[ "$(get worktree)" != "$top" ]]; then
     die 4 "leased to $(get worktree), not $top (use --force)"
   fi
+  echo "$(date '+%F %T') release $(get branch) by $top" >>"$state/log"
   restore
   echo "released"
 }
