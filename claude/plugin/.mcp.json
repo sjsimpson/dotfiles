@@ -8,6 +8,10 @@
         "--caps=devtools",
         "--output-dir=${HOME}/screenshots"
       ]
+    },
+    "basecamp": {
+      "command": "basecamp",
+      "args": ["mcp", "--read-only"]
     }
   }
 }

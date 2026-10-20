@@ -55,9 +55,10 @@ ever clashes).
 | Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Report in chat; posts nothing unless asked |
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
-| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, blocked agents, personal tasks. Read-only; sources come from the assistant home |
+| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks. Read-only; sources come from the assistant home |
 | Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Read-only on code; won't start servers or touch production |
 | MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots` |
+| MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
 MCP server: `plugin/.mcp.json`.

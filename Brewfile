@@ -32,6 +32,8 @@ brew "mise"
 
 # Agents
 brew "herdr"
+tap "basecamp/tap" # official 37signals
+cask "basecamp-cli" # read-only MCP in claude/plugin/.mcp.json
 
 # Provisional (trying out)
 tap "rjyo/moshi"

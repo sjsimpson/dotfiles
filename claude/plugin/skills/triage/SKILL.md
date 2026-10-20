@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Ranked "what needs me" brief across every configured source (issue tracker, PRs, calendar, error alerts, email, meeting notes, blocked Claude agents, personal tasks). Writes a dated brief to the assistant home and prints the short version. Read-only. Use when the user asks for a triage, brief, catch-up, or "what should I look at".
+description: Ranked "what needs me" brief across every configured source (issue tracker, PRs, calendar, error alerts, email, meeting notes, project boards like Basecamp, blocked Claude agents, personal tasks). Writes a dated brief to the assistant home and prints the short version. Read-only. Use when the user asks for a triage, brief, catch-up, or "what should I look at".
 argument-hint: "[quick | personal | winddown | prep | <mode> + prep] (quick = no file; personal = personal tasks only; winddown = end of day; prep = 1:1 prep + project update drafts)"
 ---
 

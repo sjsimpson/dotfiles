@@ -91,6 +91,8 @@ allowed=(
   mcp__claude_ai_Gmail__search_threads mcp__claude_ai_Gmail__get_thread
   mcp__claude_ai_Sentry__search_issues
   mcp__claude_ai_Granola__list_meetings
+  # whole server: plugin/.mcp.json runs it --read-only (no write actions)
+  mcp__plugin_sjsimpson_basecamp
 )
 # belt and braces: dontAsk already denies anything not allowed
 denied=(
