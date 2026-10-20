@@ -144,10 +144,13 @@ for entry in "${env_vars[@]}"; do
   if grep -q "^export $name=" "$env_file"; then
     printf '  ok      %s\n' "$name"
   elif [[ -t 0 ]]; then
-    flag=()
-    [[ "$kind" == secret ]] && flag=(-s)
-    read -r "${flag[@]}" -p "  $name: $prompt (blank skips): " value
-    [[ "$kind" == secret ]] && echo
+    # no empty arrays: macOS bash 3.2 + `set -u` treats them as unbound
+    if [[ "$kind" == secret ]]; then
+      read -rs -p "  $name: $prompt (blank skips): " value
+      echo
+    else
+      read -r -p "  $name: $prompt (blank skips): " value
+    fi
     if [[ -n "$value" ]]; then
       printf 'export %s=%q\n' "$name" "$value" >>"$env_file"
       printf '  set     %s\n' "$name"
