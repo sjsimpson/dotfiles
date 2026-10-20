@@ -155,6 +155,14 @@ if command -v npx >/dev/null; then
     printf '  FAILED  ffmpeg (npx playwright install ffmpeg)\n'
   fi
 fi
+# --storage-state in claude/plugin/.mcp.json must exist; bin/qa-login fills it
+qa_state="$HOME/.cache/qa-tester/storage-state.json"
+if [[ ! -s "$qa_state" ]]; then
+  mkdir -p "$(dirname "$qa_state")"
+  echo '{"cookies":[],"origins":[]}' >"$qa_state"
+  chmod 600 "$qa_state"
+fi
+printf '  ok      qa login state (fill: qa-login <url>)\n'
 
 echo "launchd"
 # copied, not linked: launchd skips symlinked agents at login

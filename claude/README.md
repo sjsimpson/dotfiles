@@ -56,8 +56,9 @@ ever clashes).
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks. Read-only; sources come from the assistant home |
-| Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Read-only on code; won't start servers or touch production |
-| MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots` |
+| Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Used proactively after UI changes. Read-only on code; leases the main worktree (`qa-lease`) to run the app; won't touch production |
+| Hook  | `qa-lease guard`   | PreToolUse on edits: denies edits in a main worktree while it's leased for QA |
+| MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots`; `--storage-state` loads the `qa-login` session |
 | MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
@@ -93,8 +94,11 @@ for reviews. Free and local; no account needed.
 - **Server**: [Playwright MCP](https://github.com/microsoft/playwright-mcp),
   shipped in `plugin/.mcp.json`, so every machine gets the same config
   - `--isolated`: browser profile in memory, so parallel sessions don't fight
-    over one profile. Each session starts logged out; for authed apps, pass
-    `--storage-state <file>` with a saved login
+    over one profile
+  - `--storage-state=~/.cache/qa-tester/storage-state.json`: every browser
+    starts logged in. Fill it with `qa-login <url>` (log in by hand, close the
+    window; one file covers every app/host); `install.sh` seeds it empty.
+    Running sessions need `/mcp` reconnect to pick up a new login
   - `--caps=devtools`: adds video (`browser_start_video`, chapter cards, action
     callouts) and tracing
   - `--output-dir=${HOME}/screenshots`: where unnamed files go
@@ -113,6 +117,15 @@ for reviews. Free and local; no account needed.
   snapshots don't flood the main session. Ask the main session to "use
   qa-tester on <flow> at <url>"; it returns `PASS`/`FAIL`/`BLOCKED` plus
   findings with repro steps and evidence paths
+- **Main-worktree lease** ([`bin/qa-lease`](../bin/qa-lease)): until each
+  worktree runs its own app, only the main worktree does. `qa-tester` in a
+  linked worktree (HEAD committed; WIP ok) runs `acquire`: waits for other QA
+  runs and for agents working in the main worktree, refuses if it's dirty,
+  detaches it to the worktree's HEAD, warns on deps/migration/schema changes,
+  then runs the repo's `qa-up` hook. `release` switches back and runs
+  `qa-down`. Hooks: `<repo>/scripts/qa-{up,down}` or private
+  `~/.config/qa-lease/<repo>/`. Leases go stale after 45 min. The plugin's
+  PreToolUse hook blocks edits in a leased main worktree
 - **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older
   than 30 days (keeps `macos/`). `.playwright-mcp/` is globally git-ignored in
   case anything lands in a repo

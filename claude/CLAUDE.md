@@ -55,6 +55,10 @@
 
 - For in-app/browser testing, delegate to `qa-tester`; don't drive Playwright in
   the main session unless I ask
+- UI change → commit (WIP ok), run `qa-tester` before saying done, report its
+  verdict. From a linked worktree it leases the main worktree via `qa-lease`
+- In a repo's main worktree, never switch branches or edit while `qa-lease
+  status` shows it leased; wait or work in a linked worktree
 - Screenshots/videos: absolute `filename` under
   `$HOME/screenshots/<repo>/<branch>/` (branch `/` → `-`). Relative names land
   in the repo; paths outside `~/screenshots` are rejected

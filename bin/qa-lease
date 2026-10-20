@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+#
+# qa-lease — one QA run at a time on a repo's main worktree.
+#
+# Until each worktree can run its own app, only the main worktree has a dev
+# server. A QA agent in a linked worktree leases the main worktree, which is
+# switched (detached) to the worktree's HEAD, tested, then switched back.
+#
+#   qa-lease acquire [--wait <sec>]   from the worktree under test (default 540)
+#   qa-lease release [--force]        holder only, unless --force
+#   qa-lease status
+#   qa-lease guard                    Claude PreToolUse hook: deny edits in a
+#                                     main worktree leased to someone else
+#
+# acquire refuses a dirty worktree (commit first; WIP is fine) and waits while
+# the main worktree is dirty or an agent is working in it (herdr). Leases older
+# than 45 min are stale: the next acquire restores and takes over.
+#
+# Repo hooks, looked up in order (same as wt-env):
+#   1. <main>/scripts/qa-up, qa-down          (shared with the team)
+#   2. ~/.config/qa-lease/<repo-name>/...      (private, never in a repo)
+# qa-up runs after the switch (snapshot DB, install, migrate, start servers);
+# qa-down after switching back (restore DB, reinstall, stop what qa-up started).
+# Env: QA_MAIN QA_FROM QA_TO QA_STATE (per-repo dir) QA_CHANGED (file: one
+# changed path per line). Hooks must not print secrets.
+#
+# Exit: 0 ok · 2 usage · 3 worktree dirty · 4 main busy/dirty · 5 hook failed
+#       · 75 lease held by someone else (timed out waiting)
+
+set -euo pipefail
+
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/qa-lease"
+private="${XDG_CONFIG_HOME:-$HOME/.config}/qa-lease"
+ttl=2700
+
+die() { # code, msg
+  echo "qa-lease: $2" >&2
+  exit "$1"
+}
+
+# main worktree of the repo containing $1
+main_of() { dirname "$(git -C "$1" rev-parse --path-format=absolute --git-common-dir)"; }
+dirty() { [[ -n "$(git -C "$1" status --porcelain --untracked-files=normal)" ]]; }
+get() { sed -n "s/^$1=//p" "$lock/info" 2>/dev/null; } # key
+
+setup() { # dir: sets top main repo state lock
+  top=$(git -C "$1" rev-parse --show-toplevel 2>/dev/null) || die 2 "not in a git repo"
+  main=$(main_of "$top")
+  repo=$(basename "$main")
+  state="$cache/$repo"
+  lock="$state/lock"
+  mkdir -p "$state"
+}
+
+hook() { # name
+  local f=
+  if [[ -x "$main/scripts/$1" ]]; then
+    f="$main/scripts/$1"
+  elif [[ -x "$private/$repo/$1" ]]; then
+    f="$private/$repo/$1"
+  fi
+  [[ -n "$f" ]] || return 0
+  echo "== $1 ($f)"
+  (cd "$main" && QA_MAIN="$main" QA_FROM="$(get from)" QA_TO="$(get sha)" \
+    QA_STATE="$state" QA_CHANGED="$state/changed" "$f")
+}
+
+# agents herdr reports as working inside the main worktree
+main_agents_working() {
+  command -v herdr >/dev/null || return 1
+  herdr api snapshot 2>/dev/null | jq -e --arg m "$main" \
+    '[.. | objects | select(has("agent_status") and has("cwd"))
+      | select(.agent_status == "working")
+      | select(.cwd == $m or (.cwd | startswith($m + "/")))] | length > 0' >/dev/null
+}
+
+restore() { # switch main back, run qa-down, drop lock
+  local prev
+  prev=$(get prev)
+  if dirty "$main"; then
+    die 4 "main worktree $main has uncommitted changes; not switching back. Lease kept"
+  fi
+  if [[ -n "$prev" ]]; then
+    git -C "$main" switch -q "$prev" 2>/dev/null || git -C "$main" switch -q --detach "$prev"
+    echo "main worktree back on $prev"
+  fi
+  hook qa-down || {
+    echo "qa-lease: qa-down failed; lease released anyway, check $main" >&2
+    rm -rf "$lock"
+    exit 5
+  }
+  rm -rf "$lock"
+}
+
+acquire() {
+  local wait=540
+  while (($#)); do
+    case "$1" in
+    --wait) wait=$2 && shift 2 ;;
+    *) die 2 "unknown arg: $1" ;;
+    esac
+  done
+  setup "$PWD"
+  dirty "$top" && die 3 "$top has uncommitted changes; commit first (WIP ok)"
+  local sha branch deadline
+  sha=$(git -C "$top" rev-parse HEAD)
+  branch=$(git -C "$top" branch --show-current)
+  deadline=$((SECONDS + wait))
+
+  while :; do
+    if [[ -d "$lock" ]]; then
+      if [[ "$(get worktree)" == "$top" ]]; then
+        [[ "$(get sha)" == "$sha" ]] && {
+          echo "already leased to this worktree at ${sha:0:10}"
+          return 0
+        }
+        die 4 "leased to this worktree at $(get sha | cut -c1-10); release first"
+      fi
+      if (($(date +%s) - $(get since) > ttl)); then
+        echo "stale lease from $(get branch); restoring"
+        restore
+        continue
+      fi
+      echo "waiting: leased to $(get branch) ($(get worktree)) since $(date -r "$(get since)" +%T)"
+    elif dirty "$main"; then
+      echo "waiting: main worktree $main has uncommitted changes"
+    elif main_agents_working; then
+      echo "waiting: an agent is working in $main"
+    elif mkdir "$lock" 2>/dev/null; then
+      break
+    fi
+    ((SECONDS < deadline)) || {
+      [[ -d "$lock" ]] && die 75 "still leased to $(get branch) after ${wait}s"
+      die 4 "main worktree still busy after ${wait}s"
+    }
+    sleep 15
+  done
+
+  local from prev
+  from=$(git -C "$main" rev-parse HEAD)
+  prev=$(git -C "$main" symbolic-ref -q --short HEAD || echo "$from")
+  cat >"$lock/info" <<EOF
+worktree=$top
+branch=${branch:-detached}
+sha=$sha
+from=$from
+prev=$prev
+since=$(date +%s)
+EOF
+  git diff --name-only "$from" "$sha" >"$state/changed"
+  if [[ "$top" != "$main" ]]; then
+    git -C "$main" switch -q --detach "$sha"
+  fi
+  echo "leased $main at ${sha:0:10} (${branch:-detached}); was $prev"
+  grep -E '(^|/)(package\.json|pnpm-lock\.yaml|package-lock\.json|yarn\.lock|bun\.lockb?)$|migrations?/|schema|\.prisma$' \
+    "$state/changed" | sed 's/^/WARN changed vs main: /' | head -20 || true
+  hook qa-up || {
+    echo "qa-lease: qa-up failed; still leased. Run 'qa-lease release' when done" >&2
+    exit 5
+  }
+}
+
+release() {
+  local force=0
+  [[ "${1:-}" == --force ]] && force=1
+  setup "$PWD"
+  [[ -d "$lock" ]] || {
+    echo "not leased"
+    return 0
+  }
+  if ((!force)) && [[ "$(get worktree)" != "$top" ]]; then
+    die 4 "leased to $(get worktree), not $top (use --force)"
+  fi
+  restore
+  echo "released"
+}
+
+status() {
+  setup "$PWD"
+  if [[ -d "$lock" ]]; then
+    echo "leased: $(get branch) ($(get worktree)) at $(get sha | cut -c1-10) since $(date -r "$(get since)" +%T); main was $(get prev)"
+  else
+    echo "free: $main"
+  fi
+}
+
+# PreToolUse hook. Fails open: any error allows the edit.
+guard() {
+  local input path dir top
+  input=$(cat)
+  path=$(jq -r '.tool_input.file_path // .tool_input.notebook_path // empty' <<<"$input" 2>/dev/null) || exit 0
+  [[ -n "$path" ]] || exit 0
+  dir=$(dirname "$path")
+  while [[ ! -d "$dir" && "$dir" != / ]]; do dir=$(dirname "$dir"); done
+  top=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || exit 0
+  [[ "$(main_of "$top" 2>/dev/null)" == "$top" ]] || exit 0 # only main worktrees
+  lock="$cache/$(basename "$top")/lock"
+  [[ -d "$lock" ]] || exit 0
+  jq -n --arg r "$top is leased for QA by $(get branch) (qa-lease status). Wait for release, or work in a linked worktree" \
+    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $r}}'
+}
+
+case "${1:-}" in
+acquire) shift && acquire "$@" ;;
+release) shift && release "$@" ;;
+status) status ;;
+guard) guard ;;
+*)
+  sed -n '3,30p' "$0" | sed 's/^# \{0,1\}//'
+  exit 2
+  ;;
+esac
