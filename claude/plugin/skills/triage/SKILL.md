@@ -24,7 +24,7 @@ Assistant home: `$ASSISTANT_HOME`, else `~/notes/assistant`. Read:
 
 No home or no Sources table: say so and stop.
 
-**`personal`** (weekends, or on request): use only the Personal source. Skip
+**`personal`** (weekends, or on request): use only the Personal and Workout sources. Skip
 work sources entirely; don't list them under Gaps.
 
 ## 2. Gather
@@ -71,6 +71,13 @@ notifications are never marked read, so unread means nothing).
 End with **Focus**: the one thing to start next and the free calendar gap to
 do it in.
 
+Then **Workout**, only if the home's Sources has a Workout source: today's
+session from its plan/log; on a rest day, say so. Suggest one slot plus a
+backup, each inside the source's facility hours or suited to its weather
+(say indoor vs outdoor), clear of calendar events and the home's blocked
+times. Hours/weather unreachable → suggest from the calendar alone, note it
+under **Gaps**.
+
 ## 5. Output
 
 Each item, one line: `- [ID/title](link) · why it's here · suggested action`.
@@ -81,14 +88,14 @@ bodies, PII, amounts, or secrets).
   `_HH:MM_` line, plus ` · personal` in that mode). If it exists, append `## HH:MM update` with only what
   changed. Then prune expired `snoozed.md` lines
 - Print a short version in chat: **Now** and **Today** in full, counts for the
-  rest, then **Focus**, then **Gaps**
+  rest, then **Focus**, **Workout**, then **Gaps**
 
 **`quick`**: same gathering and ranking, no file writes. Print:
 
 1. **Changed since HH:MM** (last brief's timestamp): 🆕 and ⏰ items first
 2. Everything else, compact and ranked: Now/Today one line each; Soon/FYI as
    one line or a count per group
-3. **Focus**, then **Gaps**
+3. **Focus**, **Workout**, then **Gaps**
 
 **`winddown`**: same gathering, plus what the user finished today (PRs merged,
 approved, or reviewed; issues moved to done; meetings held). Append
@@ -98,7 +105,8 @@ pruning. Sections, also printed in chat:
 1. **Shipped**
 2. **Still open**: today's Now/Today items not done, plus 🆕 items needed
    before tomorrow's first meeting
-3. **Tomorrow**: meetings with prep links, then **Focus** with its calendar gap
+3. **Tomorrow**: meetings with prep links, then **Focus** with its calendar gap,
+   then tomorrow's **Workout** slot
 
 **`prep`** (1:1 prep, weekly): gather over the past 7 days (briefs, merged
 PRs, done issues, Linear projects the user leads + their latest status

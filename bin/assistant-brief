@@ -94,6 +94,15 @@ allowed=(
   # whole server: plugin/.mcp.json runs it --read-only (no write actions)
   mcp__plugin_sjsimpson_basecamp
 )
+# private extras (e.g. WebFetch(domain:…) for sources that would reveal
+# location): one rule per line in the assistant home, # comments ok
+if [[ -f "$home/allowed-tools.txt" ]]; then
+  while IFS= read -r rule; do
+    rule="${rule%%#*}"
+    rule="${rule#"${rule%%[![:space:]]*}"}" rule="${rule%"${rule##*[![:space:]]}"}"
+    [[ -n "$rule" ]] && allowed+=("$rule")
+  done <"$home/allowed-tools.txt"
+fi
 # belt and braces: dontAsk already denies anything not allowed
 denied=(
   mcp__claude_ai_Gmail__send_message mcp__claude_ai_Gmail__reply

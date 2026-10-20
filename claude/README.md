@@ -57,7 +57,7 @@ ever clashes).
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
 | Skill | `qa`               | Browser-test a change: the calling session commits, leases and verifies the environment (`qa-lease`, every app + worker/queue/realtime dep, data), briefs `qa-tester`, then releases (restores main worktree + DB). Used proactively after UI changes |
-| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks. Read-only; sources come from the assistant home |
+| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home |
 | Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; won't touch production |
 | Hook  | `qa-lease guard`   | PreToolUse on edits: denies edits in a main worktree while it's leased for QA |
 | MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots`; `--storage-state` loads the `qa-login` session |
@@ -164,7 +164,10 @@ One Claude Code session as a chief of staff across work and personal.
     `weekly/YYYY-Www.md`, ahead of Friday's 1:1. Missed → Friday's brief adds
     it. Drafts are never posted
   - Headless `claude -p` in `--permission-mode dontAsk` with an allow list:
-    read-only tools plus writes to `briefs/` and `weekly/` only. Sonnet
+    read-only tools plus writes to `briefs/` and `weekly/` only. Private extras
+    (e.g. domain-pinned `WebFetch(domain:…)` for the Workout source) come from
+    `allowed-tools.txt` in the assistant home, one rule per line, so
+    location-revealing domains stay out of this repo. Sonnet
     (`ASSISTANT_MODEL` overrides), capped at $5. Pings by [ntfy](https://ntfy.sh)
     push (count line + link only) + Mac notification, linking the file in
     Obsidian. Log:
