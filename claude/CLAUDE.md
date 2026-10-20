@@ -53,10 +53,11 @@
 
 ## Playwright
 
-- For in-app/browser testing, delegate to `qa-tester`; don't drive Playwright in
-  the main session unless I ask
-- UI change → commit (WIP ok), run `qa-tester` before saying done, report its
-  verdict. From a linked worktree it leases the main worktree via `qa-lease`
+- For in-app/browser testing, use the `qa` skill: you prepare the environment
+  (`qa-lease`, apps, data), `qa-tester` tests. Don't drive Playwright in the
+  main session unless I ask
+- UI change → commit (WIP ok), run the `qa` skill before saying done, report
+  its verdict
 - In a repo's main worktree, never switch branches or edit while `qa-lease
   status` shows it leased; wait or work in a linked worktree
 - Screenshots/videos: absolute `filename` under

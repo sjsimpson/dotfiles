@@ -24,7 +24,8 @@ Global rules, in short:
   (`feat(ENG-1234): …`)
 - Never push, comment, or update PRs unless asked. Review comments use
   Conventional Comments and are shown locally first
-- Browser testing is delegated to `qa-tester`
+- Browser testing goes through the `qa` skill: the caller prepares the
+  environment, `qa-tester` tests
 - Playwright screenshots and videos go to `~/screenshots/<repo>/<branch>/`
   (see [Playwright](#playwright))
 
@@ -52,11 +53,12 @@ ever clashes).
 
 | Kind  | Name               | What                                                                    |
 | ----- | ------------------ | ----------------------------------------------------------------------- |
-| Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Report in chat; posts nothing unless asked |
+| Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Same-repo UI PRs also get a QA run via the `qa` skill (apps, flows, async deps from the diff); verdict in the report. Report in chat; posts nothing unless asked |
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
+| Skill | `qa`               | Browser-test a change: the calling session commits, leases and verifies the environment (`qa-lease`, every app + worker/queue/realtime dep, data), briefs `qa-tester`, then releases (restores main worktree + DB). Used proactively after UI changes |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks. Read-only; sources come from the assistant home |
-| Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Used proactively after UI changes. Read-only on code; leases the main worktree (`qa-lease`) to run the app; won't touch production |
+| Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; won't touch production |
 | Hook  | `qa-lease guard`   | PreToolUse on edits: denies edits in a main worktree while it's leased for QA |
 | MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots`; `--storage-state` loads the `qa-login` session |
 | MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
@@ -114,16 +116,20 @@ for reviews. Free and local; no account needed.
   recording after the first navigation; a recording started on a blank page
   saves nothing
 - **Agent**: `qa-tester` does the browser work in its own context, so page
-  snapshots don't flood the main session. Ask the main session to "use
-  qa-tester on <flow> at <url>"; it returns `PASS`/`FAIL`/`BLOCKED` plus
-  findings with repro steps and evidence paths
+  snapshots don't flood the main session. The `qa` skill (the caller) sets up
+  and verifies everything, then briefs it; it preflights every URL and
+  dependency and returns `PASS`/`FAIL`/`BLOCKED` plus findings with repro
+  steps and evidence paths. Any in-scope flow it can't run → `BLOCKED` with
+  what's missing
 - **Main-worktree lease** ([`bin/qa-lease`](../bin/qa-lease)): until each
-  worktree runs its own app, only the main worktree does. `qa-tester` in a
-  linked worktree (HEAD committed; WIP ok) runs `acquire`: waits for other QA
+  worktree runs its own app, only the main worktree does. The `qa` skill, from
+  a linked worktree (HEAD committed; WIP ok), runs `acquire`: waits for other QA
   runs and for agents working in the main worktree, refuses if it's dirty,
   detaches it to the worktree's HEAD, warns on deps/migration/schema changes,
-  then runs the repo's `qa-up` hook. `release` switches back and runs
-  `qa-down`. Hooks: `<repo>/scripts/qa-{up,down}` or private
+  then runs the repo's `qa-up` hook, which must start and health-check every
+  app in `--apps` (default all). Last line is `qa-lease: READY` or `NOT READY`
+  (setup failed: main already restored, lease released; exit 5); the tester is
+  only briefed on READY. `release` switches back and runs `qa-down`. Hooks: `<repo>/scripts/qa-{up,down}` or private
   `~/.config/qa-lease/<repo>/`. Leases go stale after 45 min. The plugin's
   PreToolUse hook blocks edits in a leased main worktree
 - **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older

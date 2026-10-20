@@ -7,11 +7,9 @@
     "pr": ""
   },
   "permissions": {
+    "allow": ["Bash(qa-lease:*)"],
     "defaultMode": "auto",
-    "additionalDirectories": [
-      "~/.dotfiles/claude/plugin",
-      "~/screenshots"
-    ]
+    "additionalDirectories": ["~/.dotfiles/claude/plugin", "~/screenshots"]
   },
   "hooks": {
     "Notification": [

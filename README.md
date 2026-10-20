@@ -123,11 +123,11 @@ I used tmux before herdr. The config lives on the
   wind-down at 16:45 weekdays (Thu adds 1:1 prep); see
   [Assistant](claude/README.md#assistant).
 
-- `qa-lease acquire|release|status`: one QA run at a time on a repo's main
-  worktree: switches it to the calling worktree's HEAD, runs repo hooks
+- `qa-lease acquire [--apps a,b]|release|status`: one QA run at a time on a
+  repo's main worktree: switches it to the calling worktree's HEAD, runs repo hooks
   (`scripts/qa-up`/`qa-down`, or private `~/.config/qa-lease/<repo>/`) to
   snapshot/restore the DB, install, migrate, start dev, then switches back.
-  Used by `qa-tester`; see [Playwright](claude/README.md#playwright)
+  Used by the `qa` skill; see [Playwright](claude/README.md#playwright)
 - `qa-login <url>`: log in by hand once; `qa-tester`'s browsers reuse the
   session
 

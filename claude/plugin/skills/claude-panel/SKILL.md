@@ -1,6 +1,6 @@
 ---
 name: claude-panel
-description: Local, Claude-only PR review panel — parallel lens finders + repo `*-reviewer` agents, blind validation, report in chat; posts nothing to GitHub unless asked afterward. Use ONLY when the user explicitly asks (`/claude-panel [pr]`).
+description: Local, Claude-only PR review panel — parallel lens finders + repo `*-reviewer` agents, blind validation, plus a qa-tester run for same-repo UI PRs, report in chat; posts nothing to GitHub unless asked afterward. Use ONLY when the user explicitly asks (`/claude-panel [pr]`).
 argument-hint: "[pr-number | pr-url] (optional — defaults to current branch's PR)"
 ---
 
@@ -11,7 +11,7 @@ Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file)
 ## Rules
 
 - **No GitHub writes by default.** Reads only. Pending review / checkbox tick / comments only on explicit request after the report (Step 4).
-- **Read-only everywhere.** No edits, `pnpm install`, or test runs in any worktree — safe on fork PRs.
+- **Read-only everywhere.** No edits, `pnpm install`, or test runs in any worktree — safe on fork PRs. One exception: Step 2b's QA run (same-repo PRs only), which runs the PR's code in the app via the `qa` skill.
 - Never touch the user's working tree for someone else's PR; use a disposable worktree.
 - Each Bash call is a fresh shell — start every call with `SCRATCH="${TMPDIR:-/tmp}"; SCRATCH="${SCRATCH%/}/claude-panel"`.
 - Every `gh pr` call carries `<n>` explicitly.
@@ -23,7 +23,7 @@ First, alone: `ps -p $$ >/dev/null 2>&1 || echo SANDBOXED`. Sandboxed → tell t
 Arg: PR number or URL (extract number); none → `gh pr view --json number -q .number`.
 
 ```bash
-gh api 'repos/{owner}/{repo}/pulls/<n>' --jq '{state, draft, title, base: .base.ref, head: .head.ref, headSha: .head.sha, author: .user.login, mergeable_state, body}'
+gh api 'repos/{owner}/{repo}/pulls/<n>' --jq '{state, draft, title, base: .base.ref, head: .head.ref, headSha: .head.sha, author: .user.login, mergeable_state, body, fork: (.head.repo.full_name != .base.repo.full_name)}'
 gh api user -q .login
 gh api 'repos/{owner}/{repo}/pulls/<n>/reviews' --paginate --jq '[.[] | {id, user: .user.login, state, commit_id, body}]'
 gh api 'repos/{owner}/{repo}/pulls/<n>/comments' --paginate --jq '[.[] | select(.in_reply_to_id == null) | {user: .user.login, path, line, body}]'
@@ -79,6 +79,23 @@ Lenses: `correctness`, `security`, `conventions`, `tests` (Sonnet unless `escala
 
 While it runs, don't poll — the completion notification wakes you. If it dies, re-invoke with `resumeFromRunId`; finished agents return cached.
 
+## Step 2b: QA (UI PRs)
+
+Start right after Step 2's Workflow call, so it runs alongside. Skip, and say
+why in the report, when:
+
+- `fork` is true: QA runs the PR's code locally. Only if the user asks
+- No UI in the diff: no changed `.tsx`/`.jsx`/`.vue`/`.svelte`/`.css`/`.scss`
+  outside tests and stories (`git -C "$WORKDIR" diff --name-only origin/<base>...<headSha>`)
+
+Otherwise follow the `qa` skill from `WORKDIR` (already at `headSha`, so
+committed): decide apps (each touched app plus its runtime deps: workers,
+queues, realtime), data, and async triggers from the diff and intent;
+`qa-lease acquire --apps …` there; verify; brief `qa-tester` in the
+background with base `origin/<base>`. `NOT READY` you can't fix → QA is
+`BLOCKED` in the report, don't brief the tester. After its verdict,
+`qa-lease release` from `WORKDIR`. Don't poll; notifications wake you.
+
 ## Step 3: Report (local)
 
 Re-pin head (`gh api .../pulls/<n> --jq .head.sha`). Moved → `git diff --name-only <reviewed> <new>`; mark findings in changed files "may be fixed/moved".
@@ -93,8 +110,9 @@ Print, in chat:
 3. **Uncertain** (major+ only, one-liners) — worth a human look.
 4. **Refuted** — one line each with evidence, so the user can override.
 5. Already on thread — one line each.
-6. Agents: ran / out-of-scope / failed. Never present a failed agent as clean.
-7. Verdict suggestion (would comment / approve / request changes) — advisory only.
+6. **QA** (Step 2b): verdict (`PASS`/`FAIL`/`BLOCKED`/skipped + why), its findings one line each with severity and evidence path, and its "Not tested" list. `BLOCKED` is never shown as a pass.
+7. Agents: ran / out-of-scope / failed. Never present a failed agent as clean.
+8. Verdict suggestion (would comment / approve / request changes) — advisory only.
 
 Save the full workflow result to `$SCRATCH/pr-<n>-<headSha:0:8>.json`, and append one line to `~/.claude/claude-panel-runs.jsonl`:
 
@@ -132,4 +150,4 @@ No match → say so; never inject the line.
 
 ## Step 5: Cleanup
 
-`git worktree remove` this run's `pr-<n>-<RUN>-wt` only (never the repo root), then `git worktree prune`. Mention other `claude-panel/pr-*-wt` leftovers; remove only on confirmation.
+If `qa-lease status` (from `WORKDIR`) still shows this worktree holding the lease, `qa-lease release` there first: removing the worktree strands the main worktree. Then `git worktree remove` this run's `pr-<n>-<RUN>-wt` only (never the repo root), then `git worktree prune`. Mention other `claude-panel/pr-*-wt` leftovers; remove only on confirmation.
