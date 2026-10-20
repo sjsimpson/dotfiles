@@ -7,6 +7,10 @@
     defaultBranch = main
 [push]
     autoSetupRemote = true
+[branch]
+    # only track the start point when names match: `worktree add -b foo origin/main`
+    # (herdr's --base) leaves foo untracked; first push sets origin/foo
+    autoSetupMerge = simple
 [fetch]
     prune = true
 [merge]
