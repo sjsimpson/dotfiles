@@ -108,7 +108,36 @@ child row). Direct edits are allowed, on these terms:
   allowed row ids (and the backup file, when there is one)
 
 Interrupted mid-brief (the user stopped you, or the session restarted)?
-Restore first, before anything else.
+Restore first, before anything else. Paused for hand-back: stay paused.
+
+## Hand back (manual testing)
+
+The user often wants main for manual testing mid-desk ("clear main", "hand
+back", "put main on <branch>"). That's a user request only, never a brief's.
+
+1. Finish the current brief, or restore it if they want main now
+2. No branch named → main stays parked, apps as they are. Done
+3. Branch named: `git fetch -q origin <branch>` if it isn't local. `from=$(git
+   rev-parse HEAD)`, then `git switch -q <branch>`; if it's checked out in
+   another worktree, `git switch -q --detach <branch>` and say so
+4. Run bare (Bash timeout 600000): `QA_HANDBACK=1 QA_APPS=<apps they name,
+   else all> qa-up "$from"`. It always installs, generates, and pushes the
+   schema without dropping data, and saves a backup snapshot it never
+   restores: their records survive. A push that would drop data fails →
+   tell them; don't add `--accept-data-loss`
+5. `WARN … restart them` with apps already running → ask before
+   `QA_RESTART=<apps>` (it stops their running servers, clears `.next`, and
+   starts fresh ones the desk then owns)
+6. Report URLs and "main is yours; say resume". Now **paused**: main is
+   theirs. Briefs get "queued (desk paused for manual testing, N ahead)". Run
+   no git, DB, or server commands until they say resume
+
+**Resume**: tracked changes in main → ask them, don't clean up. Else `git
+switch -q --detach <park>`, `qa-down` (stops what the desk started, keeps
+the DB, pushes the parked schema back without data loss; says if it
+can't), then take queued briefs. Briefs snapshot and restore on top of
+their data as usual. "restore my DB" → the backup path `qa-up` printed;
+ask before loading it.
 
 ## Closing the desk
 

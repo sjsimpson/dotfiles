@@ -57,7 +57,7 @@ ever clashes).
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
 | Skill | `qa`               | Browser-test a change: commit, decide apps (incl. worker/queue/realtime deps), flows, async and data, send the brief to the repo's QA desk, relay its verdict. Never touches the main worktree. Used proactively after UI changes |
-| Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions |
+| Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home |
 | Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; won't touch production |
 | MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots`; `--storage-state` loads the `qa-login` session |
@@ -110,7 +110,8 @@ for reviews. Free and local; no account needed.
   filenames there. macOS screenshots go to `~/screenshots/macos`
   (set by `install.sh`)
 - **Access**: `~/screenshots` is in `permissions.additionalDirectories`, so no
-  prompts. Health checks use [`bin/http-status`](../bin/http-status)
+  prompts. Health checks use [`bin/http-status`](../bin/http-status) (also
+  linked into `~/.local/bin`, on every session's PATH)
   (localhost only), the one allowlisted Bash command, since auto mode denies
   plain `curl`
 - **Video**: needs Playwright's own ffmpeg build; `install.sh` installs it
@@ -137,7 +138,12 @@ for reviews. Free and local; no account needed.
   discarded). `QA_CHECK=1 qa-up` shows app states read-only. Code toggles (a
   fixed date, a flag) ride in the tested commit (a throwaway commit is fine);
   the desk never edits code. Seed scripts can live anywhere; the desk reads
-  each one first and runs only local, id-scoped DB writes. Start the desk in the same
+  each one first and runs only local, id-scoped DB writes. **Hand back**:
+  tell the desk "put main on <branch>" for manual testing; it runs
+  `QA_HANDBACK=1 qa-up` (always install/generate/push schema, never drop
+  data; backup snapshot, never restored), pauses briefs, and on "resume"
+  parks main and runs `qa-down` (keeps your data). `QA_RESTART=<apps>` (with
+  your OK) replaces an already-running stale dev server. Start the desk in the same
   permission mode as other sessions, or their messages wait for approval
 - **Housekeeping**: `shots` opens the folder; `shots-prune` deletes files older
   than 30 days (keeps `macos/`). `.playwright-mcp/` is globally git-ignored in

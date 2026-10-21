@@ -115,6 +115,9 @@ fi
 echo "claude"
 link claude/CLAUDE.md "$HOME/.claude/CLAUDE.md"
 link claude/settings.json "$HOME/.claude/settings.json"
+# agents run it via the allowlist; ~/.local/bin is on PATH even in sessions
+# started from a shell older than export.zsh's PATH
+link bin/http-status "$HOME/.local/bin/http-status"
 
 # Never let claude/git wait on a hidden prompt: no stdin, no git credential
 # prompts, 2 min cap per call (perl alarm: macOS has no `timeout`).

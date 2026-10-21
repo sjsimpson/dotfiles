@@ -124,7 +124,8 @@ I used tmux before herdr. The config lives on the
   [Assistant](claude/README.md#assistant).
 
 - `http-status <url>`: HTTP status of a localhost URL only (no redirects, no
-  body); allowlisted for agents' health checks (`Bash(http-status:*)`)
+  body); allowlisted for agents' health checks (`Bash(http-status:*)`);
+  `install.sh` also links it into `~/.local/bin`
 - `qa-login <url>`: log in by hand once; `qa-tester`'s browsers reuse the
   session
 
