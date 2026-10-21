@@ -1,0 +1,198 @@
+#!/usr/bin/env python3
+"""pr-pending — agent findings into my PENDING GitHub review. Never submits.
+
+  pr-pending list <pr> [-R owner/repo]
+  pr-pending sync <pr> <findings.json> --ledger <file> [--run ID] [-R owner/repo] [--dry-run]
+
+findings.json: {"body": "...", "comments": [{"path", "line", "startLine"?,
+"side"?, "body"}]}. Every posted body gets a hidden <!-- deep-review:<run> -->
+marker; the ledger records each comment's id and exact posted body.
+
+sync adds to my pending review (creates one, no event, if there's none). A
+comment is the agent's to update or delete only if it has the marker AND
+still matches its ledger body: anything I edited or wrote stays untouched.
+Lines not in the diff, and a body for a review that already exists, are
+skipped (keep them in the report). Prints added / replaced / removed /
+unchanged / skipped, with reasons, and the review link.
+"""
+
+import argparse, datetime, json, re, subprocess, sys
+
+MARK_RE = re.compile(r"\s*<!-- deep-review:[^>]*-->\s*$")
+
+
+def gh(query, **variables):
+    out = subprocess.run(
+        ["gh", "api", "graphql", "--input", "-"],
+        input=json.dumps({"query": query, "variables": variables}),
+        capture_output=True, text=True,
+    )
+    data = json.loads(out.stdout or "{}")
+    if out.returncode or data.get("errors"):
+        msg = "; ".join(e.get("message", "") for e in data.get("errors", [])) or out.stderr.strip()
+        raise RuntimeError(msg)
+    return data["data"]
+
+
+def plain(body):
+    return MARK_RE.sub("", body or "").rstrip()
+
+
+def resolve(pr, repo):
+    m = re.search(r"github\.com/([^/]+/[^/]+)/pull/(\d+)", pr)
+    if m:
+        return m.group(1), int(m.group(2))
+    if not repo:
+        repo = subprocess.run(["gh", "repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner"],
+                              capture_output=True, text=True, check=True).stdout.strip()
+    return repo, int(pr)
+
+
+def state(repo, n):
+    owner, name = repo.split("/")
+    d = gh("""query($o:String!,$r:String!,$n:Int!){viewer{login}
+      repository(owner:$o,name:$r){pullRequest(number:$n){id url headRefOid
+        reviews(states:PENDING,first:10){nodes{id url author{login}
+          comments(first:100){nodes{id path line originalLine body}}}}}}}""", o=owner, r=name, n=n)
+    pr = d["repository"]["pullRequest"]
+    mine = [r for r in pr["reviews"]["nodes"] if r["author"]["login"] == d["viewer"]["login"]]
+    return pr, (mine[0] if mine else None)
+
+
+def cmd_list(repo, n):
+    pr, review = state(repo, n)
+    if not review:
+        print(f"no pending review on {pr['url']}")
+        return
+    print(f"pending review {review['url']}")
+    for c in review["comments"]["nodes"]:
+        tag = "marked" if MARK_RE.search(c["body"]) else "yours"
+        gist = re.sub(r"\s+", " ", plain(c["body"]))[:120]
+        print(f"{c['id']} {c['path']}:{c['line'] or c['originalLine']} [{tag}] {gist}")
+
+
+def cmd_sync(repo, n, findings_path, ledger_path, run, dry):
+    findings = json.load(open(findings_path))
+    try:
+        ledger = json.load(open(ledger_path))
+    except FileNotFoundError:
+        ledger = {"comments": []}
+    pr, review = state(repo, n)
+    current = {c["id"]: c for c in (review["comments"]["nodes"] if review else [])}
+    marker = f"<!-- deep-review:{run} -->"
+    tally = {"added": 0, "replaced": 0, "removed": 0, "unchanged": 0}
+    skipped, keep = [], []
+
+    owned, edited = {}, set()
+    for e in ledger["comments"]:
+        c = current.get(e["id"])
+        if c and MARK_RE.search(c["body"]) and c["body"] == e["body"]:
+            owned[(e["path"], e["line"])] = e
+        elif c:
+            edited.add((e["path"], e["line"]))
+    others = {(c["path"], c["line"]): plain(c["body"]) for c in current.values()
+              if c["id"] not in {e["id"] for e in owned.values()}}
+
+    todo = []
+    for f in findings.get("comments", []):
+        key, text = (f["path"], f["line"]), f["body"].rstrip()
+        if key in owned:
+            e = owned.pop(key)
+            if plain(e["body"]) == text:
+                tally["unchanged"] += 1
+                keep.append(e)
+            else:
+                todo.append(("replace", f, e))
+        elif key in edited:
+            skipped.append(f"{key[0]}:{key[1]}: you edited the agent's comment here; left it")
+        elif others.get(key) == text:
+            skipped.append(f"{key[0]}:{key[1]}: same comment already in the review")
+        else:
+            todo.append(("add", f, None))
+    for e in owned.values():
+        todo.append(("remove", None, e))
+
+    body = (findings.get("body") or "").strip()
+    if body and review:
+        skipped.append("review body: a pending review already exists; GitHub won't add one, keep it in the report")
+        body = ""
+
+    if dry:
+        for op, f, e in todo:
+            where = f"{(f or e)['path']}:{(f or e)['line']}"
+            print(f"would {op} {where}")
+        if body:
+            print("would create pending review with body")
+        for s in skipped:
+            print(f"skip {s}")
+        return
+
+    if not review and (body or any(op == "add" for op, _, _ in todo)):
+        r = gh("""mutation($pr:ID!,$sha:GitObjectID!,$body:String){addPullRequestReview(
+          input:{pullRequestId:$pr,commitOID:$sha,body:$body}){pullRequestReview{id url}}}""",
+               pr=pr["id"], sha=pr["headRefOid"], body=f"{body}\n\n{marker}" if body else None)
+        review = r["addPullRequestReview"]["pullRequestReview"]
+
+    for op, f, e in todo:
+        try:
+            if op == "add":
+                posted = f"{f['body'].rstrip()}\n\n{marker}"
+                r = gh("""mutation($rid:ID!,$path:String!,$line:Int!,$side:DiffSide,$start:Int,$body:String!){
+                  addPullRequestReviewThread(input:{pullRequestReviewId:$rid,path:$path,line:$line,
+                    side:$side,startLine:$start,body:$body}){thread{comments(first:1){nodes{id}}}}}""",
+                       rid=review["id"], path=f["path"], line=f["line"], side=f.get("side", "RIGHT"),
+                       start=f.get("startLine"), body=posted)
+                thread = r["addPullRequestReviewThread"]["thread"]
+                if not thread:
+                    raise RuntimeError("line not in the diff")
+                cid = thread["comments"]["nodes"][0]["id"]
+                keep.append({"id": cid, "path": f["path"], "line": f["line"], "body": posted})
+                tally["added"] += 1
+            elif op == "replace":
+                posted = f"{f['body'].rstrip()}\n\n{marker}"
+                gh("""mutation($id:ID!,$body:String!){updatePullRequestReviewComment(
+                  input:{pullRequestReviewCommentId:$id,body:$body}){pullRequestReviewComment{id}}}""",
+                   id=e["id"], body=posted)
+                keep.append({**e, "body": posted})
+                tally["replaced"] += 1
+            else:
+                gh("""mutation($id:ID!){deletePullRequestReviewComment(input:{id:$id}){clientMutationId}}""",
+                   id=e["id"])
+                tally["removed"] += 1
+        except RuntimeError as err:
+            where = f"{(f or e)['path']}:{(f or e)['line']}"
+            skipped.append(f"{where}: {op} failed: {err}")
+            if e and op != "add":
+                keep.append(e)
+
+    json.dump({"repo": repo, "pr": n, "run": run, "review": review and review["url"],
+               "comments": keep}, open(ledger_path, "w"), indent=2)
+    print(", ".join(f"{v} {k}" for k, v in tally.items()) + f", {len(skipped)} skipped")
+    for s in skipped:
+        print(f"  skipped {s}")
+    print(f"review: {review['url'] if review else 'none (nothing to add)'} (pending, not submitted)")
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("cmd", choices=["list", "sync"])
+    p.add_argument("pr")
+    p.add_argument("findings", nargs="?")
+    p.add_argument("-R", dest="repo")
+    p.add_argument("--ledger")
+    p.add_argument("--run", default=datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+    p.add_argument("--dry-run", action="store_true")
+    a = p.parse_args()
+    repo, n = resolve(a.pr, a.repo)
+    if a.cmd == "list":
+        return cmd_list(repo, n)
+    if not (a.findings and a.ledger):
+        p.error("sync needs <findings.json> and --ledger")
+    cmd_sync(repo, n, a.findings, a.ledger, a.run, a.dry_run)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except RuntimeError as err:
+        sys.exit(f"pr-pending: {err}")

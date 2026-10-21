@@ -47,6 +47,9 @@
 
 - [IMPORTANT] Do not make comments, update pull requests, or push code changes unless
   I explicitly ask you to.
+  - Exception: `/deep-review` agents add findings to my pending review via
+    `pr-pending` (never submit). Submitting and public comments are mine, in
+    the GitHub UI; a hook blocks them
 - [IMPORTANT] Always use (except `WIP:` commits) [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
   `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
   build, ci, style, revert). Ticket ID as scope when known, e.g.

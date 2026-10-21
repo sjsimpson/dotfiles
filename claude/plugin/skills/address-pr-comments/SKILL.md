@@ -14,9 +14,9 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
 - **Gate before changing anything.** Edits, commits, and ticket writes happen
   only after the user approves the decision table (Step 3). Approval covers
   exactly what's in the table
-- **Never push** (`git push`, `gh stack push|submit|sync`) and never post PR
-  replies, resolve threads, or re-request review unless asked. Draft replies
-  are shown locally
+- **Never push** (`git push`, `gh stack push|submit|sync`) and never resolve
+  threads or re-request review unless asked. Draft replies are shown
+  locally; the user posts them (a hook blocks public PR comments)
 - **Ticket paper trail.** Never edit an existing ticket's title, description,
   or comments. Updates are new comments starting `**Update YYYY-MM-DD:**`
 - Follow the user's global git rules (WIP commit of existing work first,

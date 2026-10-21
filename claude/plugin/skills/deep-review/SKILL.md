@@ -1,6 +1,6 @@
 ---
 name: deep-review
-description: Hand a PR to its own herdr worktree + Claude agent for a full review and in-app QA, reported back to this session. The agent always runs claude-panel AND qa, tests against real production data read-only where possible, and never posts, pushes, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
+description: Hand a PR to its own herdr worktree + Claude agent for a full review and in-app QA, reported back to this session. The agent always runs claude-panel AND qa, tests against real production data read-only where possible, adds its findings to my pending GitHub review (never submits), and never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
 argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [extra context]"
 ---
 
@@ -121,9 +121,10 @@ Risky (only when risky) - read first
   automatically. Report gets a Submission safety section
 
 Hard rules
-- No push, comment, approve, request changes, or code edits (status mode:
-  only as above). GitHub writes, even pending-review comments, are a
-  separate step the user drives in this pane
+- No push, approve, request changes, public comments, or code edits (status
+  mode: only as above). The one GitHub write: findings into the user's
+  pending review via `pr-pending` (below). Never submit it; a hook blocks
+  every other write
 - Prod data read-only. Internal IDs only: no customer names, amounts,
   account numbers, or other customer details in the report
 - Don't block on questions: note assumptions and carry on. Hard blocker
@@ -136,7 +137,19 @@ Write <report path> (not a scratchpad or /tmp) as the shared report
 mergeable now / needs X, with the path to merge), Findings (drafts per the
 global PR feedback rule, only ones worth the author's time), Earlier asks,
 QA per pass with screenshot paths, Safety (risky only), Not verified.
-Then SendMessage <reply-to>: one line, verdict + report path.
+Pending review (review mode; after the report, which stays the source of
+truth): write the findings that anchor to diff lines as
+<report dir>/pr-<n>-findings.json ({"body": "<findings with no line>",
+"comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
+the report), then
+  pr-pending sync <n> -R <owner/repo> <findings.json> \
+    --ledger <report dir>/pr-<n>-pending-comments.json --run <ticket>-<head sha:8>
+It adds to the user's pending review (or starts one), and on re-runs only
+updates/removes comments it posted that the user hasn't edited. Put its
+counts (added / replaced / removed / skipped + why) and the review link in
+the report's Verdict.
+Then SendMessage <reply-to>: one line, verdict, pending-review counts +
+link, report path.
 ```
 
 ## Stack (`--stack`)

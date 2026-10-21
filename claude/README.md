@@ -31,7 +31,8 @@ Global rules, in short:
 
 ## settings.json
 
-- **Permissions**: `auto` mode
+- **Permissions**: `auto` mode; allow `http-status`, `pr-pending`
+- **Hooks**: `block-review-submit` before every Bash call (see Shared conventions)
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
 - **Env**: `CLAUDE_CODE_PLUGIN_DIRS` loads `plugin/` and moshi straight from disk
 - **Marketplace path**: `~/.dotfiles/claude`, kept portable. `claude plugin
@@ -55,7 +56,7 @@ ever clashes).
 | ----- | ------------------ | ----------------------------------------------------------------------- |
 | Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Same-repo UI PRs also get a QA run via the `qa` skill (apps, flows, async deps from the diff); verdict in the report. Report in chat; posts nothing unless asked |
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments`. Local, no QA, works before PRs exist; with PRs and QA use `deep-review --stack` |
-| Skill | `deep-review`      | `/deep-review <pr> [--status] [--risky] [--stack]`: PR → its own herdr worktree + Claude agent, briefed to read every thread (`pr-threads`), run `claude-panel` and `qa` (prod data read-only first, generated local data only for what's new), and write the shared report to `~/screenshots/<repo>/<branch>/`; re-runs check earlier findings against posted threads. `--stack`: one agent per layer, then a stack-wide summary. Never posts. Repo specifics from private `~/.config/claude-repos/<repo>/review.md` |
+| Skill | `deep-review`      | `/deep-review <pr> [--status] [--risky] [--stack]`: PR → its own herdr worktree + Claude agent, briefed to read every thread (`pr-threads`), run `claude-panel` and `qa` (prod data read-only first, generated local data only for what's new), and write the shared report to `~/screenshots/<repo>/<branch>/`; re-runs check earlier findings against posted threads. `--stack`: one agent per layer, then a stack-wide summary. Findings also go into your pending review via `pr-pending`; never submits or posts publicly. Repo specifics from private `~/.config/claude-repos/<repo>/review.md` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
 | Skill | `qa`               | Browser-test a change: commit, decide apps (incl. worker/queue/realtime deps), flows, async and data, send the brief to the repo's QA desk, relay its verdict. Never touches the main worktree. Used proactively after UI changes |
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
@@ -102,6 +103,14 @@ agents, hooks) and its token cost.
   when posted, judicious). Skills point there instead of restating it
 - **Existing feedback**: [`bin/pr-threads`](../bin/pr-threads), used by
   `claude-panel`, `address-pr-comments`, `deep-review`
+- **GitHub writes**: [`bin/pr-pending`](../bin/pr-pending) is the only way
+  Claude writes review comments: into your pending review, marked
+  `<!-- deep-review:<run> -->`, with a ledger of ids + exact bodies so
+  re-runs only touch comments it posted that you haven't edited. Never
+  submits. Backstop: [`hooks/block-review-submit`](hooks/block-review-submit)
+  (PreToolUse on Bash) blocks submitting, dismissing, `gh pr review|comment`
+  and REST writes to review/comment endpoints in every session; you submit
+  and post in the GitHub UI
 - **Reports**: [`plugin/reference/report.md`](plugin/reference/report.md),
   one section order (Verdict, Findings, Earlier asks, QA, Safety, Not
   verified) for `claude-panel`, `deep-review`, `qa-tester`, the QA desk

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# PreToolUse(Bash) backstop: Claude never submits a review or posts a public
+# PR comment. Pending-review writes go through `pr-pending` only (it never
+# sends an event). Exit 2 blocks the call; stderr goes back to Claude.
+
+cmd=$(jq -r '.tool_input.command // ""')
+
+block() {
+  echo "blocked: $1. Pending-review comments go through pr-pending; submitting and public comments are the user's, in the GitHub UI" >&2
+  exit 2
+}
+
+grep -qE 'submitPullRequestReview|addPullRequestReviewComment|addComment[^a-zA-Z]|dismissPullRequestReview' <<<"$cmd" &&
+  block "GraphQL submit/comment mutation"
+grep -qE '\bgh +pr +(review|comment)\b' <<<"$cmd" && block "gh pr review/comment"
+grep -qE '/dismissals' <<<"$cmd" && block "review dismissal"
+
+# REST writes to reviews or comment endpoints (reads are fine)
+if grep -qE 'pulls/[^ ]+/(reviews|comments)|issues/[^ ]+/comments|pulls/comments/' <<<"$cmd" &&
+  grep -qE '(^| )(-f|-F|--field|--raw-field|--input|-X|--method)( |=)' <<<"$cmd"; then
+  grep -qE '(-X|--method)[ =]+(GET|get)\b' <<<"$cmd" || block "REST write to a PR review/comment endpoint"
+fi
+exit 0

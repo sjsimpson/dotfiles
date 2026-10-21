@@ -120,6 +120,8 @@ link claude/settings.json "$HOME/.claude/settings.json"
 link bin/http-status "$HOME/.local/bin/http-status"
 # every review skill reads PR feedback through it
 link bin/pr-threads "$HOME/.local/bin/pr-threads"
+# the only way agents write to GitHub: pending-review comments, never submit
+link bin/pr-pending "$HOME/.local/bin/pr-pending"
 # qa-tester's MCP server launcher (absolute path in agents/qa-tester.md)
 link bin/qa-browser "$HOME/.local/bin/qa-browser"
 # user-level, not plugin: plugin agents can't declare their own MCP servers

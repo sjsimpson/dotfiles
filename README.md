@@ -131,6 +131,8 @@ I used tmux before herdr. The config lives on the
 - `pr-threads <pr> [--json]`: every piece of feedback on a PR (threads with
   open/resolved/outdated, reviews, comments, my pending review); the review
   skills read it. `install.sh` links it into `~/.local/bin`
+- `pr-pending list|sync <pr>`: findings into my pending review, never
+  submits; only touches comments it posted that I haven't edited
 - `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile
   copy, headless); `install.sh` links it into `~/.local/bin`
 
