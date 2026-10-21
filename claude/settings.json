@@ -8,8 +8,14 @@
   },
   "permissions": {
     "defaultMode": "auto",
-    "allow": ["Bash(http-status:*)"],
-    "additionalDirectories": ["~/.dotfiles/claude/plugin", "~/screenshots"]
+    "allow": [
+      "Bash(http-status:*)",
+      "Bash(pr-pending:*)"
+    ],
+    "additionalDirectories": [
+      "~/.dotfiles/claude/plugin",
+      "~/screenshots"
+    ]
   },
   "hooks": {
     "Notification": [
@@ -128,6 +134,15 @@
             "type": "command",
             "command": "'/opt/homebrew/bin/moshi-hook' claude-hook",
             "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.dotfiles/claude/hooks/block-review-submit\""
           }
         ]
       }
