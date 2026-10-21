@@ -141,7 +141,9 @@ for reviews. Free and local; no account needed.
   `qa-desk-<repo>`, running `/qa-desk`. Other sessions' `qa` skill finds it
   by that name and sends a brief (code path, commit, apps, flows, async,
   data); the desk queues them, runs one at a time, and replies. Repo hooks:
-  `<repo>/scripts/qa-{up,down}` or private `~/.config/qa-desk/<repo>/`.
+  `<repo>/scripts/qa-{up,down}` or private `~/.config/qa-desk/<repo>/`
+  (which can also hold `login.md`: per-app login recipe the desk passes the
+  tester, e.g. auth-provider test users).
   `qa-up <from-sha>` snapshots the dev DB, installs/migrates if needed,
   starts + health-checks every app in `QA_APPS` (progress while waiting; exit
   1 with reasons); `qa-down` stops what it started, removes generated files,

@@ -69,6 +69,9 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    tester then reports `stale dev server`, ask the user before restarting it
    (it's theirs)
    Direct DB edits: see **Local data** for the backup rule
+   Login: `~/.config/qa-desk/<repo>/login.md` exists → read it and follow
+   it for each app the brief logs into; put the per-brief login steps it
+   gives in the tester's Login field. It overrides a brief's Login
 5. Spawn `qa-tester` in the background with the brief, marked "Environment
    (verified ready)", with `Code: <code path>` and `Base: <base>`. Its
    report wakes you, and it stops itself on stalls. The user asks for status
