@@ -2,23 +2,20 @@
 #
 # qa-login <url> — log in by hand once; qa-tester's browsers reuse it.
 #
-# Opens a Playwright browser at <url>, loaded with the current saved state.
-# Log in (any app; one file holds cookies for every host), then close the
-# window: cookies + local storage are saved to the file the Playwright MCP
-# loads at startup (--storage-state in claude/plugin/.mcp.json). New Claude
-# sessions pick it up; running ones need /mcp reconnect.
+# Opens Chrome on qa-tester's golden profile at <url>. Log in (any app; the
+# profile holds every host), then close the window. Each worktree's profile
+# is re-seeded from it on its next qa-tester run (see qa-browser).
 
 set -euo pipefail
 
 [[ $# -eq 1 ]] || {
-  sed -n '3,9p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '3,7p' "$0" | sed 's/^# \{0,1\}//'
   exit 2
 }
-state="${XDG_CACHE_HOME:-$HOME/.cache}/qa-tester/storage-state.json"
-mkdir -p "$(dirname "$state")"
-[[ -s "$state" ]] || echo '{"cookies":[],"origins":[]}' >"$state"
+golden="${XDG_CACHE_HOME:-$HOME/.cache}/qa-tester/profile"
+mkdir -p "$golden"
 
 npx -y -p @playwright/mcp@latest playwright open \
-  --load-storage="$state" --save-storage="$state" "$1"
-chmod 600 "$state"
-echo "saved: $state"
+  --channel chrome --user-data-dir="$golden" "$1"
+touch "$golden/.login-stamp"
+echo "saved: $golden"

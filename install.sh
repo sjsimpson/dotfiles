@@ -118,6 +118,8 @@ link claude/settings.json "$HOME/.claude/settings.json"
 # agents run it via the allowlist; ~/.local/bin is on PATH even in sessions
 # started from a shell older than export.zsh's PATH
 link bin/http-status "$HOME/.local/bin/http-status"
+# qa-tester's MCP server launcher (absolute path in agents/qa-tester.md)
+link bin/qa-browser "$HOME/.local/bin/qa-browser"
 # user-level, not plugin: plugin agents can't declare their own MCP servers
 link claude/agents/qa-tester.md "$HOME/.claude/agents/qa-tester.md"
 
@@ -160,14 +162,11 @@ if command -v npx >/dev/null; then
     printf '  FAILED  ffmpeg (npx playwright install ffmpeg)\n'
   fi
 fi
-# --storage-state in claude/plugin/.mcp.json must exist; bin/qa-login fills it
-qa_state="$HOME/.cache/qa-tester/storage-state.json"
-if [[ ! -s "$qa_state" ]]; then
-  mkdir -p "$(dirname "$qa_state")"
-  echo '{"cookies":[],"origins":[]}' >"$qa_state"
-  chmod 600 "$qa_state"
+if [[ -f "$HOME/.cache/qa-tester/profile/.login-stamp" ]]; then
+  printf '  ok      qa login profile\n'
+else
+  printf '  todo    qa login profile (qa-login <url>)\n'
 fi
-printf '  ok      qa login state (fill: qa-login <url>)\n'
 
 echo "launchd"
 # copied, not linked: launchd skips symlinked agents at login

@@ -101,17 +101,22 @@ Browser automation for verifying UI changes and capturing screenshots or videos
 for reviews. Free and local; no account needed.
 
 - **Server**: [Playwright MCP](https://github.com/microsoft/playwright-mcp),
-  declared inline in `agents/qa-tester.md`: it starts when `qa-tester` runs
-  and stops when it finishes. No other session loads it (none idle for days,
-  none driving a browser outside the desk)
+  declared inline in `agents/qa-tester.md` via
+  [`bin/qa-browser`](../bin/qa-browser): it starts when `qa-tester` runs and
+  stops when it finishes. No other session loads it (none idle for days, none
+  driving a browser outside the desk)
   - `--headless`: no Chrome window stealing focus mid-run; screenshots and
     video still work
-  - `--isolated`: browser profile in memory, so parallel sessions don't fight
-    over one profile
-  - `--storage-state=~/.cache/qa-tester/storage-state.json`: every browser
-    starts logged in. Fill it with `qa-login <url>` (log in by hand, close the
-    window; one file covers every app/host); `install.sh` seeds it empty.
-    Each `qa-tester` run starts a fresh server, so a new login applies at once
+  - `--user-data-dir`: persistent Chrome profile per worktree
+    (`~/.cache/qa-tester/profiles/<repo>/<worktree>`), so cookies refresh
+    run to run instead of expiring. One browser per profile, so parallel
+    worktrees each get their own
+  - Login: `qa-login <url>` opens the golden profile
+    (`~/.cache/qa-tester/profile`) in Chrome; log in to every app, close the
+    window. Copies seed from it on first use and re-seed after each
+    `qa-login` (skipped while in use). Deleted worktrees' copies are pruned.
+    Not copied from your daily browser: its cookies are Keychain-encrypted
+    and it holds personal accounts
   - `--caps=devtools`: adds video (`browser_start_video`, chapter cards, action
     callouts) and tracing
   - `--output-dir=${HOME}/screenshots`: where unnamed files go

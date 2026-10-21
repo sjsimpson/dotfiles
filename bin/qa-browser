@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# qa-browser — start qa-tester's Playwright MCP on this worktree's profile.
+#
+# Golden profile (~/.cache/qa-tester/profile) is the one qa-login logs into.
+# Each worktree gets a copy (profiles/<repo>/<worktree>), seeded on first use
+# and re-seeded after every qa-login. Copies keep their own refreshed cookies;
+# profiles of deleted worktrees are pruned. Run by qa-tester's MCP config.
+
+set -euo pipefail
+
+root="${XDG_CACHE_HOME:-$HOME/.cache}/qa-tester"
+golden="$root/profile"
+mkdir -p "$golden" "$root/profiles"
+
+for marker in "$root"/profiles/*/*/.worktree; do
+  [[ -f "$marker" ]] || continue
+  [[ -d "$(cat "$marker")" ]] || rm -rf "$(dirname "$marker")"
+done
+
+if top=$(git rev-parse --show-toplevel 2>/dev/null); then
+  repo=$(basename "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")
+  profile="$root/profiles/$repo/$(basename "$top")"
+else
+  top="" profile="$root/profiles/_/default"
+fi
+
+stale() { [[ ! -f "$profile/.seeded" || "$golden/.login-stamp" -nt "$profile/.seeded" ]]; }
+if [[ -f "$golden/.login-stamp" ]] && stale; then
+  if [[ -L "$golden/SingletonLock" || -L "$profile/SingletonLock" ]]; then
+    echo "qa-browser: profile in use, not re-seeding $profile" >&2
+  else
+    mkdir -p "$profile"
+    rsync -a --delete \
+      --exclude 'Singleton*' --exclude '.worktree' --exclude '.seeded' \
+      --exclude 'Cache' --exclude 'Code Cache' --exclude 'GPUCache' \
+      "$golden/" "$profile/"
+    touch "$profile/.seeded"
+  fi
+fi
+mkdir -p "$profile"
+[[ -n "$top" ]] && echo "$top" >"$profile/.worktree"
+
+exec npx -y @playwright/mcp@latest --headless --caps=devtools \
+  --output-dir="$HOME/screenshots" --user-data-dir="$profile"

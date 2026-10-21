@@ -126,8 +126,10 @@ I used tmux before herdr. The config lives on the
 - `http-status <url>`: HTTP status of a localhost URL only (no redirects, no
   body); allowlisted for agents' health checks (`Bash(http-status:*)`);
   `install.sh` also links it into `~/.local/bin`
-- `qa-login <url>`: log in by hand once; `qa-tester`'s browsers reuse the
-  session
+- `qa-login <url>`: log in by hand to `qa-tester`'s golden Chrome profile;
+  every worktree's copy re-seeds from it
+- `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile
+  copy, headless); `install.sh` links it into `~/.local/bin`
 
 ## Claude Code
 

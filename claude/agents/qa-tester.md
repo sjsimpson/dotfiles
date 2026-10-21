@@ -2,15 +2,15 @@
 name: qa-tester
 description: Called by the QA desk (`/qa-desk`) only; don't invoke directly, use the `qa` skill. Adversarial in-app QA through a real browser (Playwright MCP). Exercises the happy path and edge cases in an already-running app and returns a findings report with screenshots/video. The desk prepares and verifies the environment first and passes a brief - goal, environment (every app and dependency, verified ready), flows, async triggers, data, login. It reads the code to work out how to test; it never sets up, starts, or resets anything. Missing brief or unreachable dependency → BLOCKED before testing, never a partial run. It tests and reports; it does not fix code.
 tools: mcp__playwright__*, Bash, Read, Grep, Glob
-# only this agent starts a browser server, for its run only. sh -c: $HOME
-# isn't known to expand in frontmatter args
+# only this agent starts a browser server, for its run only. qa-browser
+# picks this worktree's copy of the logged-in profile (headless)
 mcpServers:
   - playwright:
       type: stdio
       command: sh
       args:
         - -c
-        - exec npx -y @playwright/mcp@latest --headless --isolated --caps=devtools --output-dir="$HOME/screenshots" --storage-state="$HOME/.cache/qa-tester/storage-state.json"
+        - exec "$HOME/.local/bin/qa-browser"
 color: orange
 ---
 
