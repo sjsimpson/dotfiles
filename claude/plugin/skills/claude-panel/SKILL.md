@@ -129,7 +129,8 @@ Offer in one line at the end: "Want a pending review, the checkbox ticked, or fi
 
 **Pending review** (invisible to others until the user submits in the UI):
 
-- Comment body: `**Claude (<sources>) said this:**`, blank line, finding as a blockquote (1-3 declarative sentences, `nit:` the only prefix), then a top-level ` ```suggestion ` block (never inside the quote) when `fix` exactly replaces the anchored line range.
+- Comment body: the Conventional Comment itself (`**label (decorations):** subject`, then 1-3 declarative sentences of discussion), then a ` ```suggestion ` block when `fix` exactly replaces the anchored line range. No attribution header ("Claude said this", sources, finding ids), no blockquote wrapper.
+- Be judicious: post only findings worth the author's time. Drop duplicates of open or declined threads, speculative questions, follow-up-only concerns (→ ticket), and nits CI/CodeRabbit already catches. Merge findings that share one fix.
 - Only diff lines anchor; others go in the review body. Each comment stands alone.
 - `gh api 'repos/{owner}/{repo}/pulls/<n>/reviews' --input payload.json` with `{body, commit_id, comments:[{path, line, side:"RIGHT", body}]}` and **no `event`**. Existing pending review of mine → append via GraphQL `addPullRequestReviewThread` instead (one pending review per user). Give the `html_url`.
 

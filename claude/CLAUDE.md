@@ -32,6 +32,17 @@
   a workaround the next engineer would misread or "fix". Intent, rationale,
   review context → PR/commit, not comments. Unsure → leave out, mention in chat
 
+## Scope
+
+- Edit only the repo/worktree this session works in (plus scratchpad,
+  `~/screenshots`). Change needed elsewhere → `SendMessage` the session
+  working there (`ListAgents`); none running → tell me the exact change.
+  Never edit, then hand off
+- Exception: the `dotfiles` session (`~/.dotfiles`) also owns my
+  environment: `~/notes`, `~/.config`, `~/.claude`, `~/env.zsh`
+- Edits = source/config changes. Tool side effects (DB writes, caches, dev
+  server files, QA desk worktree switches) are fine
+
 ## Git
 
 - [IMPORTANT] Do not make comments, update pull requests, or push code changes unless
@@ -42,6 +53,7 @@
   `feat(ENG-6659): add supported locations page`
 - Comments should be shown locally for me to review and post
 - [IMPORTANT] Always use [Conventional Comments](https://conventionalcomments.org/) when giving PR feedback
+  - Posted GitHub comments are the Conventional Comment only: no "Claude said this" / attribution header, no blockquote wrapper
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
   unrelated uncommitted changes
 
