@@ -104,6 +104,8 @@ for reviews. Free and local; no account needed.
   declared inline in `agents/qa-tester.md`: it starts when `qa-tester` runs
   and stops when it finishes. No other session loads it (none idle for days,
   none driving a browser outside the desk)
+  - `--headless`: no Chrome window stealing focus mid-run; screenshots and
+    video still work
   - `--isolated`: browser profile in memory, so parallel sessions don't fight
     over one profile
   - `--storage-state=~/.cache/qa-tester/storage-state.json`: every browser

@@ -10,7 +10,7 @@ mcpServers:
       command: sh
       args:
         - -c
-        - exec npx -y @playwright/mcp@latest --isolated --caps=devtools --output-dir="$HOME/screenshots" --storage-state="$HOME/.cache/qa-tester/storage-state.json"
+        - exec npx -y @playwright/mcp@latest --headless --isolated --caps=devtools --output-dir="$HOME/screenshots" --storage-state="$HOME/.cache/qa-tester/storage-state.json"
 color: orange
 ---
 
