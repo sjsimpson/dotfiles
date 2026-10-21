@@ -25,9 +25,11 @@ else
   top="" profile="$root/profiles/_/default"
 fi
 
+# Chrome leaves SingletonLock (-> host-pid) behind if killed; only a live pid counts
+in_use() { local t; t=$(readlink "$1/SingletonLock" 2>/dev/null) && kill -0 "${t##*-}" 2>/dev/null; }
 stale() { [[ ! -f "$profile/.seeded" || "$golden/.login-stamp" -nt "$profile/.seeded" ]]; }
 if [[ -f "$golden/.login-stamp" ]] && stale; then
-  if [[ -L "$golden/SingletonLock" || -L "$profile/SingletonLock" ]]; then
+  if in_use "$golden" || in_use "$profile"; then
     echo "qa-browser: profile in use, not re-seeding $profile" >&2
   else
     mkdir -p "$profile"

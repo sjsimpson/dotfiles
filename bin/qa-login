@@ -15,7 +15,8 @@ set -euo pipefail
 golden="${XDG_CACHE_HOME:-$HOME/.cache}/qa-tester/profile"
 mkdir -p "$golden"
 
+# closing the window or ^C can exit non-zero; the profile is saved either way
 npx -y -p @playwright/mcp@latest playwright open \
-  --channel chrome --user-data-dir="$golden" "$1"
+  --channel chrome --user-data-dir="$golden" "$1" || true
 touch "$golden/.login-stamp"
 echo "saved: $golden"
