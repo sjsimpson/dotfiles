@@ -55,7 +55,7 @@
 
 - For in-app/browser testing, use the `qa` skill: you brief the repo's QA
   desk (`/qa-desk`), which sets up the main worktree and runs `qa-tester`.
-  Don't drive Playwright in the main session unless I ask
+  Playwright only loads inside `qa-tester`
 - UI change → commit (WIP ok), run the `qa` skill before saying done, report
   its verdict
 - A repo's main worktree belongs to its QA desk while one runs: never switch

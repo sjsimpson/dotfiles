@@ -69,8 +69,12 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    tester then reports `stale dev server`, ask the user before restarting it
    (it's theirs)
    Direct DB edits: see **Local data** for the backup rule
-5. Spawn `qa-tester` with the brief, marked "Environment (verified ready)",
-   with `Code: <code path>` and `Base: <base>`. Wait for its report
+5. Spawn `qa-tester` in the background with the brief, marked "Environment
+   (verified ready)", with `Code: <code path>` and `Base: <base>`. Its
+   report wakes you, and it stops itself on stalls. The user asks for status
+   or a pause: `SendMessage` it. It doesn't answer when you're next woken,
+   or they want it stopped now: stop it and reply `BLOCKED` with the
+   evidence dir's partial results
 6. **Always restore**, whatever the verdict: if you backed up rows (only
    when there's no hook snapshot), restore and verify them; then `git switch -q --detach <park>` (refuses
    only on tracked changes; untracked files the dev servers generated are

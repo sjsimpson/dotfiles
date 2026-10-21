@@ -118,6 +118,8 @@ link claude/settings.json "$HOME/.claude/settings.json"
 # agents run it via the allowlist; ~/.local/bin is on PATH even in sessions
 # started from a shell older than export.zsh's PATH
 link bin/http-status "$HOME/.local/bin/http-status"
+# user-level, not plugin: plugin agents can't declare their own MCP servers
+link claude/agents/qa-tester.md "$HOME/.claude/agents/qa-tester.md"
 
 # Never let claude/git wait on a hidden prompt: no stdin, no git credential
 # prompts, 2 min cap per call (perl alarm: macOS has no `timeout`).

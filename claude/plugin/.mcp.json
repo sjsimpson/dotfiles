@@ -1,18 +1,11 @@
 {
   "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--isolated",
-        "--caps=devtools",
-        "--output-dir=${HOME}/screenshots",
-        "--storage-state=${HOME}/.cache/qa-tester/storage-state.json"
-      ]
-    },
     "basecamp": {
       "command": "basecamp",
-      "args": ["mcp", "--read-only"]
+      "args": [
+        "mcp",
+        "--read-only"
+      ]
     }
   }
 }

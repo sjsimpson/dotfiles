@@ -59,12 +59,19 @@ ever clashes).
 | Skill | `qa`               | Browser-test a change: commit, decide apps (incl. worker/queue/realtime deps), flows, async and data, send the brief to the repo's QA desk, relay its verdict. Never touches the main worktree. Used proactively after UI changes |
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home |
-| Agent | `qa-tester`        | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; won't touch production |
-| MCP   | `playwright`       | Browser automation. `--isolated` so parallel sessions don't share a profile; `--caps=devtools` adds video and tracing; output to `~/screenshots`; `--storage-state` loads the `qa-login` session |
 | MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
 MCP server: `plugin/.mcp.json`.
+
+### User-level agents (`agents/`)
+
+Linked into `~/.claude/agents/` by `install.sh`: plugin agents can't declare
+their own MCP servers; these can.
+
+| Agent | What it does |
+| ----- | ------------ |
+| `qa-tester` | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; stalls (no progress ~3 min) → `BLOCKED`, not a wait; won't touch production. Owns the only Playwright server (see [Playwright](#playwright)) |
 
 ### Third-party (`.claude-plugin/marketplace.json`)
 
@@ -94,13 +101,15 @@ Browser automation for verifying UI changes and capturing screenshots or videos
 for reviews. Free and local; no account needed.
 
 - **Server**: [Playwright MCP](https://github.com/microsoft/playwright-mcp),
-  shipped in `plugin/.mcp.json`, so every machine gets the same config
+  declared inline in `agents/qa-tester.md`: it starts when `qa-tester` runs
+  and stops when it finishes. No other session loads it (none idle for days,
+  none driving a browser outside the desk)
   - `--isolated`: browser profile in memory, so parallel sessions don't fight
     over one profile
   - `--storage-state=~/.cache/qa-tester/storage-state.json`: every browser
     starts logged in. Fill it with `qa-login <url>` (log in by hand, close the
     window; one file covers every app/host); `install.sh` seeds it empty.
-    Running sessions need `/mcp` reconnect to pick up a new login
+    Each `qa-tester` run starts a fresh server, so a new login applies at once
   - `--caps=devtools`: adds video (`browser_start_video`, chapter cards, action
     callouts) and tracing
   - `--output-dir=${HOME}/screenshots`: where unnamed files go
