@@ -128,6 +128,9 @@ I used tmux before herdr. The config lives on the
   `install.sh` also links it into `~/.local/bin`
 - `qa-login <url>`: log in by hand to `qa-tester`'s golden Chrome profile;
   every worktree's copy re-seeds from it
+- `pr-threads <pr> [--json]`: every piece of feedback on a PR (threads with
+  open/resolved/outdated, reviews, comments, my pending review); the review
+  skills read it. `install.sh` links it into `~/.local/bin`
 - `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile
   copy, headless); `install.sh` links it into `~/.local/bin`
 

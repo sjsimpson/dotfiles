@@ -118,6 +118,8 @@ link claude/settings.json "$HOME/.claude/settings.json"
 # agents run it via the allowlist; ~/.local/bin is on PATH even in sessions
 # started from a shell older than export.zsh's PATH
 link bin/http-status "$HOME/.local/bin/http-status"
+# every review skill reads PR feedback through it
+link bin/pr-threads "$HOME/.local/bin/pr-threads"
 # qa-tester's MCP server launcher (absolute path in agents/qa-tester.md)
 link bin/qa-browser "$HOME/.local/bin/qa-browser"
 # user-level, not plugin: plugin agents can't declare their own MCP servers

@@ -25,9 +25,7 @@ Arg: PR number or URL (extract number); none → `gh pr view --json number -q .n
 ```bash
 gh api 'repos/{owner}/{repo}/pulls/<n>' --jq '{state, draft, title, base: .base.ref, head: .head.ref, headSha: .head.sha, author: .user.login, mergeable_state, body, fork: (.head.repo.full_name != .base.repo.full_name)}'
 gh api user -q .login
-gh api 'repos/{owner}/{repo}/pulls/<n>/reviews' --paginate --jq '[.[] | {id, user: .user.login, state, commit_id, body}]'
-gh api 'repos/{owner}/{repo}/pulls/<n>/comments' --paginate --jq '[.[] | select(.in_reply_to_id == null) | {user: .user.login, path, line, body}]'
-gh api 'repos/{owner}/{repo}/issues/<n>/comments' --paginate --jq '[.[] | {user: .user.login, body}]'
+pr-threads <n>
 grep "\"pr\":<n>," ~/.claude/claude-panel-runs.jsonl 2>/dev/null | tail -1
 ```
 
@@ -35,8 +33,7 @@ Pin `headSha` from REST (`gh pr` GraphQL caches stale heads). Then:
 
 - Closed/merged → stop. Draft → ask.
 - Last run log line has same `headSha` → already done for this head; ask before re-running. Different `headSha` → `git diff --name-only <old> <headSha> -- <PR paths>`: empty = rebase only, ask; non-empty = delta pass, pass those files as `focusFiles`.
-- My own PENDING review → fetch its comments (`.../reviews/<id>/comments`) into the raised list.
-- **Raised list**: one line per root thread / substantive review body / PR comment, any author (CodeRabbit, humans, me): `path:line — gist (author)`. Bot noise (CI summaries, walkthroughs) excluded.
+- **Raised list**: `pr-threads` lines (threads any status, my `PENDING` comments, substantive review bodies and PR comments; any author). Drop bot noise (CI summaries, walkthroughs). Resolved/declined threads stay in: findings that repeat them are dropped too.
 
 ## Step 1: Workspace
 
@@ -99,19 +96,18 @@ don't poll, its message wakes you.
 
 Re-pin head (`gh api .../pulls/<n> --jq .head.sha`). Moved → `git diff --name-only <reviewed> <new>`; mark findings in changed files "may be fixed/moved".
 
-Print, in chat:
+Print, in chat, the shared report (`report.md` in the plugin's `reference/` dir, `<this skill's base directory>/../../reference/report.md`), its sections as bold labels:
 
-1. Banner (sensitive / large / conflicted / head moved), if any.
+1. **Verdict**: would comment / approve / request changes (advisory only), plus the banner (sensitive / large / conflicted / head moved), if any.
 2. **Findings** (confirmed + codified), grouped by `action`, then severity, then confidence:
    - **Fix**: `**path:line** [sources · severity · conf] — claim` + one-line evidence + `fix` as a code block when present
    - **Ticket** (codebase-wide): same line + `note` (the pattern and where else it applies)
    - **Skip**: one line each with `reason` and `note`, so the user can override
-3. **Uncertain** (major+ only, one-liners) — worth a human look.
-4. **Refuted** — one line each with evidence, so the user can override.
-5. Already on thread — one line each.
-6. **QA** (Step 2b): verdict (`PASS`/`FAIL`/`BLOCKED`/skipped + why), its findings one line each with severity and evidence path, and its "Not tested" list. `BLOCKED` is never shown as a pass.
-7. Agents: ran / out-of-scope / failed. Never present a failed agent as clean.
-8. Verdict suggestion (would comment / approve / request changes) — advisory only.
+   - **Uncertain** (major+ only, one-liners): worth a human look
+   - **Refuted**: one line each with evidence, so the user can override
+3. **Earlier asks**: raised-list items findings matched, one line each.
+4. **QA** (Step 2b): verdict (`PASS`/`FAIL`/`BLOCKED`/skipped + why), its findings one line each with severity and evidence path. `BLOCKED` is never shown as a pass.
+5. **Not verified**: QA's list, plus agents that failed or were out of scope (ran / out-of-scope / failed). Never present a failed agent as clean.
 
 Save the full workflow result to `$SCRATCH/pr-<n>-<headSha:0:8>.json`, and append one line to `~/.claude/claude-panel-runs.jsonl`:
 
@@ -129,8 +125,7 @@ Offer in one line at the end: "Want a pending review, the checkbox ticked, or fi
 
 **Pending review** (invisible to others until the user submits in the UI):
 
-- Comment body: the Conventional Comment itself (`**label (decorations):** subject`, then 1-3 declarative sentences of discussion), then a ` ```suggestion ` block when `fix` exactly replaces the anchored line range. No attribution header ("Claude said this", sources, finding ids), no blockquote wrapper.
-- Be judicious: post only findings worth the author's time. Drop duplicates of open or declined threads, speculative questions, follow-up-only concerns (→ ticket), and nits CI/CodeRabbit already catches. Merge findings that share one fix.
+- Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
 - Only diff lines anchor; others go in the review body. Each comment stands alone.
 - `gh api 'repos/{owner}/{repo}/pulls/<n>/reviews' --input payload.json` with `{body, commit_id, comments:[{path, line, side:"RIGHT", body}]}` and **no `event`**. Existing pending review of mine → append via GraphQL `addPullRequestReviewThread` instead (one pending review per user). Give the `html_url`.
 

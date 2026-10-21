@@ -32,7 +32,7 @@ commands) and say so in the reply.
    shift its files. Many staged files on a detached, untouched worktree mean
    something else wrote to it: tell the user, don't clean it up yourself
 4. Hooks: `<repo>/scripts/qa-up` + `qa-down` (shared), else
-   `~/.config/qa-desk/<repo>/` (private). `QA_CHECK=1 qa-up` shows app
+   `~/.config/claude-repos/<repo>/` (private). `QA_CHECK=1 qa-up` shows app
    states without changing anything. No hooks: use whatever is already
    running, and verify it per brief
 5. Say "QA desk ready" and wait. Don't poll; messages wake you
@@ -69,7 +69,7 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    tester then reports `stale dev server`, ask the user before restarting it
    (it's theirs)
    Direct DB edits: see **Local data** for the backup rule
-   Login: `~/.config/qa-desk/<repo>/login.md` exists → read it and follow
+   Login: `~/.config/claude-repos/<repo>/login.md` exists → read it and follow
    it for each app the brief logs into; put the per-brief login steps it
    gives in the tester's Login field. It overrides a brief's Login
 5. Spawn `qa-tester` in the background with the brief, marked "Environment
@@ -84,7 +84,7 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    fine, qa-down removes them), then `qa-down`. If either fails, tell the
    user and take no new brief until it's fixed
 7. `SendMessage` to **from**: verdict, findings (one line each: severity,
-   title, evidence file), "Not tested", "Blocked on", evidence dir
+   title, evidence file), "Not verified", "Blocked on", evidence dir
 
 ## Local data
 

@@ -1,7 +1,7 @@
 ---
 name: deep-review
-description: Hand a PR to its own herdr worktree + Claude agent for a full review and in-app QA, reported back to this session. The agent always runs claude-panel AND qa, tests against real production data read-only where possible, and never posts, pushes, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
-argument-hint: "<pr-number | pr-url> [--status] [--risky] [extra context]"
+description: Hand a PR to its own herdr worktree + Claude agent for a full review and in-app QA, reported back to this session. The agent always runs claude-panel AND qa, tests against real production data read-only where possible, and never posts, pushes, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
+argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [extra context]"
 ---
 
 # Deep review
@@ -15,12 +15,12 @@ review, post, or edit anything yourself.
   (`gh repo view --json nameWithOwner`)
 - Repo name = last part of `owner/repo`. Local checkout: the main worktree
   of that repo (ask if you can't find it)
-- Private repo config: `~/.config/deep-review/<repo>.md` (prod data source,
+- Private repo config: `~/.config/claude-repos/<repo>/review.md` (prod data source,
   setup notes, QA gotchas, risky areas). Read it; missing → say so, carry on
   without a prod pass (the report must then say prod wasn't checked)
 - Mode: `--status` (my own PR), else review. `--risky` adds on to either. Also
   risky, unasked, when the diff touches an area the repo config lists as
-  risky: say so
+  risky: say so. `--stack` combines with any of them (see **Stack**)
 - Reply-to: this session's name (`ListAgents` shows it). No name → the agent
   can't message back: tell the user to name the session, or rely on the
   report file only
@@ -39,8 +39,7 @@ gh api user -q .login
 - Review mode: `ListAgents` should show `qa-desk-<repo>`. Not there → warn
   the user (QA will block until it's started) before dispatching
 - Report path: `$HOME/screenshots/<repo>/<head, / → ->/pr-<n>-<review|status>.md`.
-  Already exists → tell the agent to read it first and focus on what changed
-  since (its head sha is in the report)
+  Already exists → re-run: the brief's re-run line applies
 
 ## 2. Worktree + agent
 
@@ -72,16 +71,22 @@ in this order.
 Task from the user (via <reply-to>): <review | status check> PR
 <owner/repo>#<n>, "<title>" (author <author>). Worktree on branch <head>.
 <extra context from the user, if any>
-<earlier report exists: read <report path> first; focus on changes since>
+<stack: Layer <i> of <N> (bottom → top: #a, #b, …). Review only this
+ layer's diff vs <base>. Problems a lower layer introduced belong to it:
+ note them, don't re-raise>
+<re-run: read <report path> first; review what changed since its head sha.
+ For each earlier finding, check pr-threads: posted (a thread matching it)?
+ resolved, declined, or open at head? Don't re-raise posted or declined
+ ones; report their status under Earlier asks>
 
 Setup
 1. git branch --set-upstream-to=origin/<head>, then this repo's normal
    worktree setup so the app runs. <repo config: setup notes>
 2. Check you have the prod data tool (<repo config: prod data source>).
    Missing → hard blocker (below)
-3. Read every existing review thread: gh pr view <n> --comments, plus
-   review comments and reviews via gh api, plus any linked issue-tracker
-   review thread. List each earlier ask with its status at head: resolved /
+3. Read every existing review thread: `pr-threads <n> -R <owner/repo>`
+   (`--json` for full bodies), plus any linked issue-tracker review
+   thread. List each earlier ask with its status at head: resolved /
    not / partly, with evidence
 
 Review (review mode)
@@ -126,18 +131,35 @@ Hard rules
   message <reply-to>, then finish what you can
 
 Deliverable
-Write <report path> (not a scratchpad or /tmp). First line: reviewed head
-sha + date.
-- Verdict: approve / request changes / comment (status: mergeable now /
-  needs X)
-- Findings ranked by severity as draft Conventional Comments (file:line,
-  suggestion block when it's an exact fix), only ones worth the author's time
-- Earlier asks and their status
-- QA per pass with screenshot paths (status: blockers + path to merge)
-- Submission safety (risky only)
-- Not verified, and why
+Write <report path> (not a scratchpad or /tmp) as the shared report
+(~/.dotfiles/claude/plugin/reference/report.md): Verdict (status mode:
+mergeable now / needs X, with the path to merge), Findings (drafts per the
+global PR feedback rule, only ones worth the author's time), Earlier asks,
+QA per pass with screenshot paths, Safety (risky only), Not verified.
 Then SendMessage <reply-to>: one line, verdict + report path.
 ```
+
+## Stack (`--stack`)
+
+Layers from the PR's base chain, open PRs only:
+
+```bash
+gh pr list -R <owner/repo> --head <base> --state open --json number,headRefName,baseRefName   # parent; repeat down to the default branch
+gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName               # child; repeat up. Several → ask which
+```
+
+- Bottom → top. One layer → plain run. More than 4 → state the count and
+  ask (each layer is a full panel + QA)
+- Per layer: steps 1-3 as above, own worktree, agent and report, brief with
+  the stack line. Dispatch all at once; the QA desk queues their QA
+- Track the layers; each agent's message wakes you. When all are in (or
+  blocked), write `$HOME/screenshots/<repo>/stack-<bottom head>/stack-review.md`
+  as the shared report: Verdict per layer + overall; Findings merged across
+  layers (same problem twice → one item, owned by the lowest layer that
+  introduced it; fixes that cascade to upper layers noted); Earlier asks,
+  QA, Not verified as links to each layer's report
+- My own stack → offer `/address-pr-comments stack` with the layer reports
+  and the summary
 
 ## 4. Log + report
 

@@ -54,8 +54,8 @@ ever clashes).
 | Kind  | Name               | What                                                                    |
 | ----- | ------------------ | ----------------------------------------------------------------------- |
 | Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Same-repo UI PRs also get a QA run via the `qa` skill (apps, flows, async deps from the diff); verdict in the report. Report in chat; posts nothing unless asked |
-| Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments` |
-| Skill | `deep-review`      | `/deep-review <pr> [--status] [--risky]`: PR → its own herdr worktree + Claude agent, briefed to read every thread, run `claude-panel` and `qa` (prod data read-only first, generated local data only for what's new), and write a report to `~/screenshots/<repo>/<branch>/`; never posts. Repo specifics (prod data source, QA gotchas, risky areas) from private `~/.config/deep-review/<repo>.md` |
+| Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments`. Local, no QA, works before PRs exist; with PRs and QA use `deep-review --stack` |
+| Skill | `deep-review`      | `/deep-review <pr> [--status] [--risky] [--stack]`: PR → its own herdr worktree + Claude agent, briefed to read every thread (`pr-threads`), run `claude-panel` and `qa` (prod data read-only first, generated local data only for what's new), and write the shared report to `~/screenshots/<repo>/<branch>/`; re-runs check earlier findings against posted threads. `--stack`: one agent per layer, then a stack-wide summary. Never posts. Repo specifics from private `~/.config/claude-repos/<repo>/review.md` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
 | Skill | `qa`               | Browser-test a change: commit, decide apps (incl. worker/queue/realtime deps), flows, async and data, send the brief to the repo's QA desk, relay its verdict. Never touches the main worktree. Used proactively after UI changes |
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
@@ -95,6 +95,16 @@ To add one:
 
 `claude plugin details <name>@<marketplace>` shows what a plugin loads (skills,
 agents, hooks) and its token cost.
+
+## Shared conventions
+
+- **PR feedback**: one format, in `CLAUDE.md` (Conventional Comments, bare
+  when posted, judicious). Skills point there instead of restating it
+- **Existing feedback**: [`bin/pr-threads`](../bin/pr-threads), used by
+  `claude-panel`, `address-pr-comments`, `deep-review`
+- **Reports**: [`plugin/reference/report.md`](plugin/reference/report.md),
+  one section order (Verdict, Findings, Earlier asks, QA, Safety, Not
+  verified) for `claude-panel`, `deep-review`, `qa-tester`, the QA desk
 
 ## Playwright
 
@@ -147,9 +157,10 @@ for reviews. Free and local; no account needed.
   `qa-desk-<repo>`, running `/qa-desk`. Other sessions' `qa` skill finds it
   by that name and sends a brief (code path, commit, apps, flows, async,
   data); the desk queues them, runs one at a time, and replies. Repo hooks:
-  `<repo>/scripts/qa-{up,down}` or private `~/.config/qa-desk/<repo>/`
-  (which can also hold `login.md`: per-app login recipe the desk passes the
-  tester, e.g. auth-provider test users).
+  `<repo>/scripts/qa-{up,down}` or private `~/.config/claude-repos/<repo>/`
+  (one private folder per repo for every Claude tool: `qa-up`, `qa-down`,
+  `login.md` (per-app login recipe the desk passes the tester), `review.md`
+  (for `deep-review`); never in this repo).
   `qa-up <from-sha>` snapshots the dev DB, installs/migrates if needed,
   starts + health-checks every app in `QA_APPS` (progress while waiting; exit
   1 with reasons); `qa-down` stops what it started, removes generated files,

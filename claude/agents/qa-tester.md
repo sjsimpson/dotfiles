@@ -113,33 +113,10 @@ evidence. Close the browser when done.
 
 ## Report
 
-Return exactly this, concise and factual. The calling agent will act on it.
-
-```
-VERDICT: PASS | FAIL | BLOCKED
-Target: <url> · <repo>@<branch> · tested <what>
-Evidence: <evidence dir>
-Blocked on: <BLOCKED only: exactly what's missing and how the caller can provide it>
-
-Findings (most severe first)
-1. [blocker|major|minor|nit] <one-line title>
-   Steps: <numbered, minimal>
-   Expected: <...>
-   Actual: <...>
-   Evidence: <file names>
-   Suspect: <file:line from the diff, if you have a grounded guess; else omit>
-
-Passed
-- <scenario>: <one line>
-
-Not tested
-- <scenario>: <why: out of scope per brief>
-```
+Return the shared report (`~/.dotfiles/claude/plugin/reference/report.md`): Verdict (`PASS` / `FAIL` / `BLOCKED`,
+first line of the report: `VERDICT: <it>`, plus Target `<url> · <repo>@<branch>`
+and Evidence dir), Findings (QA-bug form), QA (passed scenarios), Not
+verified. Concise and factual; the caller acts on it.
 
 An in-scope flow you couldn't run makes the verdict `BLOCKED`, not `PASS`
-with a "Not tested" line.
-
-Severity: **blocker** breaks the main flow or loses or corrupts data;
-**major** is a wrong result or a broken edge case a real user will hit;
-**minor** is a cosmetic issue or rare edge; **nit** is polish. Don't pad: no
-findings means an empty list and `PASS`.
+with a "Not verified" line.

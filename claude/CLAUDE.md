@@ -52,8 +52,18 @@
   build, ci, style, revert). Ticket ID as scope when known, e.g.
   `feat(ENG-6659): add supported locations page`
 - Comments should be shown locally for me to review and post
-- [IMPORTANT] Always use [Conventional Comments](https://conventionalcomments.org/) when giving PR feedback
-  - Posted GitHub comments are the Conventional Comment only: no "Claude said this" / attribution header, no blockquote wrapper
+- [IMPORTANT] PR feedback (findings, drafts, posted comments) is the one
+  format every skill and agent uses:
+  - [Conventional Comments](https://conventionalcomments.org/):
+    `**label (decorations):** subject`, then 1-3 sentences; ` ```suggestion `
+    block when it exactly replaces the anchored lines; `file:line` in drafts
+  - Posted: the comment only. No "Claude said this" / attribution header, no
+    blockquote wrapper
+  - Judicious: only what's worth the author's time. Drop duplicates of open
+    or declined threads, speculative questions, follow-up-only concerns
+    (→ ticket), nits CI/bots catch. Merge findings that share one fix
+  - Existing feedback: `pr-threads <pr>` (threads with status, reviews,
+    comments, my pending review)
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
   unrelated uncommitted changes
 

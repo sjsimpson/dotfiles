@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# pr-threads <pr> [-R owner/repo] [--json] — every piece of feedback on a PR.
+#
+# One line each: review threads (open / resolved / outdated, replies, last
+# author), review bodies, PR comments, and my own pending review's comments
+# (only visible to me). Bots are tagged [bot]. --json: same data, full
+# bodies, for skills to filter. Read-only.
+
+set -euo pipefail
+
+usage() { sed -n '3,8p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+pr="" repo="" json=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -R) repo=$2; shift 2 ;;
+    --json) json=1; shift ;;
+    -h|--help) usage ;;
+    *) pr=${1##*/pull/}; pr=${pr%%[/?#]*}; [[ $1 == */pull/* ]] && repo=${1#*github.com/} && repo=${repo%%/pull/*}; shift ;;
+  esac
+done
+[[ -n "$pr" ]] || usage
+[[ -n "$repo" ]] || repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+
+data=$(gh api graphql -F o="${repo%/*}" -F r="${repo#*/}" -F n="$pr" -f query='
+query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){
+  headRefOid
+  reviewThreads(first:100){nodes{isResolved isOutdated path line originalLine
+    comments(first:50){totalCount nodes{author{login __typename} body url createdAt}}}}
+  reviews(first:100){nodes{author{login __typename} state body url submittedAt
+    comments(first:100){nodes{path line originalLine body url}}}}
+  comments(first:100){nodes{author{login __typename} body url createdAt}}
+}}}')
+
+[[ -n "$json" ]] && { jq '.data.repository.pullRequest' <<<"$data"; exit 0; }
+
+jq -r '
+def who: (.author.login // "ghost") + (if .author.__typename == "Bot" then " [bot]" else "" end);
+def gist: (.body // "") | gsub("\\s+"; " ") | .[0:160];
+.data.repository.pullRequest as $p
+| "head \($p.headRefOid[0:8])",
+  ($p.reviewThreads.nodes[]
+    | (if .isResolved then "resolved" elif .isOutdated then "outdated" else "open" end) as $s
+    | .comments as $c
+    | "THREAD \($s) \(.path):\(.line // .originalLine) (\($c.nodes[0] | who), \($c.totalCount - 1) replies, last \($c.nodes[-1] | who)) — \($c.nodes[0] | gist)  \($c.nodes[0].url)"),
+  ($p.reviews.nodes[] | select(.state == "PENDING") | .comments.nodes[]
+    | "PENDING (mine) \(.path):\(.line // .originalLine) — \(gist)"),
+  ($p.reviews.nodes[] | select(.state != "PENDING" and (.body // "") != "")
+    | "REVIEW \(.state) \(who) — \(gist)  \(.url)"),
+  ($p.comments.nodes[] | "COMMENT \(who) — \(gist)  \(.url)")
+' <<<"$data"

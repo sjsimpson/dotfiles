@@ -47,8 +47,7 @@ git status --porcelain
 Per layer with a PR, unresolved only:
 
 ```bash
-gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{id isResolved isOutdated path line comments(first:20){nodes{author{login} body url}}}} reviews(last:50){nodes{author{login} state body url}}}}}' -F o=<owner> -F r=<repo> -F n=<pr>
-gh api 'repos/{owner}/{repo}/issues/<pr>/comments' --paginate --jq '[.[] | {user: .user.login, body, url: .html_url}]'
+pr-threads <pr> --json   # threads (isResolved/isOutdated), reviews, PR comments, full bodies
 ```
 
 Plus any claude-panel results passed in (result `.json` files or findings
@@ -100,7 +99,7 @@ Layer 1 · eng-1234-foo · PR #101 · mode: commit
 
 Then **Skips** (one line each with the reason, so the user can override),
 **Tickets** (existing ticket to comment on, or new sub-issue under which
-parent), **Draft replies** (Conventional Comments style), and the verification
+parent), **Draft replies** (global PR feedback rule), and the verification
 commands you'll run. Stop and wait. The user may approve all, edit actions, or
 approve per layer.
 

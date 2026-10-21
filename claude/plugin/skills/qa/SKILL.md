@@ -70,6 +70,6 @@ works out the steps, selectors, and edge cases from the code.
 ## 5. Wait and report
 
 Don't poll; the desk's reply wakes you ("queued (N ahead)" first if it's
-busy). Report the verdict, findings, and "Not tested". `BLOCKED` is never a
+busy). Report the verdict, findings, and "Not verified". `BLOCKED` is never a
 pass. If it's blocked on something you can fix (code, a better brief),
 fix it, commit, and send a new brief.
