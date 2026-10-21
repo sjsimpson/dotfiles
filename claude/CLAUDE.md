@@ -67,6 +67,10 @@
     (→ ticket), nits CI/bots catch. Merge findings that share one fix
   - Existing feedback: `pr-threads <pr>` (threads with status, reviews,
     comments, my pending review)
+- Big changes: one gh stack of small reviewable PRs. Only the bottom PR is
+  ready for review; upper layers stay drafts. Merge one layer at a time:
+  `gh stack rebase` → `gh stack push` → CI green → `gh stack merge
+  <bottom-pr> --yes`. Never merge the whole stack at once
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
   unrelated uncommitted changes
 

@@ -90,7 +90,7 @@ allowed=(
   mcp__claude_ai_Google_Calendar__list_events
   mcp__claude_ai_Gmail__search_threads mcp__claude_ai_Gmail__get_thread
   mcp__claude_ai_Sentry__search_issues
-  mcp__claude_ai_Granola__list_meetings
+  mcp__claude_ai_Google_Drive__read_file_content
   # whole server: plugin/.mcp.json runs it --read-only (no write actions)
   mcp__plugin_sjsimpson_basecamp
 )

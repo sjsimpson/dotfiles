@@ -62,7 +62,7 @@ ever clashes).
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home |
 | MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
-| Bin   | `basecamp-safe`    | CLI wrapper for the assistant: reads + message drafts (`--draft` forced, narrow flags); everything else refused. `assist` and `assistant-brief` deny raw `basecamp` and allow only this. Permissions live in those launchers, not the vault (Obsidian Sync skips `.claude/`) |
+| Bin   | `basecamp-safe`    | CLI wrapper for the assistant: reads + message drafts (`--draft` forced, narrow flags); everything else refused. `assistant` and `assistant-brief` deny raw `basecamp` and allow only this. Permissions live in those launchers, not the vault (Obsidian Sync skips `.claude/`) |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
 MCP server: `plugin/.mcp.json`.
@@ -199,9 +199,9 @@ One Claude Code session as a chief of staff across work and personal.
   `~/notes/assistant/` (`$ASSISTANT_HOME`): `CLAUDE.md` (rules + sources
   table), `priorities.md`, `briefs/`, `log/`. Swapping jobs = new sources
   table + connectors
-- **Start**: `assist` (alias) opens `claude -n assistant` there; reachable from
+- **Start**: `assistant` (zsh function) opens `claude -n assistant` there from anywhere; reachable from
   the phone via Remote Control
-- **Sources**: claude.ai connectors (Linear, Calendar, Gmail, Sentry, Granola)
+- **Sources**: claude.ai connectors (Linear, Calendar, Gmail incl. Gemini meeting notes, Drive for linked notes Docs, Sentry)
   plus `gh`, `herdr api snapshot`, and Obsidian tasks
 - **Safety**: read-only; never posts, sends, or marks anything read. Briefs
   hold titles and links only
