@@ -5,7 +5,9 @@ alias dotfiles="cd ~/.dotfiles && nvim"
 alias change="nvim ~/.zshrc"
 alias update="source ~/.zshrc"
 alias notes="cd ~/notes && nvim"
-alias assist="cd ~/notes/assistant && claude -n assistant"
+# Basecamp only via basecamp-safe (reads + drafts); rules live here, not in
+# the vault (Obsidian Sync skips .claude/)
+alias assist='cd ~/notes/assistant && claude -n assistant --disallowedTools "Bash(basecamp *)" --allowedTools "Bash(basecamp-safe:*)"'
 # QA desk: from anywhere in a repo, open Claude in its main worktree as
 # qa-desk-<repo>, the session other agents send QA briefs to
 qa-desk() {

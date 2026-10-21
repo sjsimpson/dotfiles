@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# basecamp-safe <args> — the basecamp CLI, reads + message drafts only.
+#
+# Reads: `<group> list|show`, `search`, `show`, `url`,
+# `checkins reminders|questions|answers`. Drafts: `messages create` with
+# --draft always added; only --attach --format -p/--project/--in --category
+# --message-board and output flags pass. Anything else is refused. For
+# agents whose raw `basecamp` is denied (a draft notifies nobody until a
+# human publishes it in Basecamp).
+
+set -euo pipefail
+
+refuse() { echo "basecamp-safe: refused: $*" >&2; exit 2; }
+[[ $# -gt 0 ]] || { sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+
+case "$1 ${2:-}" in
+  "search "*|"show "*|"url "*|"checkins reminders"|"checkins questions"|"checkins answers")
+    exec basecamp "$@" ;;
+  "messages create")
+    shift 2
+    args=()
+    while [[ $# -gt 0 ]]; do
+      case $1 in
+        --attach|--format|-p|--project|--in|--category|--message-board|-a|--account)
+          [[ $# -ge 2 ]] || refuse "$1 needs a value"
+          args+=("$1" "$2"); shift 2 ;;
+        --attach=*|--format=*|--project=*|--in=*|--category=*|--message-board=*|--account=*|-j|--json|-m|--md|-q|--quiet|--draft)
+          args+=("$1"); shift ;;
+        -) args+=("-"); shift ;;
+        -*) refuse "flag $1 not allowed on drafts" ;;
+        *) args+=("$1"); shift ;;
+      esac
+    done
+    exec basecamp messages create "${args[@]}" --draft ;;
+esac
+case "${2:-}" in
+  list|show) exec basecamp "$@" ;;
+esac
+refuse "basecamp $* (reads and message drafts only)"

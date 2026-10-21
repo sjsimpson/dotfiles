@@ -122,6 +122,8 @@ link bin/http-status "$HOME/.local/bin/http-status"
 link bin/pr-threads "$HOME/.local/bin/pr-threads"
 # the only way agents write to GitHub: pending-review comments, never submit
 link bin/pr-pending "$HOME/.local/bin/pr-pending"
+# assistant: Basecamp reads + message drafts only (raw basecamp denied)
+link bin/basecamp-safe "$HOME/.local/bin/basecamp-safe"
 # qa-tester's MCP server launcher (absolute path in agents/qa-tester.md)
 link bin/qa-browser "$HOME/.local/bin/qa-browser"
 # user-level, not plugin: plugin agents can't declare their own MCP servers

@@ -81,7 +81,7 @@ allowed=(
   "Write(./briefs/**)" "Edit(./briefs/**)"
   "Write(./weekly/**)" "Edit(./weekly/**)"
   "Bash(gh search prs:*)" "Bash(gh pr view:*)" "Bash(gh pr list:*)"
-  "Bash(herdr api snapshot:*)" "Bash(obsidian tasks:*)"
+  "Bash(herdr api snapshot:*)" "Bash(obsidian tasks:*)" "Bash(basecamp-safe:*)"
   "Bash(grep -rn:*)" "Bash(date:*)" "Bash(ls:*)"
   mcp__claude_ai_Linear__get_notifications mcp__claude_ai_Linear__list_issues
   mcp__claude_ai_Linear__get_issue
@@ -114,6 +114,7 @@ denied=(
   mcp__claude_ai_Linear__save_status_update mcp__claude_ai_Linear__save_project
   mcp__claude_ai_Linear__mark_notification
   mcp__claude_ai_Sentry__update_issue
+  "Bash(basecamp *)"
   "Edit(./snoozed.md)" "Write(./snoozed.md)"
   "Edit(./priorities.md)" "Write(./priorities.md)"
 )

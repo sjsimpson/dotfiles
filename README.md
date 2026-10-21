@@ -133,6 +133,8 @@ I used tmux before herdr. The config lives on the
   skills read it. `install.sh` links it into `~/.local/bin`
 - `pr-pending list|sync <pr>`: findings into my pending review, never
   submits; only touches comments it posted that I haven't edited
+- `basecamp-safe`: the `basecamp` CLI limited to reads + message drafts
+  (`--draft` forced); the assistant may run only this
 - `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile
   copy, headless); `install.sh` links it into `~/.local/bin`
 

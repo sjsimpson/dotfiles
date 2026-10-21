@@ -62,6 +62,7 @@ ever clashes).
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home |
 | MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
+| Bin   | `basecamp-safe`    | CLI wrapper for the assistant: reads + message drafts (`--draft` forced, narrow flags); everything else refused. `assist` and `assistant-brief` deny raw `basecamp` and allow only this. Permissions live in those launchers, not the vault (Obsidian Sync skips `.claude/`) |
 
 To add a skill: `plugin/skills/<name>/SKILL.md`. Agent: `plugin/agents/<name>.md`.
 MCP server: `plugin/.mcp.json`.
