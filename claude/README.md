@@ -107,7 +107,9 @@ agents, hooks) and its token cost.
   Claude writes review comments: into your pending review, marked
   `<!-- deep-review:<run> -->`, with a ledger of ids + exact bodies so
   re-runs only touch comments it posted that you haven't edited. Never
-  submits
+  submits. Public writes (`gh pr comment|review`, `gh api` comment writes,
+  POSTs, GraphQL mutations) hit `permissions.ask` in `settings.json`: you
+  get a prompt even in auto mode
 - **Reports**: [`plugin/reference/report.md`](plugin/reference/report.md),
   one section order (Verdict, Findings, Earlier asks, QA, Safety, Not
   verified) for `claude-panel`, `deep-review`, `qa-tester`, the QA desk

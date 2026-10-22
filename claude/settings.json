@@ -15,6 +15,14 @@
     "additionalDirectories": [
       "~/.dotfiles/claude/plugin",
       "~/screenshots"
+    ],
+    "ask": [
+      "Bash(gh api *comments* -F *)",
+      "Bash(gh api *comments* -f *)",
+      "Bash(gh api -X POST *)",
+      "Bash(gh api graphql *mutation*)",
+      "Bash(gh pr comment *)",
+      "Bash(gh pr review *)"
     ]
   },
   "hooks": {
