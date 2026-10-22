@@ -1,6 +1,6 @@
 ---
 name: deep-review
-description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report; this session then adds the findings to my pending GitHub review (never submits). Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
+description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report. Others' PRs: this session adds the findings to my pending GitHub review (never submits). My own PRs: no pending review; offers to fix the findings. Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
 argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [extra context]"
 ---
 
@@ -157,12 +157,12 @@ Write <report path> (not a scratchpad or /tmp) as the shared report
 mergeable now / needs X, with the path to merge), Findings (drafts per the
 global PR feedback rule, only ones worth the author's time), Earlier asks,
 QA per pass with screenshot paths, Safety (risky only), Not verified.
-Review mode: also write the findings that anchor to diff lines as
+Review mode, author isn't the user: also write the findings that anchor to diff lines as
 <report dir>/pr-<n>-findings.json ({"body": "<findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
 the report).
 Then SendMessage <reply-to>: one line, verdict, report path, findings.json
-path.
+path if any.
 ```
 
 ## 3b. In-session
@@ -172,9 +172,15 @@ and the Deliverable's SendMessage. Run claude-panel and qa from here; QA
 desk replies wake you. While it runs: no branch switch, no code edits
 (status mode: only when the user says so, after a `WIP: snapshot`).
 
-## 4. Pending review (review mode, you)
+## 4. Findings → pending review or fixes (you)
 
-When the agent reports (or 3b finishes), sync its findings:
+**My own PR**: no pending review. Findings → offer to fix them
+(`/address-pr-comments` with the report). Passing verdict → also offer
+`gh pr ready <n>` and adding merge prerequisites the review found to the PR
+body. Nothing without my OK.
+
+**Others' PR** (review mode): when the agent reports (or 3b finishes), sync
+its findings:
 
 ```bash
 pr-pending sync <n> -R <owner/repo> <report dir>/pr-<n>-findings.json \
@@ -185,9 +191,6 @@ Adds to the user's pending review (or starts one); on re-runs only
 updates/removes comments it posted that the user hasn't edited. Never
 submits. Add its counts (added / replaced / removed / skipped + why) and
 the review link under the report's Verdict.
-
-My own PR, passing verdict → offer: `gh pr ready <n>`, and adding merge
-prerequisites the review found to the PR body. Neither without my OK.
 
 ## 5. Cleanup (herdr)
 
@@ -209,7 +212,7 @@ gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName 
   ask (each layer is a full panel + QA)
 - Per layer: steps 1-4 as above (herdr), own worktree, agent and report,
   brief with the stack line. Dispatch all at once; the QA desk queues their
-  QA. Sync each layer's pending review as it reports
+  QA. Others' stack: sync each layer's pending review as it reports
 - Track the layers; each agent's message wakes you. When all are in (or
   blocked), write `$HOME/screenshots/<repo>/stack-<bottom head>/stack-review.md`
   as the shared report: Verdict per layer + overall; Findings merged across
@@ -227,11 +230,11 @@ This session works in `~/notes` (the assistant) → append to
 Any other session: skip (not its repo).
 
 Tell the user: agent name, worktree label, report path to expect (herdr).
-The agent's message wakes you; relay its verdict, path, and the
-pending-review counts + link.
+The agent's message wakes you; relay its verdict, path, and step 4's
+outcome.
 
 ## Never
 
 Post publicly, submit, push, approve, or edit code; write to prod data; run
 or brief a review without both claude-panel and qa (review mode). Your one
-GitHub write is `pr-pending sync`.
+GitHub write is `pr-pending sync` (others' PRs).

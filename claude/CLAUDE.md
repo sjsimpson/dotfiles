@@ -47,9 +47,10 @@
 
 - [IMPORTANT] Do not make comments, update pull requests, or push code changes unless
   I explicitly ask you to.
-  - Exception: `/deep-review` findings go to my pending review via
-    `pr-pending`, run by the dispatching session (never submit). Public
-    comments/submits only when I ask
+  - Pending reviews: only on others' PRs I review. Findings go to my
+    pending review via `pr-pending` (never submit), no need to ask
+  - My own PRs: no pending review. Report findings and offer to fix them
+  - Public comments/replies/submits: only when I ask
 - [IMPORTANT] Always use (except `WIP:` commits) [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
   `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
   build, ci, style, revert). Ticket ID as scope when known, e.g.

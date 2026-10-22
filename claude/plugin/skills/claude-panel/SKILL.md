@@ -121,9 +121,9 @@ Completion ping: `osascript -e 'display notification "PR #<n>: <k> findings" wit
 
 ## Step 4: Follow-ups (ONLY when the user asks)
 
-Offer in one line at the end: "Want a pending review, the checkbox ticked, or fixes applied?"
+Offer in one line at the end. My own PR: "Want fixes applied (or the checkbox ticked)?" (no pending review on my own PRs). Someone else's: "Want these in a pending review?"
 
-**Pending review** (invisible to others until the user submits in the UI):
+**Pending review** (others' PRs only; invisible to others until the user submits in the UI):
 
 - Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
 - Only diff lines anchor; others go in the review body. Each comment stands alone.
