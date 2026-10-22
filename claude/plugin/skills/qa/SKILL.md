@@ -60,6 +60,7 @@ Flows: <...>
 Async: <how to trigger; states to watch>
 Data: <what must exist, how to create it>
 Login: <saved session, or test credentials>
+Evidence: <dir the caller wants evidence in; default $HOME/screenshots/<repo>/<this worktree's branch, / → ->/>
 Out of scope: <anything deliberately not tested>
 ```
 

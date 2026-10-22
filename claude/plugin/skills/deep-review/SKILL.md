@@ -1,13 +1,23 @@
 ---
 name: deep-review
-description: Hand a PR to its own herdr worktree + Claude agent for a full review and in-app QA, reported back to this session. The agent always runs claude-panel AND qa, tests against real production data read-only where possible, adds its findings to my pending GitHub review (never submits), and never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
+description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report; this session then adds the findings to my pending GitHub review (never submits). Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
 argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [extra context]"
 ---
 
 # Deep review
 
-You dispatch; the agent does the work in its own worktree and pane. You never
-review, post, or edit anything yourself.
+Where it runs:
+
+- **In-session**: the PR's head branch is checked out in this session's
+  worktree and the user is working on it. You run the brief's steps
+  yourself (**In-session** below)
+- **herdr**: anything else (e.g. someone else's PR). The agent works in its
+  own worktree and pane; you dispatch and relay
+
+Why not a sub-agent: it can't start claude-panel's agents, and QA desk
+replies go to the parent session anyway. Panel lenses and QA already run
+outside this session's context. herdr: the agent is a named session you
+can drive in its pane.
 
 ## 0. Inputs
 
@@ -18,10 +28,11 @@ review, post, or edit anything yourself.
 - Private repo config: `~/.config/claude-repos/<repo>/review.md` (prod data source,
   setup notes, QA gotchas, risky areas). Read it; missing → say so, carry on
   without a prod pass (the report must then say prod wasn't checked)
-- Mode: `--status` (my own PR), else review. `--risky` adds on to either. Also
+- Mode: `--status` (my own PR), else review. Never pass or assume a mode
+  the user didn't give; ask (step 1). `--risky` adds on to either. Also
   risky, unasked, when the diff touches an area the repo config lists as
   risky: say so. `--stack` combines with any of them (see **Stack**)
-- Reply-to: this session's name (`ListAgents` shows it). No name → the agent
+- Reply-to (herdr): this session's name (`ListAgents` shows it). No name → the agent
   can't message back: tell the user to name the session, or rely on the
   report file only
 
@@ -30,6 +41,8 @@ review, post, or edit anything yourself.
 ```bash
 gh pr view <n> -R <owner/repo> --json number,title,author,headRefName,headRepositoryOwner,baseRefName,state,isDraft,reviewDecision,mergeStateStatus,body,url,files
 gh api user -q .login
+git -C <checkout> worktree list --porcelain   # where <head> is checked out
+git branch --show-current                      # this session's branch
 ```
 
 - Closed/merged → stop. Fork PR → stop: `qa` runs only same-repo code
@@ -40,8 +53,10 @@ gh api user -q .login
   the user (QA will block until it's started) before dispatching
 - Report path: `$HOME/screenshots/<repo>/<head, / → ->/pr-<n>-<review|status>.md`.
   Already exists → re-run: the brief's re-run line applies
+- Where: current branch = head → **In-session** (step 3b); else herdr
+  (step 2)
 
-## 2. Worktree + agent
+## 2. Worktree + agent (herdr)
 
 ```bash
 git -C <checkout> fetch -q origin <head>
@@ -49,9 +64,10 @@ HERDR_ENV=1 herdr worktree create --cwd <checkout> --branch <head> \
   --base origin/<head> --label "<ticket> <review|status>" --no-focus
 ```
 
-Branch already checked out in a worktree → reuse that worktree, don't
-create one. Pane id: from the create output, else
-`herdr pane list --workspace <id>`. Then write the brief (step 3) to
+Branch already checked out in another worktree → reuse it (the brief gets
+the shared-worktree line); new tab for the agent:
+`herdr tab create --workspace <id> --cwd <path> --label "<ticket> <mode>"`.
+Pane id: from the create output. Then write the brief (step 3) to
 `<report dir>/pr-<n>-brief.md` (kept for re-runs) and:
 
 ```bash
@@ -59,8 +75,10 @@ herdr agent start <agent> --kind claude --pane <pane> -- -n <agent>
 herdr agent prompt <agent> "$(cat <report dir>/pr-<n>-brief.md)"
 ```
 
-No `--wait`: it times out while the agent works. `herdr agent get <agent>`
-once to confirm it's working.
+No `--wait` on prompt: it times out while the agent works. Confirm it
+started: `herdr agent wait <agent> --until working --timeout 60000`
+(`agent get` can say idle right after a prompt; `herdr pane read <pane>`
+to see why it isn't working).
 
 ## 3. Brief
 
@@ -71,6 +89,8 @@ in this order.
 Task from the user (via <reply-to>): <review | status check> PR
 <owner/repo>#<n>, "<title>" (author <author>). Worktree on branch <head>.
 <extra context from the user, if any>
+<reused worktree: Worktree shared with <reply-to>. Don't switch branches or
+ edit files>
 <stack: Layer <i> of <N> (bottom → top: #a, #b, …). Review only this
  layer's diff vs <base>. Problems a lower layer introduced belong to it:
  note them, don't re-raise>
@@ -91,7 +111,8 @@ Setup
 
 Review (review mode)
 4. /sjsimpson:claude-panel <n>. Local only, post nothing
-5. /sjsimpson:qa, mostly UI/in-app. Both passes, neither optional:
+5. /sjsimpson:qa, mostly UI/in-app, brief Evidence: <report dir>. Both
+   passes, neither optional:
    a. Prod: read-only via the prod data tool. Find real cases the change
       affects (accounts, periods, records) and confirm the new behavior on
       each, by reproducing the shape locally or reasoning from the code.
@@ -121,10 +142,9 @@ Risky (only when risky) - read first
   automatically. Report gets a Submission safety section
 
 Hard rules
-- No push, approve, request changes, public comments, or code edits (status
-  mode: only as above). The one GitHub write: findings into the user's
-  pending review via `pr-pending` (below). Never submit it; a hook blocks
-  every other write
+- No GitHub writes at all: no push, approve, request changes, comments,
+  or pending review (<reply-to> syncs that). No code edits (status mode:
+  only as above)
 - Prod data read-only. Internal IDs only: no customer names, amounts,
   account numbers, or other customer details in the report
 - Don't block on questions: note assumptions and carry on. Hard blocker
@@ -137,20 +157,44 @@ Write <report path> (not a scratchpad or /tmp) as the shared report
 mergeable now / needs X, with the path to merge), Findings (drafts per the
 global PR feedback rule, only ones worth the author's time), Earlier asks,
 QA per pass with screenshot paths, Safety (risky only), Not verified.
-Pending review (review mode; after the report, which stays the source of
-truth): write the findings that anchor to diff lines as
+Review mode: also write the findings that anchor to diff lines as
 <report dir>/pr-<n>-findings.json ({"body": "<findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
-the report), then
-  pr-pending sync <n> -R <owner/repo> <findings.json> \
-    --ledger <report dir>/pr-<n>-pending-comments.json --run <ticket>-<head sha:8>
-It adds to the user's pending review (or starts one), and on re-runs only
-updates/removes comments it posted that the user hasn't edited. Put its
-counts (added / replaced / removed / skipped + why) and the review link in
-the report's Verdict.
-Then SendMessage <reply-to>: one line, verdict, pending-review counts +
-link, report path.
+the report).
+Then SendMessage <reply-to>: one line, verdict, report path, findings.json
+path.
 ```
+
+## 3b. In-session
+
+The brief (step 3) is your checklist; skip setup step 1 (already set up)
+and the Deliverable's SendMessage. Run claude-panel and qa from here; QA
+desk replies wake you. While it runs: no branch switch, no code edits
+(status mode: only when the user says so, after a `WIP: snapshot`).
+
+## 4. Pending review (review mode, you)
+
+When the agent reports (or 3b finishes), sync its findings:
+
+```bash
+pr-pending sync <n> -R <owner/repo> <report dir>/pr-<n>-findings.json \
+  --ledger <report dir>/pr-<n>-pending-comments.json --run <ticket>-<head sha:8>
+```
+
+Adds to the user's pending review (or starts one); on re-runs only
+updates/removes comments it posted that the user hasn't edited. Never
+submits. Add its counts (added / replaced / removed / skipped + why) and
+the review link under the report's Verdict.
+
+My own PR, passing verdict → offer: `gh pr ready <n>`, and adding merge
+prerequisites the review found to the PR body. Neither without my OK.
+
+## 5. Cleanup (herdr)
+
+When the user's done with the reviewer (herdr has no agent kill): worktree
+created for the review → `herdr worktree remove --workspace <id>`; reused
+worktree → `herdr tab close <tab>`. Report, brief, findings, ledger, and
+pending review stay.
 
 ## Stack (`--stack`)
 
@@ -163,8 +207,9 @@ gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName 
 
 - Bottom → top. One layer → plain run. More than 4 → state the count and
   ask (each layer is a full panel + QA)
-- Per layer: steps 1-3 as above, own worktree, agent and report, brief with
-  the stack line. Dispatch all at once; the QA desk queues their QA
+- Per layer: steps 1-4 as above (herdr), own worktree, agent and report,
+  brief with the stack line. Dispatch all at once; the QA desk queues their
+  QA. Sync each layer's pending review as it reports
 - Track the layers; each agent's message wakes you. When all are in (or
   blocked), write `$HOME/screenshots/<repo>/stack-<bottom head>/stack-review.md`
   as the shared report: Verdict per layer + overall; Findings merged across
@@ -174,17 +219,19 @@ gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName 
 - My own stack → offer `/address-pr-comments stack` with the layer reports
   and the summary
 
-## 4. Log + report
+## 6. Log + report
 
 This session works in `~/notes` (the assistant) → append to
 `~/notes/assistant/log/<YYYY-MM>.md`:
 `- <date>: <ticket> (#<n>) <mode> dispatched: herdr worktree "<label>", agent \`<agent>\``.
 Any other session: skip (not its repo).
 
-Tell the user: agent name, worktree label, report path to expect. The
-agent's message wakes you; relay its verdict and path.
+Tell the user: agent name, worktree label, report path to expect (herdr).
+The agent's message wakes you; relay its verdict, path, and the
+pending-review counts + link.
 
 ## Never
 
-Post, push, approve, or edit code yourself; write to prod data; brief an
-agent without both claude-panel and qa (review mode).
+Post publicly, submit, push, approve, or edit code; write to prod data; run
+or brief a review without both claude-panel and qa (review mode). Your one
+GitHub write is `pr-pending sync`.

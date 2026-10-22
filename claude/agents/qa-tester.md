@@ -76,8 +76,9 @@ caller did that and told you what's running.
    hunks (base from the brief, else `main`). Read the routes, components,
    actions, and jobs the flows touch: they tell you the steps, the states,
    and where bugs are likely. Code paths in findings refer to that checkout.
-4. **Evidence dir.** `$HOME/screenshots/<repo>/<branch>/qa-<YYYYMMDD-HHMM>/`
-   (branch `/` → `-`; outside a repo use `adhoc` for both). Create it with
+4. **Evidence dir.** `<brief's Evidence>/qa-<YYYYMMDD-HHMM>/`; no Evidence →
+   `$HOME/screenshots/<repo>/<branch>/qa-<YYYYMMDD-HHMM>/` (the Code
+   worktree's branch, `/` → `-`; outside a repo use `adhoc` for both). Create it with
    `mkdir -p`. **Every file a tool saves goes there, by absolute filename**:
    screenshots, video, `browser_network_request` bodies, downloads. Relative
    names land in the repo, unnamed ones loose in `~/screenshots`, and paths

@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 #
-# PreToolUse(Bash) backstop: Claude never submits a review or posts a public
-# PR comment. Pending-review writes go through `pr-pending` only (it never
-# sends an event). Exit 2 blocks the call; stderr goes back to Claude.
+# PreToolUse(Bash) backstop: submitting a review or posting a public PR
+# comment always prompts the user, even in auto mode, so it happens only when
+# they asked for it. Pending-review writes go through `pr-pending` (never
+# sends an event) and don't prompt.
 
 cmd=$(jq -r '.tool_input.command // ""')
 
 block() {
-  echo "blocked: $1. Pending-review comments go through pr-pending; submitting and public comments are the user's, in the GitHub UI" >&2
-  exit 2
+  jq -n --arg r "$1: public GitHub write, needs the user's OK. Pending-review comments go through pr-pending" \
+    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $r}}'
+  exit 0
 }
 
 grep -qE 'submitPullRequestReview|addPullRequestReviewComment|addComment[^a-zA-Z]|dismissPullRequestReview' <<<"$cmd" &&

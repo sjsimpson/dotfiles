@@ -48,7 +48,7 @@ commit and brief that sha.
 
 Fields: **from** (sender session), **code** (its worktree path), **commit**
 (sha), **base**, **apps**, **goal**, **flows**, **async**, **data**,
-**login**, **out of scope**. Missing code, commit, apps, or flows, or a
+**login**, **evidence** (dir), **out of scope**. Missing code, commit, apps, or flows, or a
 commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
 `incomplete brief: <what's missing>`.
 
@@ -73,7 +73,7 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
    it for each app the brief logs into; put the per-brief login steps it
    gives in the tester's Login field. It overrides a brief's Login
 5. Spawn `qa-tester` in the background with the brief, marked "Environment
-   (verified ready)", with `Code: <code path>` and `Base: <base>`. Its
+   (verified ready)", with `Code: <code path>`, `Base: <base>` and `Evidence: <evidence>`. Its
    report wakes you, and it stops itself on stalls. The user asks for status
    or a pause: `SendMessage` it. It doesn't answer when you're next woken,
    or they want it stopped now: stop it and reply `BLOCKED` with the
