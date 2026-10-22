@@ -127,7 +127,7 @@ Offer in one line at the end: "Want a pending review, the checkbox ticked, or fi
 
 - Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
 - Only diff lines anchor; others go in the review body. Each comment stands alone.
-- Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits (any other GitHub review/comment write prompts the user via a hook). Give its counts and link.
+- Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link.
 
 **Tick the template checkbox** (re-fetch body first — author may have edited):
 

@@ -32,7 +32,6 @@ Global rules, in short:
 ## settings.json
 
 - **Permissions**: `auto` mode; allow `http-status`, `pr-pending`
-- **Hooks**: `block-review-submit` before every Bash call (see Shared conventions)
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
 - **Env**: `CLAUDE_CODE_PLUGIN_DIRS` loads `plugin/` and moshi straight from disk
 - **Marketplace path**: `~/.dotfiles/claude`, kept portable. `claude plugin
@@ -108,10 +107,7 @@ agents, hooks) and its token cost.
   Claude writes review comments: into your pending review, marked
   `<!-- deep-review:<run> -->`, with a ledger of ids + exact bodies so
   re-runs only touch comments it posted that you haven't edited. Never
-  submits. Backstop: [`hooks/block-review-submit`](hooks/block-review-submit)
-  (PreToolUse on Bash) makes submitting, dismissing, `gh pr review|comment`
-  and REST writes to review/comment endpoints prompt you, even in auto mode,
-  in every session; Claude does them only when you ask
+  submits
 - **Reports**: [`plugin/reference/report.md`](plugin/reference/report.md),
   one section order (Verdict, Findings, Earlier asks, QA, Safety, Not
   verified) for `claude-panel`, `deep-review`, `qa-tester`, the QA desk
