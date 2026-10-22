@@ -1,16 +1,16 @@
 ---
 name: claude-panel
-description: Local, Claude-only PR review panel — parallel lens finders + repo `*-reviewer` agents, blind validation, plus a qa-tester run for same-repo UI PRs, report in chat; posts nothing to GitHub unless asked afterward. Use ONLY when the user explicitly asks (`/claude-panel [pr]`).
+description: Local, Claude-only PR review panel — parallel lens finders + repo `*-reviewer` agents, blind validation, plus a qa-tester run for same-repo UI PRs, report in chat; on others' PRs also adds the findings to my pending GitHub review (never submits); nothing else goes to GitHub unless asked. Use ONLY when the user explicitly asks (`/claude-panel [pr]`).
 argument-hint: "[pr-number | pr-url] (optional — defaults to current branch's PR)"
 ---
 
 # Claude Review Panel (local)
 
-Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file) does find → merge → blind-validate. Output is a **local report**. Nothing goes to GitHub unless the user asks after seeing it.
+Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file) does find → merge → blind-validate. Output is a **local report**; on others' PRs the findings also go into my pending review (Step 4). Nothing else goes to GitHub unless the user asks.
 
 ## Rules
 
-- **No GitHub writes by default.** Reads only. Pending review / checkbox tick / comments only on explicit request after the report (Step 4).
+- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → never a pending review. Checkbox tick / public comments only on explicit request.
 - **Read-only everywhere.** No edits, `pnpm install`, or test runs in any worktree — safe on fork PRs. One exception: Step 2b's QA run (same-repo PRs only), which runs the PR's code in the app via the `qa` skill.
 - Never touch the user's working tree for someone else's PR; use a disposable worktree.
 - Each Bash call is a fresh shell — start every call with `SCRATCH="${TMPDIR:-/tmp}"; SCRATCH="${SCRATCH%/}/claude-panel"`.
@@ -119,17 +119,17 @@ Save the full workflow result to `$SCRATCH/pr-<n>-<headSha:0:8>.json`, and appen
 
 Completion ping: `osascript -e 'display notification "PR #<n>: <k> findings" with title "claude-panel"' 2>/dev/null`.
 
-## Step 4: Follow-ups (ONLY when the user asks)
+## Step 4: Follow-ups
 
-Offer in one line at the end. My own PR: "Want fixes applied (or the checkbox ticked)?" (no pending review on my own PRs). Someone else's: "Want these in a pending review?"
+My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ticked)?" No pending review.
 
-**Pending review** (others' PRs only; invisible to others until the user submits in the UI):
+**Pending review** (others' PRs, automatic after the report unless the caller said local only; invisible to others until the user submits in the UI):
 
 - Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
 - Only diff lines anchor; others go in the review body. Each comment stands alone.
-- Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link.
+- Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 
-**Tick the template checkbox** (re-fetch body first — author may have edited):
+**Tick the template checkbox** (only when asked; re-fetch body first — author may have edited):
 
 ```bash
 gh api 'repos/{owner}/{repo}/pulls/<n>' --jq '.body // ""' > "$SCRATCH/pr-<n>-body.md"

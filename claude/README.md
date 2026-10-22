@@ -53,7 +53,7 @@ ever clashes).
 
 | Kind  | Name               | What                                                                    |
 | ----- | ------------------ | ----------------------------------------------------------------------- |
-| Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Same-repo UI PRs also get a QA run via the `qa` skill (apps, flows, async deps from the diff); verdict in the report. Report in chat; posts nothing unless asked |
+| Skill | `claude-panel`     | PR review panel: parallel Claude reviewers with distinct lenses, blind validation, then a skeptical fix / ticket / skip call per finding (worth it? realistic? fits codebase patterns?). Same-repo UI PRs also get a QA run via the `qa` skill (apps, flows, async deps from the diff); verdict in the report. Report in chat; others' PRs: findings also go into your pending review (`pr-pending`, never submitted); own PRs: offers fixes. Posts nothing publicly |
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments`. Local, no QA, works before PRs exist; with PRs and QA use `deep-review --stack` |
 | Skill | `deep-review`      | `/deep-review <pr> [--status] [--risky] [--stack]`: PR reviewed in this session if its branch is checked out here, else in its own herdr worktree + Claude agent, briefed to read every thread (`pr-threads`), run `claude-panel` and `qa` (prod data read-only first, generated local data only for what's new), and write the shared report to `~/screenshots/<repo>/<branch>/`; re-runs check earlier findings against posted threads. `--stack`: one agent per layer, then a stack-wide summary. Others' PRs: the dispatching session puts findings into your pending review via `pr-pending`; your own: offers fixes instead. Never submits or posts publicly. Offers `gh pr ready` on a passing own PR; herdr cleanup when you're done. Repo specifics from private `~/.config/claude-repos/<repo>/review.md` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
@@ -103,8 +103,9 @@ agents, hooks) and its token cost.
   when posted, judicious). Skills point there instead of restating it
 - **Existing feedback**: [`bin/pr-threads`](../bin/pr-threads), used by
   `claude-panel`, `address-pr-comments`, `deep-review`
-- **GitHub writes**: pending reviews only on others' PRs you review (own
-  PRs: findings → fixes). [`bin/pr-pending`](../bin/pr-pending) is the only way
+- **GitHub writes**: pending reviews only on others' PRs you review,
+  automatic from `claude-panel` / `deep-review` (own PRs: findings →
+  fixes). Public comments: drafted locally, posted only when you ask. [`bin/pr-pending`](../bin/pr-pending) is the only way
   Claude writes review comments: into your pending review, marked
   `<!-- deep-review:<run> -->`, with a ledger of ids + exact bodies so
   re-runs only touch comments it posted that you haven't edited. Never

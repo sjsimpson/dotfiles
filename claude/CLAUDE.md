@@ -47,10 +47,12 @@
 
 - [IMPORTANT] Do not make comments, update pull requests, or push code changes unless
   I explicitly ask you to.
-  - Pending reviews: only on others' PRs I review. Findings go to my
-    pending review via `pr-pending` (never submit), no need to ask
+  - Pending reviews: only on others' PRs I review. `/deep-review` and
+    `claude-panel` add findings via `pr-pending` without asking (never
+    submit), and always report them locally too
   - My own PRs: no pending review. Report findings and offer to fix them
-  - Public comments/replies/submits: only when I ask
+  - Public comments/replies/submits: draft locally (as
+    `address-pr-comments` does), post only when I ask
 - [IMPORTANT] Always use (except `WIP:` commits) [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
   `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
   build, ci, style, revert). Ticket ID as scope when known, e.g.
