@@ -1,7 +1,7 @@
 ---
 name: claude-panel
 description: Local, Claude-only PR review panel — parallel lens finders + repo `*-reviewer` agents, blind validation, plus a qa-tester run for same-repo UI PRs, report in chat; on others' PRs also adds the findings to my pending GitHub review (never submits); nothing else goes to GitHub unless asked. Use ONLY when the user explicitly asks (`/claude-panel [pr]`).
-argument-hint: "[pr-number | pr-url] (optional — defaults to current branch's PR)"
+argument-hint: "[pr-number | pr-url | --local] (optional — defaults to current branch's PR)"
 ---
 
 # Claude Review Panel (local)
@@ -21,6 +21,8 @@ Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file)
 First, alone: `ps -p $$ >/dev/null 2>&1 || echo SANDBOXED`. Sandboxed → tell the user the panel needs unsandboxed Bash and stop.
 
 Arg: PR number or URL (extract number); none → `gh pr view --json number -q .number`.
+
+**`--local`**: review the current branch's local commits instead of the PR head on GitHub, so fixes can change before pushing. Uncommitted changes → stop, ask for a `WIP:` commit. `headSha` = `git rev-parse HEAD`; base = the PR's base if one exists, else the gh stack parent (`gh stack view --json`), else the default branch. No PR → number `local-<branch>`, intent from `git log origin/<base>..HEAD`, empty raised list. Skip the REST pin and the draft/closed checks; `WORKDIR` = repo root; never a pending review (own work).
 
 ```bash
 gh api 'repos/{owner}/{repo}/pulls/<n>' --jq '{state, draft, title, base: .base.ref, head: .head.ref, headSha: .head.sha, author: .user.login, mergeable_state, body, fork: (.head.repo.full_name != .base.repo.full_name)}'
@@ -44,6 +46,7 @@ git fetch origin "refs/pull/<n>/head"            # separate fetch; combined brea
 [ "$(git rev-parse FETCH_HEAD)" = "<headSha>" ] || echo "HEAD MOVED — re-pin"
 ```
 
+- `--local` → only `git fetch origin "<base>"`; `WORKDIR` = repo root.
 - Current branch's PR, `HEAD == headSha`, clean tree → `WORKDIR` = repo root.
 - Else → `RUN=$(date +%Y%m%d-%H%M%S); git worktree add --detach "$SCRATCH/pr-<n>-$RUN-wt" <headSha>`; `WORKDIR` = that.
 
@@ -94,7 +97,7 @@ don't poll, its message wakes you.
 
 ## Step 3: Report (local)
 
-Re-pin head (`gh api .../pulls/<n> --jq .head.sha`). Moved → `git diff --name-only <reviewed> <new>`; mark findings in changed files "may be fixed/moved".
+Re-pin head (`gh api .../pulls/<n> --jq .head.sha`; `--local`: `git rev-parse HEAD`). Moved → `git diff --name-only <reviewed> <new>`; mark findings in changed files "may be fixed/moved".
 
 Print, in chat, the shared report (`report.md` in the plugin's `reference/` dir, `<this skill's base directory>/../../reference/report.md`), its sections as bold labels:
 

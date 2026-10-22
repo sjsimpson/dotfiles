@@ -1,7 +1,7 @@
 ---
 name: deep-review
-description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report. Others' PRs: this session adds the findings to my pending GitHub review (never submits). My own PRs: no pending review; offers to fix the findings. Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
-argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [extra context]"
+description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report. Others' PRs: this session adds the findings to my pending GitHub review (never submits). My own PRs: no pending review; offers to fix the findings. Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --fix (my own PR/layer, in-session: review + QA, fix, repeat until steady state, report before it's opened), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
+argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [--fix] [extra context]"
 ---
 
 # Deep review
@@ -31,7 +31,8 @@ can drive in its pane.
 - Mode: `--status` (my own PR), else review. Never pass or assume a mode
   the user didn't give; ask (step 1). `--risky` adds on to either. Also
   risky, unasked, when the diff touches an area the repo config lists as
-  risky: say so. `--stack` combines with any of them (see **Stack**)
+  risky: say so. `--stack` combines with any of them (see **Stack**).
+  `--fix`: my own PR or layer, checked out here (else stop); see **3c**
 - Reply-to (herdr): this session's name (`ListAgents` shows it). No name → the agent
   can't message back: tell the user to name the session, or rely on the
   report file only
@@ -168,13 +169,33 @@ path if any.
 ## 3b. In-session
 
 The brief (step 3) is your checklist; skip setup step 1 (already set up)
-and the Deliverable's SendMessage. Run claude-panel and qa from here; QA
+and the Deliverable's SendMessage. Run `claude-panel --local` (reviews the
+local commits) and qa from here; QA
 desk replies wake you. While it runs: no branch switch, no code edits
 (status mode: only when the user says so, after a `WIP: snapshot`).
 
+## 3c. Fix loop (`--fix`)
+
+In-session only, my own work; you asked for the fixes, so no decision-table
+gate. Never push. Round k (cap 10):
+
+1. Review + QA on local HEAD, as 3b (`claude-panel --local`, qa both passes)
+2. Fix: the panel's `fix` findings and QA bugs. Apply per
+   `address-pr-comments` Step 4 (owning branch, its commit mode,
+   Conventional Commits with the ticket scope, verify). `ticket` / `skip`
+   (separate effort, not worth it, codebase-wide) → not done, listed
+3. Steady state → stop: no `fix` findings and QA PASS, or only repeats of
+   earlier skips/tickets. Else next round on the new HEAD
+
+Report (shared template, report path from step 1 with `-fix`): per round
+one line (found / fixed / commits), final verdict, Ticket candidates (not
+created), Skips with reason, Not verified. Then offer: push (stack: `gh
+stack push`), `gh pr ready`, merge prerequisites into the PR body. Nothing
+without my OK.
+
 ## 4. Findings → pending review or fixes (you)
 
-**My own PR**: no pending review. Findings → offer to fix them
+**My own PR** (not `--fix`): no pending review. Findings → offer to fix them
 (`/address-pr-comments` with the report). Passing verdict → also offer
 `gh pr ready <n>` and adding merge prerequisites the review found to the PR
 body. Nothing without my OK.
@@ -210,6 +231,8 @@ gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName 
 
 - Bottom → top. One layer → plain run. More than 4 → state the count and
   ask (each layer is a full panel + QA)
+- `--fix` doesn't combine: fix the checked-out layer, then the next after
+  the user opens it (see the stack flow in global CLAUDE.md)
 - Per layer: steps 1-4 as above (herdr), own worktree, agent and report,
   brief with the stack line. Dispatch all at once; the QA desk queues their
   QA. Others' stack: sync each layer's pending review as it reports
