@@ -74,6 +74,10 @@
   ready for review; upper layers stay drafts. Merge one layer at a time:
   `gh stack rebase` → `gh stack push` → CI green → `gh stack merge
   <bottom-pr> --yes`. Never merge the whole stack at once
+  - Before opening a layer: `gh stack sync` → `/deep-review <pr> --fix` →
+    report; I open it
+  - Rebase stack branches only with `gh stack sync|rebase`, never plain
+    `git rebase` (stale saved base; recovery: plugin `reference/gh-stack.md`)
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
   unrelated uncommitted changes
 
