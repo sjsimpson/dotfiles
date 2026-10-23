@@ -159,7 +159,8 @@ mergeable now / needs X, with the path to merge), Findings (drafts per the
 global PR feedback rule, only ones worth the author's time), Earlier asks,
 QA per pass with screenshot paths, Safety (risky only), Not verified.
 Review mode, author isn't the user: also write the findings that anchor to diff lines as
-<report dir>/pr-<n>-findings.json ({"body": "<findings with no line>",
+<report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
+report.md: what was tested and how, then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
 the report).
 Then SendMessage <reply-to>: one line, verdict, report path, findings.json
@@ -208,8 +209,10 @@ pr-pending sync <n> -R <owner/repo> <report dir>/pr-<n>-findings.json \
   --ledger <report dir>/pr-<n>-pending-comments.json --run <ticket>-<head sha:8>
 ```
 
-Adds to the user's pending review (or starts one); on re-runs only
-updates/removes comments it posted that the user hasn't edited. Never
+Adds to the user's pending review (or starts one) and sets its body (what
+was tested); on re-runs only updates/removes comments and a body it posted
+that the user hasn't edited. Body skipped as not the agent's → tell the
+user; `--replace-body` only on their OK. Never
 submits. Add its counts (added / replaced / removed / skipped + why) and
 the review link under the report's Verdict.
 

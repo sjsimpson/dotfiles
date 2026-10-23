@@ -2,7 +2,7 @@
 """pr-pending — agent findings into my PENDING GitHub review. Never submits.
 
   pr-pending list <pr> [-R owner/repo]
-  pr-pending sync <pr> <findings.json> --ledger <file> [--run ID] [-R owner/repo] [--dry-run]
+  pr-pending sync <pr> <findings.json> --ledger <file> [--run ID] [-R owner/repo] [--dry-run] [--replace-body]
 
 findings.json: {"body": "...", "comments": [{"path", "line", "startLine"?,
 "side"?, "body"}]}. Every posted body gets a hidden <!-- deep-review:<run> -->
@@ -11,9 +11,12 @@ marker; the ledger records each comment's id and exact posted body.
 sync adds to my pending review (creates one, no event, if there's none). A
 comment is the agent's to update or delete only if it has the marker AND
 still matches its ledger body: anything I edited or wrote stays untouched.
-Lines not in the diff, and a body for a review that already exists, are
-skipped (keep them in the report). Prints added / replaced / removed /
-unchanged / skipped, with reasons, and the review link.
+The review body (what was tested, then findings with no line) is set the
+same way: on a new review, on an existing one with an empty body, or
+replacing the agent's own unedited body; a body I wrote or edited stays
+unless I said to replace it (--replace-body).
+Lines not in the diff are skipped (keep them in the report). Prints added /
+replaced / removed / unchanged / skipped, with reasons, and the review link.
 """
 
 import argparse, datetime, json, re, subprocess, sys
@@ -52,7 +55,7 @@ def state(repo, n):
     owner, name = repo.split("/")
     d = gh("""query($o:String!,$r:String!,$n:Int!){viewer{login}
       repository(owner:$o,name:$r){pullRequest(number:$n){id url headRefOid
-        reviews(states:PENDING,first:10){nodes{id url author{login}
+        reviews(states:PENDING,first:10){nodes{id url body author{login}
           comments(first:100){nodes{id path line originalLine body}}}}}}}""", o=owner, r=name, n=n)
     pr = d["repository"]["pullRequest"]
     mine = [r for r in pr["reviews"]["nodes"] if r["author"]["login"] == d["viewer"]["login"]]
@@ -71,7 +74,7 @@ def cmd_list(repo, n):
         print(f"{c['id']} {c['path']}:{c['line'] or c['originalLine']} [{tag}] {gist}")
 
 
-def cmd_sync(repo, n, findings_path, ledger_path, run, dry):
+def cmd_sync(repo, n, findings_path, ledger_path, run, dry, replace_body):
     findings = json.load(open(findings_path))
     try:
         ledger = json.load(open(ledger_path))
@@ -113,16 +116,25 @@ def cmd_sync(repo, n, findings_path, ledger_path, run, dry):
         todo.append(("remove", None, e))
 
     body = (findings.get("body") or "").strip()
+    body_op, posted_body = None, ledger.get("body")
     if body and review:
-        skipped.append("review body: a pending review already exists; GitHub won't add one, keep it in the report")
-        body = ""
+        have = review.get("body") or ""
+        if plain(have) == body:
+            body_op = "unchanged"
+            tally["unchanged"] += 1
+        elif replace_body or not have.strip() or (MARK_RE.search(have) and have == ledger.get("body")):
+            body_op = "update"
+        else:
+            skipped.append("review body: not the agent's recorded body (edited, or ledger predates it); left it")
 
     if dry:
         for op, f, e in todo:
             where = f"{(f or e)['path']}:{(f or e)['line']}"
             print(f"would {op} {where}")
-        if body:
+        if body and not review:
             print("would create pending review with body")
+        elif body_op == "update":
+            print("would update review body")
         for s in skipped:
             print(f"skip {s}")
         return
@@ -132,6 +144,16 @@ def cmd_sync(repo, n, findings_path, ledger_path, run, dry):
           input:{pullRequestId:$pr,commitOID:$sha,body:$body}){pullRequestReview{id url}}}""",
                pr=pr["id"], sha=pr["headRefOid"], body=f"{body}\n\n{marker}" if body else None)
         review = r["addPullRequestReview"]["pullRequestReview"]
+        posted_body = f"{body}\n\n{marker}" if body else None
+    elif body_op == "update":
+        try:
+            gh("""mutation($id:ID!,$body:String!){updatePullRequestReview(
+              input:{pullRequestReviewId:$id,body:$body}){pullRequestReview{id}}}""",
+               id=review["id"], body=f"{body}\n\n{marker}")
+            posted_body = f"{body}\n\n{marker}"
+            tally["replaced"] += 1
+        except RuntimeError as err:
+            skipped.append(f"review body: update failed: {err}")
 
     for op, f, e in todo:
         try:
@@ -166,7 +188,7 @@ def cmd_sync(repo, n, findings_path, ledger_path, run, dry):
                 keep.append(e)
 
     json.dump({"repo": repo, "pr": n, "run": run, "review": review and review["url"],
-               "comments": keep}, open(ledger_path, "w"), indent=2)
+               "body": posted_body, "comments": keep}, open(ledger_path, "w"), indent=2)
     print(", ".join(f"{v} {k}" for k, v in tally.items()) + f", {len(skipped)} skipped")
     for s in skipped:
         print(f"  skipped {s}")
@@ -182,13 +204,14 @@ def main():
     p.add_argument("--ledger")
     p.add_argument("--run", default=datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--replace-body", action="store_true")
     a = p.parse_args()
     repo, n = resolve(a.pr, a.repo)
     if a.cmd == "list":
         return cmd_list(repo, n)
     if not (a.findings and a.ledger):
         p.error("sync needs <findings.json> and --ledger")
-    cmd_sync(repo, n, a.findings, a.ledger, a.run, a.dry_run)
+    cmd_sync(repo, n, a.findings, a.ledger, a.run, a.dry_run, a.replace_body)
 
 
 if __name__ == "__main__":

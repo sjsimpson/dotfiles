@@ -40,6 +40,24 @@ Everything in scope you didn't verify, and why. A BLOCKED in-scope flow is
 never a pass
 ```
 
+## Pending review body
+
+When findings go into a pending review (`pr-pending`), the review body
+(`findings.json` `body`) leads with what was tested, then findings with no
+line:
+
+```
+**Tested** at <sha:8>
+- Prod data (read-only): <what each query checked → what it showed; internal IDs only>
+- QA: <flow / edge case → result>, one line each
+- Not tested: <what and why>
+
+<findings that can't anchor to a diff line, each per the PR feedback rule>
+```
+
+No customer details, file paths on my machine, or tool names. Re-runs
+update it (`pr-pending` replaces only its own unedited body).
+
 Chat-only reports (claude-panel) use the same section names and order as
 headings or bold labels. Tool-specific extras (claude-panel's
 Fix/Ticket/Skip groups, refuted findings, agents ran) go inside Findings or

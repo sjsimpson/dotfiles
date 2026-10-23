@@ -132,7 +132,9 @@ I used tmux before herdr. The config lives on the
   open/resolved/outdated, reviews, comments, my pending review); the review
   skills read it. `install.sh` links it into `~/.local/bin`
 - `pr-pending list|sync <pr>`: findings into my pending review, never
-  submits; only touches comments it posted that I haven't edited
+  submits; sets/updates the review body (what was tested); only touches
+  comments and a body it posted that I haven't edited (`--replace-body`
+  overrides, on my OK)
 - `basecamp-safe`: the `basecamp` CLI limited to reads + message drafts
   (`--draft` forced); the assistant may run only this
 - `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile
