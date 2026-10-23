@@ -202,7 +202,8 @@ without my OK.
 body. Nothing without my OK.
 
 **Others' PR** (review mode): when the agent reports (or 3b finishes), sync
-its findings:
+its findings. QA `BLOCKED` → sync nothing; tell the user what's blocked and
+troubleshoot here, then re-run:
 
 ```bash
 pr-pending sync <n> -R <owner/repo> <report dir>/pr-<n>-findings.json \

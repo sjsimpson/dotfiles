@@ -12,7 +12,9 @@ Head <sha:8> · <YYYY-MM-DD> · <mode, inputs: panel / QA desk / prod data / ...
 ## Verdict
 <approve | request changes> (status: mergeable now | needs X;
 QA: PASS | FAIL | BLOCKED). Never comment: any `(blocking)` finding or QA
-FAIL → request changes, else approve. One-paragraph why. Blocked → "Blocked on: <exactly
+FAIL → request changes, else approve. QA BLOCKED → no verdict and nothing
+to GitHub (no pending review sync); tell me in chat what's blocked so we
+troubleshoot, then re-run. One-paragraph why. Blocked → "Blocked on: <exactly
 what's missing and how to provide it>"
 
 ## Findings

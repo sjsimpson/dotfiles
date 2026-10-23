@@ -126,7 +126,7 @@ Completion ping: `osascript -e 'display notification "PR #<n>: <k> findings" wit
 
 My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ticked)?" No pending review.
 
-**Pending review** (others' PRs, automatic after the report unless the caller said local only; invisible to others until the user submits in the UI):
+**Pending review** (others' PRs, automatic after the report unless the caller said local only or QA is `BLOCKED`: then sync nothing, print the full report in chat with the blocker, and troubleshoot with the user; invisible to others until the user submits in the UI):
 
 - Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
 - Review body: the report template's **Pending review body** (verdict line, what was tested, panel + QA, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone.
