@@ -59,7 +59,7 @@ ever clashes).
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
 | Skill | `qa`               | Browser-test a change: commit, decide apps (incl. worker/queue/realtime deps), flows, async and data, send the brief to the repo's QA desk, relay its verdict. Never touches the main worktree. Used proactively after UI changes |
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
-| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home |
+| Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home. Not in the plugin: lives in `claude/assistant/skills/`, linked into `~/notes/assistant/.claude/skills/` by `install.sh`, so only the assistant loads it |
 | MCP   | `basecamp`         | Official 37signals [`basecamp-cli`](https://github.com/basecamp/basecamp-cli) server, `--read-only`. Auth once: `basecamp auth login`. The assistant reads it |
 | Bin   | `basecamp-safe`    | CLI wrapper for the assistant: reads + message drafts (`--draft` forced, narrow flags); everything else refused. `assistant` and `assistant-brief` deny raw `basecamp` and allow only this. Permissions live in those launchers, not the vault (Obsidian Sync skips `.claude/`) |
 
@@ -194,8 +194,9 @@ for reviews. Free and local; no account needed.
 
 One Claude Code session as a chief of staff across work and personal.
 
-- **Behavior** lives here (`plugin/skills/triage`, more to come); generic, no
-  work specifics
+- **Behavior** lives here (`assistant/skills/triage`, more to come); generic, no
+  work specifics. Linked into the assistant home's `.claude/skills/`, so
+  other sessions don't load it
 - **State and config** live in a private, synced Obsidian vault at
   `~/notes/assistant/` (`$ASSISTANT_HOME`): `CLAUDE.md` (rules + sources
   table), `priorities.md`, `briefs/`, `log/`. Swapping jobs = new sources

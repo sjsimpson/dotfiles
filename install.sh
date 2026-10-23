@@ -128,6 +128,10 @@ link bin/basecamp-safe "$HOME/.local/bin/basecamp-safe"
 link bin/qa-browser "$HOME/.local/bin/qa-browser"
 # user-level, not plugin: plugin agents can't declare their own MCP servers
 link claude/agents/qa-tester.md "$HOME/.claude/agents/qa-tester.md"
+# triage loads only in the assistant home (project skill), not everywhere
+if [[ -d "${ASSISTANT_HOME:-$HOME/notes/assistant}" ]]; then
+  link claude/assistant/skills/triage "${ASSISTANT_HOME:-$HOME/notes/assistant}/.claude/skills/triage"
+fi
 
 # Never let claude/git wait on a hidden prompt: no stdin, no git credential
 # prompts, 2 min cap per call (perl alarm: macOS has no `timeout`).
