@@ -214,7 +214,10 @@ was tested); on re-runs only updates/removes comments and a body it posted
 that the user hasn't edited. Body skipped as not the agent's → tell the
 user; `--replace-body` only on their OK. Never
 submits. Add its counts (added / replaced / removed / skipped + why) and
-the review link under the report's Verdict.
+the review link under the report's Verdict. Verdict: approve or request
+changes, never comment (any `(blocking)` finding or QA FAIL → request
+changes). Chat: the short form (report.md, after a sync), with the report
+path.
 
 ## 5. Cleanup (herdr)
 

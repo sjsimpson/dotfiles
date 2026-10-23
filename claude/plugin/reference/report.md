@@ -10,8 +10,9 @@ that doesn't apply; never rename one. Files go under
 Head <sha:8> · <YYYY-MM-DD> · <mode, inputs: panel / QA desk / prod data / ...>
 
 ## Verdict
-<approve | request changes | comment> (status: mergeable now | needs X;
-QA: PASS | FAIL | BLOCKED). One-paragraph why. Blocked → "Blocked on: <exactly
+<approve | request changes> (status: mergeable now | needs X;
+QA: PASS | FAIL | BLOCKED). Never comment: any `(blocking)` finding or QA
+FAIL → request changes, else approve. One-paragraph why. Blocked → "Blocked on: <exactly
 what's missing and how to provide it>"
 
 ## Findings
@@ -43,20 +44,29 @@ never a pass
 ## Pending review body
 
 When findings go into a pending review (`pr-pending`), the review body
-(`findings.json` `body`) leads with what was tested, then findings with no
-line:
+(`findings.json` `body`) is in my voice: casual, first person, like
+"2 nits, but otherwise looks reasonable".
 
 ```
-**Tested** at <sha:8>
-- Prod data (read-only): <what each query checked → what it showed; internal IDs only>
-- QA: <flow / edge case → result>, one line each
-- Not tested: <what and why>
+<verdict in one line: "Okay to merge, 2 nits" | "Don't merge yet: <why>">
+
+Tested:
+- Prod (read-only): <what I looked at and why, what it showed, what that
+  means for the change>, one bullet per check
+- Locally: <setup (e.g. prod-shaped data)>, then the flows and edge cases
+  I ran and how each went; group passing ones, give steps for anything odd
+- Didn't test <what>, only if it matters
 
 <findings that can't anchor to a diff line, each per the PR feedback rule>
 ```
 
-No customer details, file paths on my machine, or tool names. Re-runs
-update it (`pr-pending` replaces only its own unedited body).
+No bold "Tested" header, no commit SHA (the run marker and ledger track
+the head). Internal IDs only; no customer details, local paths, or tool
+names. Re-runs update it (`pr-pending` replaces only its own unedited body).
+
+After a sync, chat gets the verdict, the pending review link, sync counts,
+and a short summary (findings one line each); the full report stays in its
+file.
 
 Chat-only reports (claude-panel) use the same section names and order as
 headings or bold labels. Tool-specific extras (claude-panel's

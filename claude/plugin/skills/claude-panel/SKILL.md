@@ -99,9 +99,9 @@ don't poll, its message wakes you.
 
 Re-pin head (`gh api .../pulls/<n> --jq .head.sha`; `--local`: `git rev-parse HEAD`). Moved → `git diff --name-only <reviewed> <new>`; mark findings in changed files "may be fixed/moved".
 
-Print, in chat, the shared report (`report.md` in the plugin's `reference/` dir, `<this skill's base directory>/../../reference/report.md`), its sections as bold labels:
+Build the shared report (`report.md` in the plugin's `reference/` dir, `<this skill's base directory>/../../reference/report.md`), its sections as bold labels. Print it in chat, except when Step 4 syncs a pending review: then write it to `~/screenshots/<repo>/<branch>/pr-<n>-panel.md` and chat gets the short form (report.md, after a sync).
 
-1. **Verdict**: would comment / approve / request changes (advisory only), plus the banner (sensitive / large / conflicted / head moved), if any.
+1. **Verdict**: approve / request changes, never comment (advisory only; any `(blocking)` finding or QA FAIL → request changes, else approve), plus the banner (sensitive / large / conflicted / head moved), if any.
 2. **Findings** (confirmed + codified), grouped by `action`, then severity, then confidence:
    - **Fix**: `**path:line** [sources · severity · conf] — claim` + one-line evidence + `fix` as a code block when present
    - **Ticket** (codebase-wide): same line + `note` (the pattern and where else it applies)
@@ -129,7 +129,7 @@ My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ti
 **Pending review** (others' PRs, automatic after the report unless the caller said local only; invisible to others until the user submits in the UI):
 
 - Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
-- Review body: the report template's **Pending review body** (what was tested at `headSha`, panel + QA, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone.
+- Review body: the report template's **Pending review body** (verdict line, what was tested, panel + QA, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone.
 - Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 
 **Tick the template checkbox** (only when asked; re-fetch body first — author may have edited):
