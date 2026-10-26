@@ -17,8 +17,12 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
 - **Never push** (`git push`, `gh stack push|submit|sync`) and never resolve
   threads or re-request review unless asked. Draft replies are shown
   locally; post them only when the user asks
-- **Ticket paper trail.** Never edit an existing ticket's title, description,
-  or comments. Updates are new comments starting `**Update YYYY-MM-DD:**`
+- **Ticket paper trail.** Spec changes follow `reference/specs.md`
+  (`<this skill's base directory>/../../reference/`) Edits:
+  a started ticket gets an appended `## Update MM-DD-YYYY` (strike, don't
+  delete) plus a `Spec updated:` comment; never rewrite the title or edit
+  existing comments. Progress notes (not spec changes) are plain dated
+  comments
 - Follow the user's global git rules (WIP commit of existing work first,
   Conventional Commits with the ticket ID as scope)
 
@@ -130,12 +134,16 @@ end.
 Linear, for approved ticket items:
 
 - **Existing ticket fits** (the layer's ticket, or one found via search):
-  `save_comment` with `**Update YYYY-MM-DD:**` + what and why + PR link
+  scope change → specs.md Edits (description update + `Spec updated:`
+  comment); otherwise `save_comment` with `**Update MM-DD-YYYY:**` + what
+  and why + PR link
 - **Otherwise**: `save_issue` as a sub-issue (`parentId` = the layer's ticket,
   same team), title = the improvement, description = pattern, where it
-  applies (`path:line` list), origin PR link. Dated, no edits to the parent
-- Also add a dated comment on the layer's ticket for any scope change made in
-  this pass (e.g., "fixed X here; propagation tracked in ENG-1240")
+  applies (`path:line` list), origin PR link, shaped per `reference/specs.md`.
+  No edits to the parent's description
+- Scope changed in this pass → update the layer's ticket per specs.md Edits
+  (e.g., "fixed X here; propagation tracked in ENG-1240")
+- All ticket text in `reference/voice.md`'s voice
 
 ## Step 6: Report
 

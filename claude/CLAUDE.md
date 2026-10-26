@@ -74,6 +74,9 @@
     (→ ticket), nits CI/bots catch. Merge findings that share one fix
   - Existing feedback: `pr-threads <pr>` (threads with status, reviews,
     comments, my pending review)
+- Writing/editing a Linear issue or doc → plugin `reference/specs.md`;
+  anything written as me → `reference/voice.md`. Show the draft before
+  `save_issue`
 - Big changes: one gh stack of small reviewable PRs. Only the bottom PR is
   ready for review; upper layers stay drafts. Merge one layer at a time:
   `gh stack rebase` → `gh stack push` → CI green → `gh stack merge

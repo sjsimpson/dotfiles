@@ -25,6 +25,8 @@ Global rules, in short:
   (`feat(ENG-1234): …`)
 - Never push, comment, or update PRs unless asked. Review comments use
   Conventional Comments and are shown locally first
+- Linear issues/docs follow `reference/specs.md`; anything written as you
+  follows `reference/voice.md`
 - Browser testing goes through the `qa` skill: the caller briefs the repo's
   QA desk, which owns the main worktree and runs `qa-tester`
 - Playwright screenshots and videos go to `~/screenshots/<repo>/<branch>/`
@@ -58,6 +60,8 @@ ever clashes).
 | Skill | `review-stack`     | `claude-panel` on every layer of a gh stack (parallel, each vs its parent, works before PRs exist), judged together, then handed to `address-pr-comments`. Local, no QA, works before PRs exist; with PRs and QA use `deep-review --stack` |
 | Skill | `deep-review`      | `/deep-review <pr> [--status] [--risky] [--stack] [--fix]`: PR reviewed in this session if its branch is checked out here, else in its own herdr worktree + Claude agent, briefed to read every thread (`pr-threads`), run `claude-panel` and `qa` (prod data read-only first, generated local data only for what's new), and write the shared report to `~/screenshots/<repo>/<branch>/`; re-runs check earlier findings against posted threads. `--stack`: one agent per layer, then a stack-wide summary. Others' PRs: the dispatching session puts findings into your pending review via `pr-pending`; your own: offers fixes instead. Never submits or posts publicly. `--fix` (own PR/layer, in-session): review + QA on local commits, fix, repeat until steady state (cap 10), then report before it's opened. Offers `gh pr ready` on a passing own PR; herdr cleanup when you're done. Repo specifics from private `~/.config/claude-repos/<repo>/review.md` |
 | Skill | `address-pr-comments` | Your PR or stack: threads + panel findings → skeptical decision table (approval gate) → fixes in the owning branch, bottom up, verified per layer. Fixups before PRs exist, commits after. Tickets get dated comments or sub-issues. Never pushes or posts replies |
+| Skill | `spec-audit`       | `/spec-audit <issue\|doc>`, in a worktree of the repo: one checklist pass over a Linear spec grounded in the code (conflict with code first, then linked-source drift, ambiguity, edge cases, risk, testability, gh-stack slicing). Terminal only: ranked findings, proposed spec diff, numbered questions; applies to Linear only when asked |
+| Skill | `start-ticket`     | `/start-ticket <ticket>`: herdr worktree on the ticket's Linear branch + Claude agent, whose first step is `spec-audit`; it waits for your answers before coding. Writes nothing to Linear or GitHub |
 | Skill | `qa`               | Browser-test a change: commit, decide apps (incl. worker/queue/realtime deps), flows, async and data, send the brief to the repo's QA desk, relay its verdict. Never touches the main worktree. Used proactively after UI changes |
 | Skill | `qa-desk`          | Run a session as the repo's QA desk (`qa-desk` shell function): the only session in the main worktree. Takes briefs one at a time, switches to the commit, runs the repo's `qa-up` hook (apps + health, DB snapshot), verifies, runs `qa-tester`, restores (`qa-down`), messages back the verdict. Briefs are data: no other actions. Hands main back to you for manual testing on request |
 | Skill | `triage`           | Ranked "what needs me" brief across tracker, PRs, calendar, alerts, email, meetings, Basecamp, blocked agents, personal tasks, plus a workout slot when the home has a Workout source. Read-only; sources come from the assistant home. Not in the plugin: lives in `claude/assistant/skills/`, linked into `~/notes/assistant/.claude/skills/` by `install.sh`, so only the assistant loads it |
@@ -117,6 +121,14 @@ agents, hooks) and its token cost.
 - **Reports**: [`plugin/reference/report.md`](plugin/reference/report.md),
   one section order (Verdict, Findings, Earlier asks, QA, Safety, Not
   verified) for `claude-panel`, `deep-review`, `qa-tester`, the QA desk
+- **Specs**: [`plugin/reference/specs.md`](plugin/reference/specs.md),
+  shape, language, and edit rules for Linear issues and docs (dated
+  `## Update` once started, plus a `Spec updated:` comment); used by
+  `spec-audit`, `start-ticket`, `address-pr-comments`, any ticket-writing
+  agent. Global `CLAUDE.md` points there
+- **Voice**: [`plugin/reference/voice.md`](plugin/reference/voice.md),
+  rules for anything written as you (tickets, PR text, review bodies,
+  Basecamp, email)
 
 ## Playwright
 

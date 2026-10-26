@@ -46,8 +46,8 @@ never a pass
 ## Pending review body
 
 When findings go into a pending review (`pr-pending`), the review body
-(`findings.json` `body`) is in my voice: casual, first person, like
-"2 nits, but otherwise looks reasonable".
+(`findings.json` `body`) is in my voice (`voice.md`), like "2 nits, but
+otherwise looks reasonable".
 
 ```
 <verdict in one line: "Okay to merge, 2 nits" | "Don't merge yet: <why>">
