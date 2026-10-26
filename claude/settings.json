@@ -10,11 +10,16 @@
     "defaultMode": "auto",
     "allow": [
       "Bash(http-status:*)",
-      "Bash(pr-pending:*)"
+      "Bash(pr-pending:*)",
+      "Edit(~/.dotfiles/**)",
+      "Edit(~/notes/**)"
     ],
     "additionalDirectories": [
       "~/.dotfiles/claude/plugin",
       "~/screenshots"
+    ],
+    "ask": [
+      "Edit(~/.dotfiles/claude/settings.json)"
     ]
   },
   "hooks": {
