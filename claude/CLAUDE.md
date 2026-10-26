@@ -41,7 +41,9 @@
   working there (`ListAgents`); none running → tell me the exact change.
   Never edit, then hand off
 - Exception: the `dotfiles` session (`~/.dotfiles`) also owns my
-  environment: `~/notes`, `~/.config`, `~/.claude`, `~/env.zsh`
+  environment: `~/.config`, `~/.claude`, `~/env.zsh`, and the config side of
+  `~/notes`: `assistant/CLAUDE.md`, `personal/dotfiles/`. The `assistant`
+  session (`~/notes/assistant`) owns all other `~/notes` content
 - Edits = source/config changes. Tool side effects (DB writes, caches, dev
   server files, QA desk worktree switches) are fine
 
