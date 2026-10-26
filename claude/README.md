@@ -209,7 +209,9 @@ One Claude Code session as a chief of staff across work and personal.
   hold titles and links only
 - **Scheduled runs** ([`bin/assistant-brief`](../bin/assistant-brief), via
   launchd; missed runs fire on wake, skipped if off or already done):
-  - 08:30 daily: brief (`/triage`; weekends `/triage personal`)
+  - 08:30 daily: brief (`/triage`; weekends `/triage personal`). First
+    workday of the week adds **Week start** when the home has that routine:
+    a team check-in draft + proposed `priorities.md` changes (confirm first)
   - 16:45 Mon-Fri: wind-down (`/triage winddown`: shipped, still open,
     tomorrow), appended to the day's brief. Only fires 16:00-22:00, so a
     missed run doesn't land the next morning. `assistant-brief winddown`

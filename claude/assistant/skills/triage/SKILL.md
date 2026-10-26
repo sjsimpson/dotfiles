@@ -78,6 +78,24 @@ backup, each inside the source's facility hours or suited to its weather
 times. Hours/weather unreachable → suggest from the calendar alone, note it
 under **Gaps**.
 
+## 4b. Week start
+
+Only in the default brief (not `quick`, `personal`, `winddown`, `prep`), and
+only if the home's **Routines** has a **Week start** entry. Runs on the first
+workday brief of the ISO week: no earlier brief this week has a `## Week
+start` section, and today isn't a holiday or all-day OOO on the calendar
+(skip; the next workday's brief picks it up).
+
+Follow the entry for inputs and where the answer goes. Usual inputs:
+`priorities.md`, last week's `weekly/` prep file, open PRs and reviews,
+assigned issues. Output, in the brief and in chat:
+
+1. **Check-in draft**: the answer, in the voice the entry asks for. Draft
+   only; never post
+2. **Priorities**: proposed `priorities.md` changes for the week (add / drop
+   / reorder, one line each with why). Never edit `priorities.md` here; the
+   user confirms in chat first
+
 ## 5. Output
 
 Each item, one line: `- [ID/title](link) · why it's here · suggested action`.
@@ -88,7 +106,7 @@ bodies, PII, amounts, or secrets).
   `_HH:MM_` line, plus ` · personal` in that mode). If it exists, append `## HH:MM update` with only what
   changed. Then prune expired `snoozed.md` lines
 - Print a short version in chat: **Now** and **Today** in full, counts for the
-  rest, then **Focus**, **Workout**, then **Gaps**
+  rest, then **Focus**, **Workout**, **Week start** (if it ran), then **Gaps**
 
 **`quick`**: same gathering and ranking, no file writes. Print:
 
