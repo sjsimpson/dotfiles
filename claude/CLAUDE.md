@@ -31,6 +31,8 @@
 - Comments: none by default. Add only when asked, or when code is surprising /
   a workaround the next engineer would misread or "fix". Intent, rationale,
   review context → PR/commit, not comments. Unsure → leave out, mention in chat
+- Before writing or reviewing code, load the repo's conventions skills (e.g.
+  `patterns`) and read the sections the change touches
 
 ## Scope
 

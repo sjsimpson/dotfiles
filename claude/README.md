@@ -18,6 +18,7 @@ Global rules, in short:
 
 - Be terse, including in commits and plans
 - Plans end with a list of open questions
+- Before writing or reviewing code, load the repo's conventions skills
 - Commit existing work as `WIP: <name>` before making changes. That format is
   deliberately not Conventional Commits, so it has to be squashed before merge
 - All other commits use Conventional Commits, with the ticket ID as scope
