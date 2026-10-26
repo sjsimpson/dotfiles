@@ -131,6 +131,8 @@ link claude/agents/qa-tester.md "$HOME/.claude/agents/qa-tester.md"
 # triage loads only in the assistant home (project skill), not everywhere
 if [[ -d "${ASSISTANT_HOME:-$HOME/notes/assistant}" ]]; then
   link claude/assistant/skills/triage "${ASSISTANT_HOME:-$HOME/notes/assistant}/.claude/skills/triage"
+  # memory in the synced vault (Obsidian Sync skips dot-folders, so link this)
+  link claude/assistant/settings.json "${ASSISTANT_HOME:-$HOME/notes/assistant}/.claude/settings.json"
 fi
 
 # Never let claude/git wait on a hidden prompt: no stdin, no git credential

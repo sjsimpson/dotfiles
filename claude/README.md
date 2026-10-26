@@ -200,8 +200,9 @@ One Claude Code session as a chief of staff across work and personal.
   other sessions don't load it
 - **State and config** live in a private, synced Obsidian vault at
   `~/notes/assistant/` (`$ASSISTANT_HOME`): `CLAUDE.md` (rules + sources
-  table), `priorities.md`, `briefs/`, `log/`. Swapping jobs = new sources
-  table + connectors
+  table), `priorities.md`, `briefs/`, `log/`, `memory/` (auto memory, via
+  `assistant/settings.json` `autoMemoryDirectory`, linked by `install.sh`).
+  Swapping jobs = new sources table + connectors
 - **Start**: `assistant` (zsh function) opens `claude -n assistant` there from anywhere; reachable from
   the phone via Remote Control
 - **Sources**: claude.ai connectors (Linear, Calendar, Gmail incl. Gemini meeting notes, Drive for linked notes Docs, Sentry)

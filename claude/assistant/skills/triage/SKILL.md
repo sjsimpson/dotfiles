@@ -36,6 +36,12 @@ Query every source in parallel (one message, many tool calls). Per source:
 - Metadata over bodies: titles, IDs, authors, states, links. Open a body only
   when you can't rank without it
 - A source that fails or isn't connected: note it under **Gaps**, keep going
+- Carried-over items: re-check each one's live state in its source; never
+  carry an item forward on the last brief's word. The user reports only
+  completions you can't see. An item you can't see, open 2+ briefs: ask once
+  ("still open?")
+- Before naming **Focus** or any "do next" item, check it live (e.g. PR
+  review state) so you don't recommend something already done
 
 ## 3. Snoozes
 
