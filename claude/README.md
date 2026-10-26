@@ -34,10 +34,10 @@ Global rules, in short:
 
 ## settings.json
 
-- **Permissions**: `auto` mode; allow `http-status`, `pr-pending`, edits in
-  `~/.dotfiles` and `~/notes`; ask before editing `claude/settings.json`
-  itself. Auto mode can still skip skill-file edits ("no verdict"): switch
-  to accept-edits for those
+- **Permissions**: `auto` mode; allow `http-status`, `pr-pending`; ask
+  before editing `claude/settings.json` itself. Auto mode can skip
+  skill-file edits ("no verdict"; allow rules don't help): switch to
+  accept-edits for those
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
 - **Env**: `CLAUDE_CODE_PLUGIN_DIRS` loads `plugin/` and moshi straight from disk
 - **Marketplace path**: `~/.dotfiles/claude`, kept portable. `claude plugin
