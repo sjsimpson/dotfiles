@@ -9,8 +9,8 @@ argument-hint: "<linear issue ID | issue URL | doc URL>"
 Find what's wrong or missing in a spec before anyone builds it. Read-only:
 no code edits, no Linear writes unless the user asks.
 
-Rules: `<this skill's base directory>/../../reference/specs.md` (Shape,
-Language, Edits, Audit flags). Read it first.
+Rules: `specs.md` (Shape, Language, Edits, Audit flags) and `voice.md`, both
+in `<this skill's base directory>/../../reference/`. Read both first.
 
 ## 1. Load the spec
 
@@ -58,14 +58,21 @@ or the review; drop style nits.
 
 1. **Verdict**: ready to build / ready after the questions / needs rework,
    one line why
-2. **Findings**: ranked (conflict-with-code first, then by impact), one line
-   each plus `file:line`
-3. **Proposed spec diff**: the spec rewritten per specs.md Shape and
-   Language, as a diff against the current text. Started ticket → as a
-   `## Update MM-DD-YYYY` block plus the `Spec updated:` comment, never a
-   rewrite
+2. **Findings**: one plain sentence each, then its `file:line` evidence.
+   Every conflict-with-code finding, always. The rest: top ~5 by impact,
+   then "N more on request"
+3. **Proposed spec**: written as the user, per `voice.md` (normal prose,
+   never terse or compressed, whatever the session's style), shaped per
+   specs.md. The code evidence stays in the findings; the spec keeps only
+   the 1-3 names a builder needs. Show it as a diff against the current
+   text. Started ticket → an `## Update MM-DD-YYYY` block plus the
+   `Spec updated:` comment, never a rewrite
 4. **Questions**: numbered, each with who should answer
 5. **Not checked**: unreachable sources, code you couldn't find
 
-Then offer in one line to apply the diff to Linear. Only on the user's OK:
-apply it per specs.md Edits, in `voice.md`'s voice.
+Before printing, reread the proposed spec against `voice.md` and its
+samples. Anything that reads like a checklist dump or audit output: rewrite
+it.
+
+Then offer in one line to apply the diff to Linear; apply it per specs.md
+Edits only on the user's OK.

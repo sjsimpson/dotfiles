@@ -15,10 +15,11 @@ Issues. Skip a section that would be empty, except **Problem** and **Scope**.
 
 - **Title**: the outcome, imperative, ≤70 chars. "Retry failed webhook
   deliveries", not "Webhook issue"
-- **Problem**: who hits it and what goes wrong, 1-3 sentences, with code refs
-  (`path/to/file.ts:42`, `functionName`)
-- **Scope**: checkboxes, each one testable on its own. Acceptance criteria use
-  "must"; elsewhere plain language
+- **Problem**: prose, first person (`voice.md`): who hits it, what goes
+  wrong, and why it matters. A few sentences; code names only where a
+  builder needs them (1-3)
+- **Scope**: checkboxes, each one checkable as written. Plain language;
+  "must" is optional, for the criterion that can't bend, never on every line
 - **Out of scope**: what a reader might assume is included but isn't
 - **Accepted risks** (optional): known gaps we're shipping with, and why
 - **Open questions**: numbered, each with an owner. `@name` notifies them in
@@ -33,13 +34,14 @@ Made-up example:
 
 ```markdown
 ## Problem
-Partners whose webhook endpoint is briefly down lose events: `deliverWebhook`
-(`webhooks/deliver.ts:58`) logs the 5xx and drops the payload.
+When a partner's webhook endpoint blips, we lose their events for good:
+`deliverWebhook` logs the 5xx and drops the payload. Partners then ask us
+why their data is missing, and we can't replay it.
 
 ## Scope
-- [ ] Failed deliveries must retry 5 times with exponential backoff (1m → 16m)
-- [ ] After the last retry, the event must show as `failed` in the partner log
-- [ ] Retries must not reorder events for the same partner
+- [ ] Failed deliveries retry 5 times with backoff (1m → 16m)
+- [ ] After the last retry, the event shows as `failed` in the partner log
+- [ ] Retries must never reorder events for the same partner
 
 ## Out of scope
 - Manual replay UI (follow-up)
@@ -50,11 +52,14 @@ Partners whose webhook endpoint is briefly down lose events: `deliverWebhook`
 
 ## Language
 
-- One term per concept; use the codebase's names, in backticks
+Voice comes first (`voice.md`): it should read like I wrote it, not like
+audit output. Within that:
+
+- One term per concept, matching the code's names
 - Concrete values: "5 retries, 1m → 16m", not "a few retries"
 - Name the actor: "the worker retries", not "it is retried"
-- Every "if" has its "else"
-- Say whether a list is exhaustive ("only these 3 states")
+- A real branch says what happens on both sides
+- Say whether a list is exhaustive when it matters ("only these 3 states")
 - No hedges in scope: "something like…", "maybe", "not sure" go to **Open
   questions** with an owner
 
@@ -91,4 +96,4 @@ What `spec-audit` calls out:
   spec is missing or contradicts
 - Empty or one-line descriptions
 - Hedged scope ("or something?", "not sure")
-- Untestable criteria, unnamed actors, ifs without elses
+- Untestable criteria, unnamed actors, real branches missing a side
