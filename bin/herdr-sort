@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+"""herdr-sort [--dry-run] — keep each repo's worktrees in sidebar blocks.
+
+Inside every repo group, project worktrees come first and reviews (label
+contains " review", as deep-review names them) last; relative order is kept
+otherwise. herdr appends new worktrees to the end of their group, so a new
+project would land below the reviews. Idempotent: run it after creating a
+worktree. herdr has no CLI for moving workspaces, so it calls the socket API
+(workspace.move_block) at $HERDR_SOCKET_PATH (default ~/.config/herdr/herdr.sock).
+"""
+
+import json, os, socket, subprocess, sys
+
+dry = "--dry-run" in sys.argv[1:]
+if any(a in ("-h", "--help") for a in sys.argv[1:]):
+    print(__doc__.strip())
+    sys.exit(0)
+
+out = subprocess.run(["herdr", "workspace", "list"], capture_output=True, text=True, check=True)
+workspaces = json.loads(out.stdout)["result"]["workspaces"]
+
+groups = {}
+for w in workspaces:
+    wt = w.get("worktree") or {}
+    if wt.get("is_linked_worktree"):
+        groups.setdefault(wt["repo_key"], []).append(w)
+
+
+def call(method, params):
+    path = os.environ.get("HERDR_SOCKET_PATH") or os.path.expanduser("~/.config/herdr/herdr.sock")
+    s = socket.socket(socket.AF_UNIX)
+    s.connect(path)
+    s.sendall((json.dumps({"id": "herdr-sort", "method": method, "params": params}) + "\n").encode())
+    buf = b""
+    while not buf.endswith(b"\n"):
+        chunk = s.recv(65536)
+        if not chunk:
+            break
+        buf += chunk
+    r = json.loads(buf)
+    if "error" in r:
+        sys.exit(f"herdr-sort: {method}: {r['error']}")
+
+
+moved = 0
+for children in groups.values():
+    is_review = [" review" in w["label"] for w in children]
+    if True not in is_review:
+        continue
+    first = is_review.index(True)
+    late = [w for w, r in zip(children[first:], is_review[first:]) if not r]
+    if not late:
+        continue
+    before = children[first]
+    print(f"{'would move' if dry else 'move'} {', '.join(w['label'] for w in late)} above {before['label']}")
+    if not dry:
+        call("workspace.move_block", {"workspace_ids": [w["workspace_id"] for w in late],
+                                      "before_workspace_id": before["workspace_id"]})
+    moved += 1
+
+if not moved:
+    print("already sorted")

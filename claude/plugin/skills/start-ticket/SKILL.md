@@ -35,6 +35,7 @@ git -C <checkout> worktree list --porcelain   # branch already checked out?
 ```bash
 HERDR_ENV=1 herdr worktree create --cwd <checkout> --branch <gitBranchName> \
   --base origin/<default branch> --label "<ticket>" --no-focus
+herdr-sort   # new worktree appends below reviews; move it into the projects
 herdr agent start <agent> --kind claude --pane <pane> -- -n <agent>
 herdr agent prompt <agent> "<brief>"
 herdr agent wait <agent> --until working --timeout 60000

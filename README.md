@@ -137,6 +137,10 @@ I used tmux before herdr. The config lives on the
   submits; sets/updates the review body (what was tested); only touches
   comments and a body it posted that I haven't edited (`--replace-body`
   overrides, on my OK)
+- `herdr-sort [--dry-run]`: inside each repo's herdr group, project
+  worktrees above reviews (`<ticket> review`); new worktrees append at the
+  end, so `start-ticket` / `deep-review` run it after creating one.
+  `install.sh` links it into `~/.local/bin`
 - `basecamp-safe`: the `basecamp` CLI limited to reads + message drafts
   (`--draft` forced); the assistant may run only this
 - `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile

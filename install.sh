@@ -122,6 +122,8 @@ link bin/http-status "$HOME/.local/bin/http-status"
 link bin/pr-threads "$HOME/.local/bin/pr-threads"
 # the only way agents write to GitHub: pending-review comments, never submit
 link bin/pr-pending "$HOME/.local/bin/pr-pending"
+# start-ticket / deep-review: projects above reviews in herdr's sidebar
+link bin/herdr-sort "$HOME/.local/bin/herdr-sort"
 # assistant: Basecamp reads + message drafts only (raw basecamp denied)
 link bin/basecamp-safe "$HOME/.local/bin/basecamp-safe"
 # qa-tester's MCP server launcher (absolute path in agents/qa-tester.md)

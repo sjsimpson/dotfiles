@@ -65,6 +65,7 @@ git branch --show-current                      # this session's branch
 git -C <checkout> fetch -q origin <head>
 HERDR_ENV=1 herdr worktree create --cwd <checkout> --branch <head> \
   --base origin/<head> --label "<ticket> <review|status>" --no-focus
+herdr-sort   # projects (incl. status) above reviews in the sidebar
 ```
 
 Branch already checked out in another worktree → reuse it (the brief gets
