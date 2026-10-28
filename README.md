@@ -73,9 +73,9 @@ Font); theme is TokyoNight Storm everywhere.
   `~/.config/wt-env/<repo>/`) on worktree create/remove,
   and `prefix+d` opens its runtimes dashboard: per workspace, agents and their
   state, pane processes with CPU/mem and listening ports, and the docker
-  compose containers started from that checkout. Sidebar: a colored `$kind`
-  symbol per workspace and agent (■ tooling, ◆ project, ▲ review), set via
-  `report-metadata`
+  compose containers started from that checkout. Sidebar: workspace names colored
+  by kind in both panes (tooling gray, `<ticket> review` yellow, projects
+  blue)
 
 **Shell**
 
