@@ -16,9 +16,8 @@ type = "plugin_action"
 command = "sjsimpson.wt-env.runtimes"
 description = "runtimes dashboard"
 
-# Workspace name color by kind: tooling green (listed by name), reviews
-# yellow ("<ticket> review", as deep-review names them), the rest (projects)
-# blue
+# Workspace name color: reviews yellow ("<ticket> review", as deep-review
+# names them), everything else blue
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", { token = "workspace", fg = "#61afef", rules = [

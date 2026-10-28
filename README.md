@@ -74,8 +74,7 @@ Font); theme is TokyoNight Storm everywhere.
   and `prefix+d` opens its runtimes dashboard: per workspace, agents and their
   state, pane processes with CPU/mem and listening ports, and the docker
   compose containers started from that checkout. Sidebar: workspace names colored
-  by kind in both panes (tooling green, `<ticket> review` yellow, projects
-  blue)
+  by kind in both panes (`<ticket> review` yellow, the rest blue)
 
 **Shell**
 
