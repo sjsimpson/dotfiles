@@ -86,6 +86,9 @@
 - Writing/editing a Linear issue or doc → plugin `reference/specs.md`;
   anything written as me → `reference/voice.md`. Show the draft before
   `save_issue`
+- Third-party skills (e.g. mattpocock's): use their process, but
+  `voice.md`/`specs.md` override their templates for anything written as me
+- Issue tracker: Linear (MCP); spec shape per `specs.md`
 - Big changes: one gh stack of small reviewable PRs. Only the bottom PR is
   ready for review; upper layers stay drafts. Merge one layer at a time:
   `gh stack rebase` → `gh stack push` → CI green → `gh stack merge

@@ -49,7 +49,7 @@ One pass, in this order. Each finding: what, where (spec line and
    writes. Name the guard the spec needs
 6. **Testability**: each criterion checkable as written? How would QA see it?
 7. **Slicing**: does it fit one reviewable PR? If not, a gh-stack split
-   (bottom layer first, one line each)
+   per `gh-stack.md` → Slicing (bottom layer first, one line each)
 
 Skip a lens with nothing real to say. Only flag what would change the build
 or the review; drop style nits.
@@ -73,6 +73,15 @@ or the review; drop style nits.
 Before printing, reread the proposed spec against `voice.md` and its
 samples. Anything that reads like a checklist dump or audit output: rewrite
 it.
+
+## 5. Grill
+
+Questions the user owns → run them through the `grilling` skill's rounds
+(round 1 = those questions). After each round, fold the answers into the
+proposed spec and rerun the checklist on what changed: an answer can open a
+new conflict or edge case, which feeds the next round. Questions others own
+stay in the spec's **Open questions** and never block a round. Done when the
+frontier is empty: print the final spec diff and verdict.
 
 Then offer in one line to apply the diff to Linear; apply it per specs.md
 Edits only on the user's OK.

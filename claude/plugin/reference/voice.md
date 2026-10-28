@@ -66,9 +66,14 @@ parallel and worth scanning. Text only when it adds context; otherwise
 terse-ish.
 
 - **Summary**: 1-2 sentences on what changed and why. Bullets for the
-  distinct changes when there are 2+. Ticket and design links on one line
+  distinct changes when there are 2+. Ticket and design links on one line.
+  When the shape of the change is easier to see than to read, add the
+  smallest visual that shows it: a short `diff` sketch of a call tree,
+  component tree, or file tree, or a small Mermaid diagram. One at most
 - **Testing and risk reduction**: a sentence on the risk and prod impact,
-  bullets for what I tested
+  saying whether it's a one-way door (hard to roll back: migrations,
+  external writes, deletes) or a two-way door, and what it could break
+  (blast radius). Then bullets for what I tested
 - **Notes for reviewers**: the template's checkboxes, plus a bullet only
   for something a reviewer must know
 - No per-flow walkthroughs, "not covered" lists, or extra notes. Detailed

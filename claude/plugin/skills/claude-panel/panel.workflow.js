@@ -214,11 +214,25 @@ const LENSES = [
       "Missing tests that would let a real regression through; untested error paths; tests that cannot fail or pin incidental text instead of behavior. Search the whole test tree before claiming a gap. Not coverage percentage. Read-only: do not install deps or run tests.",
   },
   {
+    key: "spec",
+    model: finderModel,
+    focus: `Compare the diff to the ticket spec below, not to code quality. Report: requirements the spec asks for that are missing or partial; behavior the diff adds that the spec didn't ask for (scope creep); requirements that look implemented but wrong. Quote the spec line in every finding.\n\nSpec:\n${A.spec || ""}`,
+  },
+  {
+    key: "smells",
+    model: finderModel,
+    focus:
+      "Design smells in added code, always judgement calls labeled 'possible <smell>': mysterious name, duplicated code across hunks, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, speculative generality, message chains, middle man. A written repo rule or the codebase's existing pattern overrides any smell. At most 3 findings, only ones a reviewer would ask to change in this PR.",
+  },
+  {
     key: "skeptic",
     model: undefined,
     focus: `Read ONLY the diff file and the PR intent — do not open other repo files. Ask: what is the single most likely way this change breaks in production? Report at most 3 findings, each one you would bet on. Your value is a different vantage point from the reviewers who read the full repo.`,
   },
-].filter((l) => !(A.skipLenses || []).includes(l.key));
+].filter(
+  (l) =>
+    !(A.skipLenses || []).includes(l.key) && (l.key !== "spec" || A.spec),
+);
 
 const common = `PR #${A.number}: ${A.title}
 Author intent:

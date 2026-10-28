@@ -50,8 +50,9 @@ Worktree on branch <branch>. <extra context, if any>
 1. Run the repo's normal worktree setup.
 2. /sjsimpson:spec-audit <ticket>. Show the user the full output in this
    pane, and message <reply-to> the verdict + numbered questions.
-3. Stop. Wait for the user's answers here before writing code. Apply spec
-   changes to Linear only when they say so.
+3. Stop. Grill the questions with the user here (spec-audit step 5) until
+   none are open, before writing code. Apply spec changes to Linear only
+   when they say so.
 4. Then build per the user's global rules (WIP commit first, gh stack for
    big changes). Code done → /sjsimpson:deep-review --fix (includes qa),
    then report. Never push or open a PR unless asked.

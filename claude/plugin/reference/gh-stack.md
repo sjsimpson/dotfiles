@@ -1,5 +1,19 @@
 # gh stack
 
+## Slicing
+
+- Layers are tracer bullets: each cuts a thin, complete path (schema → API
+  → UI → tests) that can be demoed or verified on its own, not one
+  horizontal layer of the stack
+- Prefactoring goes in the bottom layer ("make the change easy, then make
+  the easy change")
+- Each layer names what it's blocked by; a stack is a straight line, so
+  independent work goes in its own stack
+- Wide mechanical refactor (rename a column, retype a shared symbol) that
+  can't land green in one slice → expand–contract: add the new form beside
+  the old, migrate callers in batches (one layer each), then delete the old
+  form last
+
 ## Flow per layer
 
 1. Layer below merged → `gh stack sync` (fetch, rebase the whole stack)

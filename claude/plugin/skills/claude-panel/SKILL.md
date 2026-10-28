@@ -65,6 +65,7 @@ Workflow({
   scriptPath: "<this skill's base directory>/panel.workflow.js"  (absolute; normally ~/.dotfiles/claude/plugin/skills/claude-panel),
   args: {
     number, title, intent: <PR body, comments/template boilerplate stripped>,
+    spec: <linked Linear ticket's description + `## Update` sections (get_issue), or "">,
     workdir: <absolute WORKDIR>, base, headSha, diffPath: <absolute>,
     raised: <raised list text, or "">,
     repoAgents: [<names>],
@@ -75,7 +76,7 @@ Workflow({
 })
 ```
 
-Lenses: `correctness`, `security`, `conventions`, `tests` (Sonnet unless `escalate`), `skeptic` (session model, diff-only), plus each repo agent. All forced into one JSON schema. Then one merge agent (dedup + already-raised filter + neutral question per finding), then blind validators (≤4 findings/file-group, see only the neutral question; CONFIRMED needs a concrete reachable trigger). Repo-agent rule violations skip validation. Last, one skeptical adjudicator tags each surviving finding `action` fix / ticket / skip with `reason` (worth-it, not-worth-it, unrealistic, pattern-conflict, codebase-wide) and a `note`.
+Lenses: `correctness`, `security`, `conventions`, `tests`, `spec` (only with a ticket), `smells` (Sonnet unless `escalate`), `skeptic` (session model, diff-only), plus each repo agent. All forced into one JSON schema. Then one merge agent (dedup + already-raised filter + neutral question per finding), then blind validators (≤4 findings/file-group, see only the neutral question; CONFIRMED needs a concrete reachable trigger). Repo-agent rule violations skip validation. Last, one skeptical adjudicator tags each surviving finding `action` fix / ticket / skip with `reason` (worth-it, not-worth-it, unrealistic, pattern-conflict, codebase-wide) and a `note`.
 
 While it runs, don't poll — the completion notification wakes you. If it dies, re-invoke with `resumeFromRunId`; finished agents return cached.
 
