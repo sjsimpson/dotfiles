@@ -52,12 +52,15 @@ ENG-1240, so @Sam, could you nudge that along?"
 - PR feedback: the format in global `CLAUDE.md` (Conventional Comments)
 - PR descriptions: see **PR descriptions** below
 - Commits: Conventional Commits, ticket ID as scope (global `CLAUDE.md`)
-- Pending review body: `report.md` → Pending review body
+- Review bodies (approve, comment, request changes): **Review bodies**
+  below; the pending-review mechanics are in `report.md`
 - Linear issues and docs: `specs.md`
 
 ## PR descriptions
 
-Short: about 10-15 lines of content under the repo's template headings.
+Title: per global `CLAUDE.md` (the repo's CI title check wins, never
+Conventional Commits). Body: short, about 10-15 lines of content under the
+repo's template headings.
 Each section mixes a short text block with a bulleted list where items are
 parallel and worth scanning. Text only when it adds context; otherwise
 terse-ish.
@@ -113,3 +116,22 @@ Low risk: only touches the delivery worker, behind `webhook_retries`.
 ## Notes for reviewers
 - [x] Tests added
 ```
+
+## Review bodies
+
+What I'd say if I typed it myself: 1-3 sentences, plus bullets only for
+findings that can't anchor to a line. The inline comments carry the
+details; the body never repeats them.
+
+- **Approve, no findings**: no body (`report.md`)
+- **Approve with nits**: say it's fine and the nits don't block. "Looks
+  good! A couple of small nits inline, nothing blocking."
+- **Request changes**: lead with the blocker and why, then point at the
+  comments. "Holding off for now: retries can reorder events for the same
+  partner (comment on `deliver.ts`). Everything else looks good."
+- **Comment** (questions, no verdict): the question or context in a
+  sentence or two
+- Testing: one clause, only when it adds confidence or shows the failure
+  ("Clicked through it locally with prod-shaped data"). Never a "Tested:"
+  list of passing flows, a prod/local breakdown, verdict labels, or tool
+  names. The full write-up stays in the local report

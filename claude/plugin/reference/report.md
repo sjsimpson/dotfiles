@@ -46,25 +46,13 @@ never a pass
 ## Pending review body
 
 When findings go into a pending review (`pr-pending`), the review body
-(`findings.json` `body`) is in my voice (`voice.md`), like "2 nits, but
-otherwise looks reasonable".
+(`findings.json` `body`) follows `voice.md` → Review bodies: 1-3 sentences
+in my voice, then any findings that can't anchor to a diff line (each per
+the PR feedback rule). What was tested, prod checks included, stays in the
+local report; at most one clause of it in the body.
 
-```
-<verdict in one line: "Okay to merge, 2 nits" | "Don't merge yet: <why>">
-
-Tested:
-- Prod (read-only): <what I looked at and why, what it showed, what that
-  means for the change>, one bullet per check
-- Locally: <setup (e.g. prod-shaped data)>, then the flows and edge cases
-  I ran and how each went; group passing ones, give steps for anything odd
-- Didn't test <what>, only if it matters
-
-<findings that can't anchor to a diff line, each per the PR feedback rule>
-```
-
-No bold "Tested" header, no commit SHA (the run marker and ledger track
-the head). Internal IDs only; no customer details, local paths, or tool
-names. Re-runs update it (`pr-pending` replaces only its own unedited body).
+No commit SHA (the run marker and ledger track the head). Internal IDs
+only; no customer details, local paths, or tool names. Re-runs update it (`pr-pending` replaces only its own unedited body).
 
 **Approve with no findings** (no anchored and no unanchored comments): just
 approve, no body. `findings.json` gets `"body": ""` and no comments, so

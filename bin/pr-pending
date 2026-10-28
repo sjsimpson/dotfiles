@@ -11,7 +11,7 @@ marker; the ledger records each comment's id and exact posted body.
 sync adds to my pending review (creates one, no event, if there's none). A
 comment is the agent's to update or delete only if it has the marker AND
 still matches its ledger body: anything I edited or wrote stays untouched.
-The review body (what was tested, then findings with no line) is set the
+The review body (short summary, then findings with no line) is set the
 same way: on a new review, on an existing one with an empty body, or
 replacing the agent's own unedited body (an empty "body" clears that one); a body I wrote or edited stays
 unless I said to replace it (--replace-body).

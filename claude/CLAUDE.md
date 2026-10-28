@@ -66,11 +66,15 @@
   `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
   build, ci, style, revert). Ticket ID as scope when known, e.g.
   `feat(ENG-6659): add supported locations page`
+- PR titles are not Conventional Commits: the repo's CI title check wins.
+  Read its regex in `.github/workflows` before `gh pr create`/`edit`; none →
+  `<TICKET-ID> <Capitalized imperative subject>`
 - Comments should be shown locally for me to review and post
 - [IMPORTANT] PR feedback (findings, drafts, posted comments) is the one
   format every skill and agent uses:
   - [Conventional Comments](https://conventionalcomments.org/):
-    `**label (decorations):** subject`, then 1-3 sentences; ` ```suggestion `
+    `**label (decorations):** subject`, then 1-3 sentences in my voice
+    (plugin `reference/voice.md`); ` ```suggestion `
     block when it exactly replaces the anchored lines; `file:line` in drafts
   - Posted: the comment only. No "Claude said this" / attribution header, no
     blockquote wrapper
