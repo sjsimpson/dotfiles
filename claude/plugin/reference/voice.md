@@ -70,17 +70,27 @@ terse-ish.
   for something a reviewer must know
 - No per-flow walkthroughs, "not covered" lists, or extra notes. Detailed
   QA and review results stay in the local report
-- **Screenshots/video** (UI changes): the shots or video that show the
-  change, from `~/screenshots/<repo>/<branch>/`. 1-3 critical-path shots
-  inline, so reviewers see the change at a glance. Anything else worth
-  including (edge cases, error states) goes below them in one collapsible,
+- **Screenshots/video** (UI changes): annotated by default, so a reviewer
+  gets the point without context. Pair them when possible: an uncropped
+  context shot with the changed area outlined, so the reader knows where
+  to find it, then a crop of that area (2x) with each row or element
+  labeled by the data state behind it and what changed outlined (before
+  vs after where it helps). One annotated pair beats several raw shots.
+  1-3 critical-path images inline; anything else worth including (edge
+  cases, error states) goes below them in one collapsible,
   `<details><summary>More screenshots (N)</summary>`, with a blank line
-  after `</summary>` so the markdown renders. Added once the PR exists
-  (`gh pr create` can't attach). Reference each file in the body by the path you attach,
-  then from that dir:
+  after `</summary>` so the markdown renders. Sources and output in
+  `~/screenshots/<repo>/<branch>/` (`annotated-<name>.png`). Added once
+  the PR exists (`gh pr create` can't attach). Reference each file in the
+  body by the path you attach, then from that dir:
   `gh pr edit <n> -R <owner/repo> --body-file body.md --attach ./after.png`.
   `--attach` uploads and rewrites `![alt](./after.png)` to the hosted URL;
   check `gh pr view <n> --json body` shows `user-attachments` URLs
+- **Annotating**: a one-off Pillow script in the scratchpad,
+  `uv run --with pillow python3 annotate.py in.png out.png` (no ImageMagick
+  on macOS). Outline on the full shot; for the crop: crop box, 2x resize,
+  labels or a side panel, a colored outline on the changed element. Fonts:
+  `/System/Library/Fonts/HelveticaNeue.ttc` (index 1 = bold)
 
 Made-up example:
 

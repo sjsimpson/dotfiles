@@ -110,7 +110,9 @@ Write a short test plan first (scenarios, ordered by risk), then execute it.
    timing or several steps.
 
 Prefer `browser_snapshot` for deciding what to click; use screenshots for
-evidence. Close the browser when done.
+evidence. For each evidence screenshot, note in the report which data
+state each visible row/element represents (e.g. "row 2: on hold +
+approved"), so it can be annotated for the PR. Close the browser when done.
 
 ## Report
 
