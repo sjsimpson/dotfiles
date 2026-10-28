@@ -164,7 +164,8 @@ Review mode, author isn't the user: also write the findings that anchor to diff 
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
 report.md: what was tested and how, then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
-the report).
+the report). Approve with no findings → "body": "" and no comments
+(report.md → Approve with no findings).
 Then SendMessage <reply-to>: one line, verdict, report path, findings.json
 path if any.
 ```

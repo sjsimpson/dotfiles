@@ -129,7 +129,7 @@ My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ti
 **Pending review** (others' PRs, automatic after the report unless the caller said local only or QA is `BLOCKED`: then sync nothing, print the full report in chat with the blocker, and troubleshoot with the user; invisible to others until the user submits in the UI):
 
 - Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
-- Review body: the report template's **Pending review body** (verdict line, what was tested, panel + QA, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone.
+- Review body: the report template's **Pending review body** (verdict line, what was tested, panel + QA, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone. Approve with no findings → empty body (report.md → Approve with no findings).
 - Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 
 **Tick the template checkbox** (only when asked; re-fetch body first — author may have edited):

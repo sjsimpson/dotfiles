@@ -66,6 +66,11 @@ No bold "Tested" header, no commit SHA (the run marker and ledger track
 the head). Internal IDs only; no customer details, local paths, or tool
 names. Re-runs update it (`pr-pending` replaces only its own unedited body).
 
+**Approve with no findings** (no anchored and no unanchored comments): just
+approve, no body. `findings.json` gets `"body": ""` and no comments, so
+`pr-pending` starts no review and clears its own earlier body, if any. The
+Tested write-up stays in the local report.
+
 After a sync, chat gets the verdict, the pending review link, sync counts,
 and a short summary (findings one line each); the full report stays in its
 file.
