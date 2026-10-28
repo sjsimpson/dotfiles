@@ -95,11 +95,20 @@ their own MCP servers; these can.
 Repos that aren't Claude plugins themselves (gh-stack, find-skills) are
 wrapped with `"strict": false` so their `skills/` folder loads as a plugin.
 
-`grill-me` + `grilling` ([mattpocock/skills](https://github.com/mattpocock/skills)):
-`install.sh` copies just these two into `~/.claude/skills` with the `skills`
-CLI, since that repo's own `plugin.json` would load all ~27 of its skills.
-Interview rounds that settle a plan's decisions, each question with a
-recommended answer. Update: `npx skills update -g`.
+[mattpocock/skills](https://github.com/mattpocock/skills): `install.sh`
+copies only the skills below into `~/.claude/skills` with the `skills` CLI,
+since that repo's own `plugin.json` would load all ~27. Only process skills;
+ones that write as me (`pr`, `to-spec`, `triage`) stay out so `voice.md` wins.
+
+| Skill | What |
+| --- | --- |
+| `grill-me` / `grilling` | Interview rounds that settle a plan's decisions, each question with a recommended answer |
+| `tdd` | Red-green loop at seams agreed up front |
+| `diagnosing-bugs` | Hard bugs: build a tight red feedback loop before theorizing |
+| `retro` | After a session: suggest environment fixes (checks, skills, CLAUDE.md) |
+| `writing-for-agents` | Reference when writing skills or CLAUDE.md |
+
+Update: `npx skills update -g`.
 
 To add one:
 

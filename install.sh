@@ -176,11 +176,12 @@ if command -v npx >/dev/null; then
     printf '  FAILED  ffmpeg (npx playwright install ffmpeg)\n'
   fi
   echo "skills"
-  # upstream plugin.json lists all its skills, so a marketplace entry can't pin these two
-  if (cd "$HOME" && npx -y skills@latest add mattpocock/skills -g -a claude-code -s grill-me grilling -y </dev/null >/dev/null 2>&1); then
-    printf '  ok      grill-me, grilling\n'
+  # upstream plugin.json lists all its skills, so a marketplace entry can't pin a subset
+  mp_skills=(grill-me grilling tdd diagnosing-bugs retro writing-for-agents)
+  if (cd "$HOME" && npx -y skills@latest add mattpocock/skills -g -a claude-code -s "${mp_skills[@]}" -y </dev/null >/dev/null 2>&1); then
+    printf '  ok      mattpocock/skills: %s\n' "${mp_skills[*]}"
   else
-    printf '  FAILED  grill-me (npx skills add mattpocock/skills -g -a claude-code -s grill-me grilling)\n'
+    printf '  FAILED  mattpocock/skills (npx skills add mattpocock/skills -g -a claude-code -s %s)\n' "${mp_skills[*]}"
   fi
 fi
 if [[ -f "$HOME/.cache/qa-tester/profile/.login-stamp" ]]; then
