@@ -71,10 +71,11 @@ terse-ish.
 - No per-flow walkthroughs, "not covered" lists, or extra notes. Detailed
   QA and review results stay in the local report
 - **Screenshots/video** (UI changes): the shots or video that show the
-  change, from `~/screenshots/<repo>/<branch>/`. Up to 2 inline (e.g.
-  before/after); 3+ all go in one collapsible,
-  `<details><summary>Screenshots (N)</summary>`, with a blank line after
-  `</summary>` so the markdown renders. Added once the PR exists
+  change, from `~/screenshots/<repo>/<branch>/`. 1-3 critical-path shots
+  inline, so reviewers see the change at a glance. Anything else worth
+  including (edge cases, error states) goes below them in one collapsible,
+  `<details><summary>More screenshots (N)</summary>`, with a blank line
+  after `</summary>` so the markdown renders. Added once the PR exists
   (`gh pr create` can't attach). Reference each file in the body by the path you attach,
   then from that dir:
   `gh pr edit <n> -R <owner/repo> --body-file body.md --attach ./after.png`.
