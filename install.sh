@@ -175,6 +175,13 @@ if command -v npx >/dev/null; then
   else
     printf '  FAILED  ffmpeg (npx playwright install ffmpeg)\n'
   fi
+  echo "skills"
+  # upstream plugin.json lists all its skills, so a marketplace entry can't pin these two
+  if (cd "$HOME" && npx -y skills@latest add mattpocock/skills -g -a claude-code -s grill-me grilling -y </dev/null >/dev/null 2>&1); then
+    printf '  ok      grill-me, grilling\n'
+  else
+    printf '  FAILED  grill-me (npx skills add mattpocock/skills -g -a claude-code -s grill-me grilling)\n'
+  fi
 fi
 if [[ -f "$HOME/.cache/qa-tester/profile/.login-stamp" ]]; then
   printf '  ok      qa login profile\n'

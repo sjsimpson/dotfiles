@@ -95,6 +95,12 @@ their own MCP servers; these can.
 Repos that aren't Claude plugins themselves (gh-stack, find-skills) are
 wrapped with `"strict": false` so their `skills/` folder loads as a plugin.
 
+`grill-me` + `grilling` ([mattpocock/skills](https://github.com/mattpocock/skills)):
+`install.sh` copies just these two into `~/.claude/skills` with the `skills`
+CLI, since that repo's own `plugin.json` would load all ~27 of its skills.
+Interview rounds that settle a plan's decisions, each question with a
+recommended answer. Update: `npx skills update -g`.
+
 To add one:
 
 1. Add an entry to `.claude-plugin/marketplace.json` (or use an existing marketplace)
