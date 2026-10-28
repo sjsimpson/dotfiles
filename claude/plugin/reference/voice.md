@@ -50,6 +50,12 @@ ENG-1240, so @Sam, could you nudge that along?"
 ## Per surface
 
 - PR feedback: the format in global `CLAUDE.md` (Conventional Comments)
+- PR descriptions: short, about 10 lines of content. Follow the repo's
+  template headings. Summary: 1-2 sentences on what changed and why, then
+  the ticket and design links on one line. Testing and risk: 2-3 sentences
+  (what I tested, the risk, prod impact). Reviewer notes: only the
+  template's checkboxes. No per-flow walkthroughs, "not covered" lists, or
+  extra notes; detailed QA and review results stay in the local report
 - Commits: Conventional Commits, ticket ID as scope (global `CLAUDE.md`)
 - Pending review body: `report.md` → Pending review body
 - Linear issues and docs: `specs.md`
