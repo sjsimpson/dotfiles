@@ -15,3 +15,25 @@ key = "prefix+d"
 type = "plugin_action"
 command = "sjsimpson.wt-env.runtimes"
 description = "runtimes dashboard"
+
+# $kind (■ tooling | ◆ project | ▲ review): workspace + agent pane metadata, set
+# by start-ticket / deep-review via `herdr workspace|pane report-metadata`
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", { token = "$kind", rules = [
+    { equals = "■", fg = "#7f8c98" },
+    { equals = "◆", fg = "#61afef" },
+    { equals = "▲", fg = "#e5c07b" },
+  ] }, "workspace"],
+  ["branch", "git_status"],
+]
+
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", { token = "$kind", rules = [
+    { equals = "■", fg = "#7f8c98" },
+    { equals = "◆", fg = "#61afef" },
+    { equals = "▲", fg = "#e5c07b" },
+  ] }, "machine", "workspace", "tab"],
+  ["agent"],
+]
