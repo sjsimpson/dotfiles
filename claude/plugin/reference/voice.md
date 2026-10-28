@@ -70,9 +70,12 @@ terse-ish.
   for something a reviewer must know
 - No per-flow walkthroughs, "not covered" lists, or extra notes. Detailed
   QA and review results stay in the local report
-- **Screenshots/video** (UI changes): 1-3 shots or one video from
-  `~/screenshots/<repo>/<branch>/`, added once the PR exists (`gh pr create`
-  can't attach). Reference each file in the body by the path you attach,
+- **Screenshots/video** (UI changes): the shots or video that show the
+  change, from `~/screenshots/<repo>/<branch>/`. Up to 2 inline (e.g.
+  before/after); 3+ all go in one collapsible,
+  `<details><summary>Screenshots (N)</summary>`, with a blank line after
+  `</summary>` so the markdown renders. Added once the PR exists
+  (`gh pr create` can't attach). Reference each file in the body by the path you attach,
   then from that dir:
   `gh pr edit <n> -R <owner/repo> --body-file body.md --attach ./after.png`.
   `--attach` uploads and rewrites `![alt](./after.png)` to the hosted URL;
