@@ -1,7 +1,7 @@
 ---
 name: deep-review
-description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report. Others' PRs: this session adds the findings to my pending GitHub review (never submits). My own PRs: no pending review; offers to fix the findings. Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --fix (my own PR/layer, in-session: review + QA, fix, repeat until steady state, report before it's opened), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree.
-argument-hint: "<pr-number | pr-url> [--status] [--risky] [--stack] [--fix] [extra context]"
+description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report. Others' PRs: this session adds the findings to my pending GitHub review (never submits). My own PRs: no pending review; offers to fix the findings. Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --fix (my own PR/layer, in-session: review + QA, fix, repeat until steady state, report before it's opened), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree. Also proactively with --fix (no PR needed) as soon as code on my own branch is finished, before reporting it done.
+argument-hint: "[pr-number | pr-url] [--status] [--risky] [--stack] [--fix] [extra context]"
 ---
 
 # Deep review
@@ -22,7 +22,9 @@ can drive in its pane.
 ## 0. Inputs
 
 - PR: number or URL. URL → `owner/repo`; number → current repo
-  (`gh repo view --json nameWithOwner`)
+  (`gh repo view --json nameWithOwner`). `--fix` without one: the current
+  branch's PR if any, else no PR: skip the `gh pr view` and thread reads,
+  base = gh stack parent or default branch, `pr-<n>` → branch name
 - Repo name = last part of `owner/repo`. Local checkout: the main worktree
   of that repo (ask if you can't find it)
 - Private repo config: `~/.config/claude-repos/<repo>/review.md` (prod data source,

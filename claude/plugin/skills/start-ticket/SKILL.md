@@ -52,7 +52,8 @@ Worktree on branch <branch>. <extra context, if any>
 3. Stop. Wait for the user's answers here before writing code. Apply spec
    changes to Linear only when they say so.
 4. Then build per the user's global rules (WIP commit first, gh stack for
-   big changes, qa for UI). Never push or open a PR unless asked.
+   big changes). Code done → /sjsimpson:deep-review --fix (includes qa),
+   then report. Never push or open a PR unless asked.
 ```
 
 ## 4. Report

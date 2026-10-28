@@ -34,6 +34,8 @@
   review context → PR/commit, not comments. Unsure → leave out, mention in chat
 - Before writing or reviewing code, load the repo's conventions skills (e.g.
   `patterns`) and read the sections the change touches
+- Code finished on my own branch → run `/deep-review --fix` (it includes
+  qa) before saying done. Run it, don't suggest it
 
 ## Scope
 
@@ -82,8 +84,8 @@
   ready for review; upper layers stay drafts. Merge one layer at a time:
   `gh stack rebase` → `gh stack push` → CI green → `gh stack merge
   <bottom-pr> --yes`. Never merge the whole stack at once
-  - Before opening a layer: `gh stack sync` → `/deep-review <pr> --fix` →
-    report; I open it
+  - Before opening a layer: `gh stack sync` → `/deep-review --fix` on that
+    layer → report; I open it
   - Rebase stack branches only with `gh stack sync|rebase`, never plain
     `git rebase` (stale saved base; recovery: plugin `reference/gh-stack.md`)
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
@@ -100,8 +102,8 @@
 - For in-app/browser testing, use the `qa` skill: you brief the repo's QA
   desk (`/qa-desk`), which sets up the main worktree and runs `qa-tester`.
   Playwright only loads inside `qa-tester`
-- UI change → commit (WIP ok), run the `qa` skill before saying done, report
-  its verdict
+- UI change: qa runs inside `/deep-review --fix` when the code is done.
+  Standalone `qa` (commit first, WIP ok) only for a mid-work check
 - A repo's main worktree belongs to its QA desk while one runs: never switch
   branches or edit there; work in a linked worktree
 - Screenshots/videos: absolute `filename` under

@@ -3,7 +3,7 @@
 ## Flow per layer
 
 1. Layer below merged → `gh stack sync` (fetch, rebase the whole stack)
-2. `gh stack checkout <next>` → `/deep-review <pr> --fix`: review + QA on
+2. `gh stack checkout <next>` → `/deep-review --fix`: review + QA on
    local commits, fix, repeat until steady state
 3. Report → the user decides: `gh stack push`, `gh pr ready`
 4. Merge one layer at a time (global CLAUDE.md)
