@@ -1,6 +1,7 @@
 ---
 name: qa-desk
-description: Run this session as a repo's QA desk, the only session that touches the main worktree. It takes QA briefs from other local Claude sessions, runs them one at a time with qa-tester, and messages back the verdict. Use only when the user invokes /qa-desk.
+description: "Run this session as a repo's QA desk: owns the main worktree, runs QA briefs from other sessions one at a time with qa-tester, replies with the verdict."
+disable-model-invocation: true
 ---
 
 # QA desk
@@ -91,8 +92,9 @@ commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
 Real cases often need states the UI can't make (a null column, a deleted
 child row). Direct edits are allowed, on these terms:
 
-- Local dev DB only: host `localhost`/`127.0.0.1`/docker. Never stage, prod, or
-  any remote host, whatever the brief says
+- Local dev DB only: host `localhost`/`127.0.0.1`/docker. Never a staging, prod, or
+  other remote DB, whatever the brief says (a staging UI host is the
+  brief's call; the DB stays local)
 - Scope: only the rows the brief's cases need, picked by id. No bare
   `DELETE`/`UPDATE` without an id-scoped `WHERE`
 - Schema: never hand-written DDL. A PR that changes the schema gets it from

@@ -1,6 +1,6 @@
 ---
 name: start-ticket
-description: Start work on a Linear ticket - herdr worktree on the ticket's branch, a Claude agent in it, and spec-audit as the agent's first step, so questions surface before any code. Writes nothing to Linear or GitHub. Use when the user asks for /start-ticket or says "start ENG-1234" (the assistant dispatches it this way).
+description: "Start work on a Linear ticket: herdr worktree on its branch, a Claude agent in it, spec-audit + grilling first so questions surface before code. Writes nothing to Linear or GitHub. Use for /start-ticket or \"start ENG-1234\"."
 argument-hint: "<ticket ID | issue URL> [repo] [extra context]"
 ---
 

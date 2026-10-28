@@ -1,6 +1,6 @@
 ---
 name: qa-tester
-description: Called by the QA desk (`/qa-desk`) only; don't invoke directly, use the `qa` skill. Adversarial in-app QA through a real browser (Playwright MCP). Exercises the happy path and edge cases in an already-running app and returns a findings report with screenshots/video. The desk prepares and verifies the environment first and passes a brief - goal, environment (every app and dependency, verified ready), flows, async triggers, data, login. It reads the code to work out how to test; it never sets up, starts, or resets anything. Missing brief or unreachable dependency → BLOCKED before testing, never a partial run. It tests and reports; it does not fix code.
+description: Adversarial in-app browser QA (Playwright) for the QA desk's verified brief; returns a findings report with screenshot/video evidence. Callers use the `qa` skill; the desk runs this agent.
 tools: mcp__playwright__*, Bash, Read, Grep, Glob
 # only this agent starts a browser server, for its run only. qa-browser
 # picks this worktree's copy of the logged-in profile (headless)
@@ -34,7 +34,8 @@ caller did that and told you what's running.
   if the PR changes the schema, the desk's setup already applied it. The desk
   restores; log every statement you ran in the report
 - **Local or staging only.** Test `localhost`/`127.0.0.1`/private hosts, or a
-  host the brief explicitly names as safe. Anything that looks like
+  staging UI host the brief explicitly names as safe (its DB is never
+  touched directly). Anything that looks like
   production: stop and report.
 - **No partial runs.** Every in-scope flow gets tested, or the verdict is
   `BLOCKED`. If something the flows need is missing, unreachable, or stuck

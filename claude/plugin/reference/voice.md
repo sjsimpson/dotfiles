@@ -49,12 +49,25 @@ ENG-1240, so @Sam, could you nudge that along?"
 
 ## Per surface
 
-- PR feedback: the format in global `CLAUDE.md` (Conventional Comments)
+- PR feedback: **PR feedback** below
 - PR descriptions: see **PR descriptions** below
 - Commits: Conventional Commits, ticket ID as scope (global `CLAUDE.md`)
 - Review bodies (approve, comment, request changes): **Review bodies**
   below; the pending-review mechanics are in `report.md`
 - Linear issues and docs: `specs.md`
+
+## PR feedback
+
+Findings, drafts, and posted comments, every skill and agent:
+
+- [Conventional Comments](https://conventionalcomments.org/):
+  `**label (decorations):** subject`, then 1-3 sentences in my voice; a
+  ` ```suggestion ` block when it exactly replaces the anchored lines;
+  `file:line` in drafts
+- Posted: the comment only, nothing around it
+- Judicious: only what's worth the author's time. Drop duplicates of open
+  or declined threads, speculative questions, follow-up-only concerns
+  (→ ticket), nits CI/bots catch. Merge findings that share one fix
 
 ## PR descriptions
 

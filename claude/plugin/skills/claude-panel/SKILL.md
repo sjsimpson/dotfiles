@@ -1,6 +1,6 @@
 ---
 name: claude-panel
-description: Local, Claude-only PR review panel — parallel lens finders + repo `*-reviewer` agents, blind validation, plus a qa-tester run for same-repo UI PRs, report in chat; on others' PRs also adds the findings to my pending GitHub review (never submits); nothing else goes to GitHub unless asked. Use ONLY when the user explicitly asks (`/claude-panel [pr]`).
+description: "Local Claude PR review panel: parallel lens finders + repo `*-reviewer` agents, blind validation, QA for same-repo UI PRs; report in chat, and on others' PRs the findings go into my pending review (never submitted). Use for /claude-panel, or when deep-review / review-stack call it."
 argument-hint: "[pr-number | pr-url | --local] (optional — defaults to current branch's PR)"
 ---
 
@@ -76,7 +76,7 @@ Workflow({
 })
 ```
 
-Lenses: `correctness`, `security`, `conventions`, `tests`, `spec` (only with a ticket), `smells` (Sonnet unless `escalate`), `skeptic` (session model, diff-only), plus each repo agent. All forced into one JSON schema. Then one merge agent (dedup + already-raised filter + neutral question per finding), then blind validators (≤4 findings/file-group, see only the neutral question; CONFIRMED needs a concrete reachable trigger). Repo-agent rule violations skip validation. Last, one skeptical adjudicator tags each surviving finding `action` fix / ticket / skip with `reason` (worth-it, not-worth-it, unrealistic, pattern-conflict, codebase-wide) and a `note`.
+Pipeline and lenses: `panel.workflow.js` (the source of truth).
 
 While it runs, don't poll — the completion notification wakes you. If it dies, re-invoke with `resumeFromRunId`; finished agents return cached.
 
@@ -102,7 +102,7 @@ Re-pin head (`gh api .../pulls/<n> --jq .head.sha`; `--local`: `git rev-parse HE
 
 Build the shared report (`report.md` in the plugin's `reference/` dir, `<this skill's base directory>/../../reference/report.md`), its sections as bold labels. Print it in chat, except when Step 4 syncs a pending review: then write it to `~/screenshots/<repo>/<branch>/pr-<n>-panel.md` and chat gets the short form (report.md, after a sync).
 
-1. **Verdict**: approve / request changes, never comment (advisory only; any `(blocking)` finding or QA FAIL → request changes, else approve), plus the banner (sensitive / large / conflicted / head moved), if any.
+1. **Verdict**: approve / request changes, never comment (advisory only; rules: `report.md` → Verdict), plus the banner (sensitive / large / conflicted / head moved), if any.
 2. **Findings** (confirmed + codified), grouped by `action`, then severity, then confidence:
    - **Fix**: `**path:line** [sources · severity · conf] — claim` + one-line evidence + `fix` as a code block when present
    - **Ticket** (codebase-wide): same line + `note` (the pattern and where else it applies)
@@ -129,7 +129,7 @@ My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ti
 
 **Pending review** (others' PRs, automatic after the report unless the caller said local only or QA is `BLOCKED`: then sync nothing, print the full report in chat with the blocker, and troubleshoot with the user; invisible to others until the user submits in the UI):
 
-- Comment body and which findings to post: the global PR feedback rule (CLAUDE.md). No sources or finding ids in the body.
+- Comment body and which findings to post: `voice.md` → PR feedback. No sources or finding ids in the body.
 - Review body: report.md → **Pending review body** (voice.md → Review bodies: 1-3 sentences, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone. Approve with no findings → empty body (report.md → Approve with no findings).
 - Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 

@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Test a change in the running app through a real browser, via the repo's QA desk. Commit, decide what the test needs, send the desk a brief, then relay its verdict. Use for a mid-work UI check, when deep-review/claude-panel call it, or when the user asks to QA / browser-test something. Finished code → `/deep-review --fix` instead (it runs qa).
+description: Test a change in the running app through a real browser, via the repo's QA desk. Use for a mid-work UI check, when deep-review/claude-panel call it, or when the user asks to QA / browser-test something. Finished code → `/deep-review --fix` instead.
 argument-hint: "[what to test] (optional; defaults to the current change)"
 ---
 

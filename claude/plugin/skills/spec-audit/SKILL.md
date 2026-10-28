@@ -1,6 +1,6 @@
 ---
 name: spec-audit
-description: Audit a Linear issue or doc against the code before building it. One pass through a checklist (conflict with existing code first, then linked-source drift, ambiguity, edge/failure cases, risk, testability, gh-stack slicing), grounded in the repo. Terminal only - ranked findings, a proposed spec diff, numbered questions; posts nothing unless asked. Use when the user asks for /spec-audit, or as step 1 of start-ticket. Run in a worktree of the repo the ticket changes.
+description: Audit a Linear issue or doc against the code before building it, then grill the open questions. Terminal only; posts nothing unless asked. Use for /spec-audit, or as step 1 of start-ticket, in a worktree of the repo the ticket changes.
 argument-hint: "<linear issue ID | issue URL | doc URL>"
 ---
 
@@ -61,9 +61,8 @@ or the review; drop style nits.
 2. **Findings**: one plain sentence each, then its `file:line` evidence.
    Every conflict-with-code finding, always. The rest: top ~5 by impact,
    then "N more on request"
-3. **Proposed spec**: written as the user, per `voice.md` (normal prose,
-   never terse or compressed, whatever the session's style), shaped per
-   specs.md. The code evidence stays in the findings; the spec keeps only
+3. **Proposed spec**: written as the user, per `voice.md` (drafts are
+   persisted text), shaped per specs.md. The code evidence stays in the findings; the spec keeps only
    the 1-3 names a builder needs. Show it as a diff against the current
    text. Started ticket → an `## Update MM-DD-YYYY` block plus the
    `Spec updated:` comment, never a rewrite
@@ -77,7 +76,8 @@ it.
 ## 5. Grill
 
 Questions the user owns → run them through the `grilling` skill's rounds
-(round 1 = those questions). After each round, fold the answers into the
+(round 1 = those questions), each round asked via AskUserQuestion per
+global CLAUDE.md → Questions to me, not as a chat list. After each round, fold the answers into the
 proposed spec and rerun the checklist on what changed: an answer can open a
 new conflict or edge case, which feeds the next round. Questions others own
 stay in the spec's **Open questions** and never block a round. Done when the

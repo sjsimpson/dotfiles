@@ -1,6 +1,7 @@
 ---
 name: review-stack
-description: Review a whole gh stack with the claude-panel workflow (one run per layer, in parallel, each against its parent), judge the findings together with existing PR feedback, then hand off to address-pr-comments to fix bottom up. Works before PRs exist. Use ONLY when the user asks to review a stack (`/review-stack`).
+description: Review a whole gh stack with claude-panel (one run per layer), judge findings together, then hand off to address-pr-comments.
+disable-model-invocation: true
 argument-hint: "(none: the current stack)"
 ---
 
@@ -65,7 +66,7 @@ Don't poll; completion notifications wake you. A failed run: re-invoke with
 
 Across all layers' results plus the existing PR threads:
 
-- **Same problem, several layers** → one item, owned by the lowest layer that
+- **Same problem, several layers** → one item, owned by its owner layer (`address-pr-comments`) — the lowest layer that
   introduced the code (an upper layer often re-flags code it only calls)
 - **Cascades**: a fix in layer N that changes what N+1.. rely on → note it on
   the item so the upper layers get re-verified

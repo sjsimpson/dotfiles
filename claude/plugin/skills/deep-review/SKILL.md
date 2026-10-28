@@ -1,6 +1,6 @@
 ---
 name: deep-review
-description: Full review and in-app QA of a PR - in this session when its branch is checked out here, else in its own herdr worktree + Claude agent that reports back. Always runs claude-panel AND qa, tests against real production data read-only where possible, writes the shared report. Others' PRs: this session adds the findings to my pending GitHub review (never submits). My own PRs: no pending review; offers to fix the findings. Never pushes, posts publicly, or edits code. Modes - default (someone else's PR), --fix (my own PR/layer, in-session: review + QA, fix, repeat until steady state, report before it's opened), --status (my own PR, merge readiness), --risky (code that can touch real external systems or money), --stack (every PR in a stack, one agent per layer, then a stack-wide summary). Use when the user asks for /deep-review, or to have a PR reviewed/QA'd in its own worktree. Also proactively with --fix (no PR needed) as soon as code on my own branch is finished, before reporting it done.
+description: Full review + in-app QA of a PR (claude-panel + qa, prod data read-only), in this session or in its own herdr worktree + agent. Modes --fix, --status, --risky, --stack. Use for /deep-review or to review/QA a PR; proactively --fix (no PR needed) once code on my branch is finished, before reporting done.
 argument-hint: "[pr-number | pr-url] [--status] [--risky] [--stack] [--fix] [extra context]"
 ---
 
@@ -13,11 +13,6 @@ Where it runs:
   yourself (**In-session** below)
 - **herdr**: anything else (e.g. someone else's PR). The agent works in its
   own worktree and pane; you dispatch and relay
-
-Why not a sub-agent: it can't start claude-panel's agents, and QA desk
-replies go to the parent session anyway. Panel lenses and QA already run
-outside this session's context. herdr: the agent is a named session you
-can drive in its pane.
 
 ## 0. Inputs
 
@@ -159,7 +154,7 @@ Deliverable
 Write <report path> (not a scratchpad or /tmp) as the shared report
 (~/.dotfiles/claude/plugin/reference/report.md): Verdict (status mode:
 mergeable now / needs X, with the path to merge), Findings (drafts per the
-global PR feedback rule, only ones worth the author's time), Earlier asks,
+`voice.md` → PR feedback, only ones worth the author's time), Earlier asks,
 QA per pass with screenshot paths, Safety (risky only), Not verified.
 Review mode, author isn't the user: also write the findings that anchor to diff lines as
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
@@ -181,24 +176,7 @@ desk replies wake you. While it runs: no branch switch, no code edits
 
 ## 3c. Fix loop (`--fix`)
 
-In-session only, my own work; you asked for the fixes, so no decision-table
-gate. Never push. Round k (cap 10):
-
-1. Review + QA on local HEAD, as 3b (`claude-panel --local`, qa both passes)
-2. Fix: the panel's `fix` findings and QA bugs. Apply per
-   `address-pr-comments` Step 4 (owning branch, its commit mode,
-   Conventional Commits with the ticket scope, verify). `ticket` / `skip`
-   (separate effort, not worth it, codebase-wide) → not done, listed
-3. Steady state → stop: no `fix` findings and QA PASS, or only repeats of
-   earlier skips/tickets. Else next round on the new HEAD
-
-Report (shared template, report path from step 1 with `-fix`): per round
-one line (found / fixed / commits), final verdict, Ticket candidates (not
-created), Skips with reason, Not verified. Then offer: push (stack: `gh
-stack push`), `gh pr ready`, merge prerequisites into the PR body (short,
-per `voice.md` → PR descriptions). Nothing
-without my OK, except attaching the best shots/video once the PR is opened
-(same rule).
+Follow `fix-loop.md` (this skill's folder).
 
 ## 4. Findings → pending review or fixes (you)
 
@@ -221,9 +199,7 @@ was tested); on re-runs only updates/removes comments and a body it posted
 that the user hasn't edited. Body skipped as not the agent's → tell the
 user; `--replace-body` only on their OK. Never
 submits. Add its counts (added / replaced / removed / skipped + why) and
-the review link under the report's Verdict. Verdict: approve or request
-changes, never comment (any `(blocking)` finding or QA FAIL → request
-changes). Chat: the short form (report.md, after a sync), with the report
+the review link under the report's Verdict (rules: `report.md` → Verdict). Chat: the short form (report.md, after a sync), with the report
 path.
 
 ## 5. Cleanup (herdr)
@@ -235,28 +211,7 @@ pending review stay.
 
 ## Stack (`--stack`)
 
-Layers from the PR's base chain, open PRs only:
-
-```bash
-gh pr list -R <owner/repo> --head <base> --state open --json number,headRefName,baseRefName   # parent; repeat down to the default branch
-gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName               # child; repeat up. Several → ask which
-```
-
-- Bottom → top. One layer → plain run. More than 4 → state the count and
-  ask (each layer is a full panel + QA)
-- `--fix` doesn't combine: fix the checked-out layer, then the next after
-  the user opens it (see the stack flow in global CLAUDE.md)
-- Per layer: steps 1-4 as above (herdr), own worktree, agent and report,
-  brief with the stack line. Dispatch all at once; the QA desk queues their
-  QA. Others' stack: sync each layer's pending review as it reports
-- Track the layers; each agent's message wakes you. When all are in (or
-  blocked), write `$HOME/screenshots/<repo>/stack-<bottom head>/stack-review.md`
-  as the shared report: Verdict per layer + overall; Findings merged across
-  layers (same problem twice → one item, owned by the lowest layer that
-  introduced it; fixes that cascade to upper layers noted); Earlier asks,
-  QA, Not verified as links to each layer's report
-- My own stack → offer `/address-pr-comments stack` with the layer reports
-  and the summary
+Follow `stack.md` (this skill's folder).
 
 ## 6. Log + report
 
@@ -271,6 +226,6 @@ outcome.
 
 ## Never
 
-Post publicly, submit, push, approve, or edit code; write to prod data; run
+Post publicly, submit, push, or approve; edit code outside `--fix` or status mode on the user's ask; write to prod data; run
 or brief a review without both claude-panel and qa (review mode). Your one
 GitHub write is `pr-pending sync` (others' PRs).

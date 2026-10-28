@@ -11,14 +11,15 @@ Head <sha:8> · <YYYY-MM-DD> · <mode, inputs: panel / QA desk / prod data / ...
 
 ## Verdict
 <approve | request changes> (status: mergeable now | needs X;
-QA: PASS | FAIL | BLOCKED). Never comment: any `(blocking)` finding or QA
-FAIL → request changes, else approve. QA BLOCKED → no verdict and nothing
+QA: PASS | FAIL | BLOCKED). Never comment: any `(blocking)` finding (panel
+severity `blocker`/`major` = `(blocking)`) or QA FAIL → request changes,
+else approve. QA BLOCKED → no verdict and nothing
 to GitHub (no pending review sync); tell me in chat what's blocked so we
 troubleshoot, then re-run. One-paragraph why. Blocked → "Blocked on: <exactly
 what's missing and how to provide it>"
 
 ## Findings
-Most severe first. Each one a draft per the global PR feedback rule:
+Most severe first. Each one a draft per `voice.md` → PR feedback:
 ### N. `path:line`
 **label (decorations):** subject + 1-3 sentences. Evidence (repro steps,
 screenshot path, log line). Suggestion block if exact.
@@ -48,7 +49,7 @@ never a pass
 When findings go into a pending review (`pr-pending`), the review body
 (`findings.json` `body`) follows `voice.md` → Review bodies: 1-3 sentences
 in my voice, then any findings that can't anchor to a diff line (each per
-the PR feedback rule). What was tested, prod checks included, stays in the
+`voice.md` → PR feedback). What was tested, prod checks included, stays in the
 local report; at most one clause of it in the body.
 
 No commit SHA (the run marker and ledger track the head). Internal IDs

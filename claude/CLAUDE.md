@@ -1,6 +1,6 @@
 # Global Claude Instructions
 
-- [IMPORTANT] In all interactions and commit messages, be extremely concise and sacrifice
+- In all interactions and commit messages, be extremely concise and sacrifice
   grammar for the sake of concision. Except drafts written as me (plugin
   `reference/voice.md`): normal prose.
 
@@ -13,13 +13,20 @@
 ## File Path Preferences
 
 - Use relative paths from the project root instead of `~/` or absolute paths when working within a project
-- This avoids filepath errors and is cleaner for project-based operations
-- Example: Use `domains/transaction/src/mutations/file.ts` instead of `~/code/project/domains/transaction/src/mutations/file.ts`
+
+## Questions to me
+
+- Ask with AskUserQuestion: 2-4 options, recommended first and labeled
+  "(Recommended)", each question standalone (names the item it's about).
+  Up to 4 independent questions per call; as many calls as needed, and
+  follow-ups that answers raise are welcome (grill-style cascade)
+- No numbered question lists in chat that need a typed answer. Free-text
+  answers (names, wording) go in chat, one per message
+- Ask only when the answer changes what you do; else pick the sensible
+  default and say so
 
 ## Plans
 
-- [IMPORTANT] All plans should be extremely concise and sacrifice grammar for
-  the sake of concision
 - When presenting a plan, copy a link to the plan to my clipboard
 - At the end of each plan, give me a list of unresolved questions to answer, if
   any
@@ -52,51 +59,34 @@
 
 ## Git
 
-- [IMPORTANT] Do not make comments, update pull requests, or push code changes unless
-  I explicitly ask you to.
-  - Pending reviews: only on others' PRs I review. `/deep-review` and
-    `claude-panel` add findings via `pr-pending` without asking (never
-    submit), and always report them locally too
-  - My own PRs: no pending review. Report findings and offer to fix them
+- [IMPORTANT] Comment, update pull requests, or push code changes only when
+  I explicitly ask. Exceptions:
+  - Pending reviews, only on others' PRs I review: `/deep-review` and
+    `claude-panel` add findings via `pr-pending` without asking, never
+    submit, and always report them locally too. My own PRs: no pending
+    review; report findings and offer to fix them
   - Public comments/replies/submits: draft locally (as
     `address-pr-comments` does), post only when I ask
   - PR just opened (by you on my ask, or I say I opened it): adding its
     screenshots/video (`voice.md` → PR descriptions) needs no extra OK
-- [IMPORTANT] Always use (except `WIP:` commits) [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
-  `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
-  build, ci, style, revert). Ticket ID as scope when known, e.g.
-  `feat(ENG-6659): add supported locations page`
+- Commits (except `WIP:`): Conventional Commits, ticket ID as scope when
+  known, e.g. `feat(ENG-6659): add supported locations page`
 - PR titles are not Conventional Commits: the repo's CI title check wins.
   Read its regex in `.github/workflows` before `gh pr create`/`edit`; none →
   `<TICKET-ID> <Capitalized imperative subject>`
-- Comments should be shown locally for me to review and post
-- [IMPORTANT] PR feedback (findings, drafts, posted comments) is the one
-  format every skill and agent uses:
-  - [Conventional Comments](https://conventionalcomments.org/):
-    `**label (decorations):** subject`, then 1-3 sentences in my voice
-    (plugin `reference/voice.md`); ` ```suggestion `
-    block when it exactly replaces the anchored lines; `file:line` in drafts
-  - Posted: the comment only. No "Claude said this" / attribution header, no
-    blockquote wrapper
-  - Judicious: only what's worth the author's time. Drop duplicates of open
-    or declined threads, speculative questions, follow-up-only concerns
-    (→ ticket), nits CI/bots catch. Merge findings that share one fix
-  - Existing feedback: `pr-threads <pr>` (threads with status, reviews,
-    comments, my pending review)
-- Writing/editing a Linear issue or doc → plugin `reference/specs.md`;
-  anything written as me → `reference/voice.md`. Show the draft before
-  `save_issue`
+- PR feedback (findings, drafts, posted comments), every skill and agent:
+  plugin `reference/voice.md` → PR feedback. Existing feedback:
+  `pr-threads <pr>` (threads with status, reviews, comments, my pending
+  review)
+- Issue tracker: Linear (MCP). Writing/editing an issue or doc → plugin
+  `reference/specs.md`; anything written as me → `reference/voice.md`. Show
+  the draft before `save_issue`
 - Third-party skills (e.g. mattpocock's): use their process, but
   `voice.md`/`specs.md` override their templates for anything written as me
-- Issue tracker: Linear (MCP); spec shape per `specs.md`
-- Big changes: one gh stack of small reviewable PRs. Only the bottom PR is
-  ready for review; upper layers stay drafts. Merge one layer at a time:
-  `gh stack rebase` → `gh stack push` → CI green → `gh stack merge
-  <bottom-pr> --yes`. Never merge the whole stack at once
-  - Before opening a layer: `gh stack sync` → `/deep-review --fix` on that
-    layer → report; I open it
-  - Rebase stack branches only with `gh stack sync|rebase`, never plain
-    `git rebase` (stale saved base; recovery: plugin `reference/gh-stack.md`)
+- Big changes: one gh stack of small reviewable PRs; only the bottom PR is
+  ready for review, upper layers stay drafts. Slicing, per-layer flow, and
+  merging: plugin `reference/gh-stack.md`. Rebase stack branches only with
+  `gh stack sync|rebase`, never plain `git rebase`
 - Stage explicit paths (`git add <paths>`), never `-A`/`.`: I often have
   unrelated uncommitted changes
 
@@ -111,12 +101,5 @@
 - For in-app/browser testing, use the `qa` skill: you brief the repo's QA
   desk (`/qa-desk`), which sets up the main worktree and runs `qa-tester`.
   Playwright only loads inside `qa-tester`
-- UI change: qa runs inside `/deep-review --fix` when the code is done.
-  Standalone `qa` (commit first, WIP ok) only for a mid-work check
 - A repo's main worktree belongs to its QA desk while one runs: never switch
   branches or edit there; work in a linked worktree
-- Screenshots/videos: absolute `filename` under
-  `$HOME/screenshots/<repo>/<branch>/` (branch `/` → `-`). Relative names land
-  in the repo; paths outside `~/screenshots` are rejected
-- Video: navigate first, then `browser_start_video` (starting on a blank page
-  records nothing)

@@ -89,11 +89,4 @@ audit output. Within that:
 
 ## Audit flags
 
-What `spec-audit` calls out:
-
-- Scope that contradicts the code, or terms that differ from it
-- A requirement in a linked source (thread, email, meeting notes) that the
-  spec is missing or contradicts
-- Empty or one-line descriptions
-- Hedged scope ("or something?", "not sure")
-- Untestable criteria, unnamed actors, real branches missing a side
+The checklist lives in `spec-audit` §3.

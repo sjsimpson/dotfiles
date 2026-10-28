@@ -1,6 +1,6 @@
 ---
 name: address-pr-comments
-description: Work through review feedback on your own PR or gh stack: human/bot threads plus claude-panel findings. Skeptically decides fix / ticket / skip / reply per item, shows a decision table and waits for approval, then applies fixes in the branch that owns the code (bottom of the stack first), verifies each layer, and updates tickets with dated comments or sub-issues. Never pushes or posts PR replies unless asked. Use when the user asks to address, resolve, or work through PR comments or review findings.
+description: "Triage and fix review feedback on my own PR or gh stack (human/bot threads + claude-panel findings): a fix / ticket / skip / reply decision table I approve, then fixes in the owner layer, bottom up. Use to address, resolve, or work through PR comments or review findings."
 argument-hint: "[pr-number | pr-url | stack] [panel result .json ...]"
 ---
 
@@ -103,7 +103,7 @@ Layer 1 · eng-1234-foo · PR #101 · mode: commit
 
 Then **Skips** (one line each with the reason, so the user can override),
 **Tickets** (existing ticket to comment on, or new sub-issue under which
-parent), **Draft replies** (global PR feedback rule), and the verification
+parent), **Draft replies** (`voice.md` → PR feedback), and the verification
 commands you'll run. Stop and wait. The user may approve all, edit actions, or
 approve per layer.
 
