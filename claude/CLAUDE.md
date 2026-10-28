@@ -60,6 +60,8 @@
   - My own PRs: no pending review. Report findings and offer to fix them
   - Public comments/replies/submits: draft locally (as
     `address-pr-comments` does), post only when I ask
+  - PR just opened (by you on my ask, or I say I opened it): adding its
+    screenshots/video (`voice.md` → PR descriptions) needs no extra OK
 - [IMPORTANT] Always use (except `WIP:` commits) [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages:
   `type(scope): subject` (types: feat, fix, refactor, test, chore, docs, perf,
   build, ci, style, revert). Ticket ID as scope when known, e.g.

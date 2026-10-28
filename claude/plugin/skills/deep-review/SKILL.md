@@ -195,7 +195,8 @@ one line (found / fixed / commits), final verdict, Ticket candidates (not
 created), Skips with reason, Not verified. Then offer: push (stack: `gh
 stack push`), `gh pr ready`, merge prerequisites into the PR body (short,
 per `voice.md` → PR descriptions). Nothing
-without my OK.
+without my OK, except attaching the best shots/video once the PR is opened
+(same rule).
 
 ## 4. Findings → pending review or fixes (you)
 

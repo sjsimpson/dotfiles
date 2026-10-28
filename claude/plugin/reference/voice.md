@@ -50,12 +50,52 @@ ENG-1240, so @Sam, could you nudge that along?"
 ## Per surface
 
 - PR feedback: the format in global `CLAUDE.md` (Conventional Comments)
-- PR descriptions: short, about 10 lines of content. Follow the repo's
-  template headings. Summary: 1-2 sentences on what changed and why, then
-  the ticket and design links on one line. Testing and risk: 2-3 sentences
-  (what I tested, the risk, prod impact). Reviewer notes: only the
-  template's checkboxes. No per-flow walkthroughs, "not covered" lists, or
-  extra notes; detailed QA and review results stay in the local report
+- PR descriptions: see **PR descriptions** below
 - Commits: Conventional Commits, ticket ID as scope (global `CLAUDE.md`)
 - Pending review body: `report.md` → Pending review body
 - Linear issues and docs: `specs.md`
+
+## PR descriptions
+
+Short: about 10-15 lines of content under the repo's template headings.
+Each section mixes a short text block with a bulleted list where items are
+parallel and worth scanning. Text only when it adds context; otherwise
+terse-ish.
+
+- **Summary**: 1-2 sentences on what changed and why. Bullets for the
+  distinct changes when there are 2+. Ticket and design links on one line
+- **Testing and risk reduction**: a sentence on the risk and prod impact,
+  bullets for what I tested
+- **Notes for reviewers**: the template's checkboxes, plus a bullet only
+  for something a reviewer must know
+- No per-flow walkthroughs, "not covered" lists, or extra notes. Detailed
+  QA and review results stay in the local report
+- **Screenshots/video** (UI changes): 1-3 shots or one video from
+  `~/screenshots/<repo>/<branch>/`, added once the PR exists (`gh pr create`
+  can't attach). Reference each file in the body by the path you attach,
+  then from that dir:
+  `gh pr edit <n> -R <owner/repo> --body-file body.md --attach ./after.png`.
+  `--attach` uploads and rewrites `![alt](./after.png)` to the hosted URL;
+  check `gh pr view <n> --json body` shows `user-attachments` URLs
+
+Made-up example:
+
+```markdown
+## Summary
+Failed webhook deliveries now retry instead of being dropped, so partners
+stop losing events when their endpoint blips.
+- Retries 5 times with backoff (1m → 16m)
+- Exhausted events show as `failed` in the partner log
+
+ENG-1234 · [Design](https://example.com/design)
+
+## Testing and risk reduction
+Low risk: only touches the delivery worker, behind `webhook_retries`.
+- Unit tests for backoff and ordering
+- Local: forced 500s, saw 5 retries then `failed`
+
+![Partner log with a failed event](./after.png)
+
+## Notes for reviewers
+- [x] Tests added
+```

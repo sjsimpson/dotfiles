@@ -131,7 +131,9 @@ agents, hooks) and its token cost.
   agent. Global `CLAUDE.md` points there
 - **Voice**: [`plugin/reference/voice.md`](plugin/reference/voice.md),
   rules for anything written as you (tickets, PR text, review bodies,
-  Basecamp, email)
+  Basecamp, email). PR descriptions: short text + bullets per template
+  section; screenshots/video attached after the PR opens via native
+  `gh pr edit --attach` (no extension, no browser cookies)
 
 ## Playwright
 
