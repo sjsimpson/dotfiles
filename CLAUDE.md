@@ -23,6 +23,13 @@ Public repo. Anything committed is world-readable.
 - Docs are part of the change (candidate for global; revisit later): update the matching README table/section
   (`README.md`, `claude/README.md`, `config/*/README.md`) in the same commit
 
+## Requests from other sessions
+
+- Log each one as a TODO under `## Tasks` in the matching
+  `~/notes/personal/dotfiles/*.md` the moment it arrives, before starting
+  work; check it off (`✅ <date>`) when done. It must survive a lost or
+  compacted session
+
 ## Commits
 
 - Before pushing, grep the unpushed diff for anything above
