@@ -151,10 +151,10 @@ Risky (only when risky) - read first
   automatically. Report gets a Submission safety section
 
 Hard rules
-- No GitHub writes at all: no push, approve, request changes, comments,
-  or pending review (<reply-to> syncs that). Push the nit commit only when
-  <reply-to> says to (step 4 there). No code edits beyond step 6 (status
-  mode: only as above)
+- GitHub writes: only the deep-review skill's step 4, run here (pending
+  review sync; the nit push after the user OKs it in this pane). Never
+  approve, request changes, comment, or submit. No code edits beyond step
+  6 (status mode: only as above)
 - Prod data read-only. Internal IDs only: no customer names, amounts,
   account numbers, or other customer details in the report
 - Don't block on questions: note assumptions and carry on. Hard blocker
@@ -175,8 +175,15 @@ report.md (voice.md → Review bodies), then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
 the report). Approve with no findings → "body": "" and no comments
 (report.md → Approve with no findings).
-Then SendMessage <reply-to>: one line, verdict, report path, findings.json
-path if any, nit commit sha if any.
+Then run the deep-review skill's step 4 here and give the user the short
+form (report.md, after a sync). Stack layer: also SendMessage <reply-to>
+one line: verdict, report path.
+
+Done
+When the user submits their review (approve, request changes, comment) or
+says they're done: SendMessage <reply-to> one line, "<ticket> #<n> review
+done (<APPROVED | CHANGES_REQUESTED | COMMENTED | done>), ready to spin
+down", plus any uncommitted or unpushed work in the worktree. Then stop.
 ```
 
 ## 3b. In-session
@@ -191,7 +198,10 @@ desk replies wake you. While it runs: no branch switch, no code edits
 
 Follow `fix-loop.md` (this skill's folder).
 
-## 4. Findings → pending review or fixes (you)
+## 4. Findings → pending review or fixes
+
+Run by the session holding the worktree: you in 3b, the reviewer agent in
+its pane (herdr; the user works with it there, nothing is relayed).
 
 **My own PR** (not `--fix`): no pending review. Non-blocking fixes are
 already committed (brief step 6), never pushed. Blocking findings → offer
@@ -200,8 +210,7 @@ to fix them
 `gh pr ready <n>` and adding merge prerequisites the review found to the PR
 body. Nothing else without my OK.
 
-**Others' PR** (review mode): when the agent reports (or 3b finishes), sync
-its findings. QA `BLOCKED` → sync nothing; tell the user what's blocked and
+**Others' PR** (review mode): after the report, sync its findings. QA `BLOCKED` → sync nothing; tell the user what's blocked and
 troubleshoot here, then re-run:
 
 ```bash
@@ -218,8 +227,7 @@ the review link under the report's Verdict (rules: `report.md` → Verdict). Cha
 path.
 
 Nit commit (brief step 6): ask me once, AskUserQuestion: push it to
-`<head>`? On OK, the session holding the worktree (the agent via
-SendMessage, or here in 3b): `git fetch origin <head>`; `origin/<head>`
+`<head>`? On OK: `git fetch origin <head>`; `origin/<head>`
 still at the reviewed sha → `git push origin HEAD:<head>`, never force;
 moved → don't push, tell me. After the push, add one line to
 findings.json `body` in my voice ("Pushed a couple of small fixes
@@ -228,9 +236,12 @@ report. No blocking findings → verdict approve either way.
 
 ## 5. Cleanup (herdr)
 
-When the user's done with the reviewer (herdr has no agent kill): worktree
-created for the review → `herdr worktree remove --workspace <id>`; reused
-worktree → `herdr tab close <tab>`. Report, brief, findings, ledger, and
+The reviewer's "review done, ready to spin down" message wakes you (or the
+user says they're done; herdr has no agent kill). Check the worktree:
+`git -C <path> status --porcelain` and `git -C <path> log @{u}..` both
+empty → clean up without asking; else list what's there and ask first.
+Worktree created for the review → `herdr worktree remove --workspace
+<id>`; reused worktree → `herdr tab close <tab>`. Report, brief, findings, ledger, and
 pending review stay.
 
 ## Stack (`--stack`)
@@ -245,8 +256,8 @@ This session works in `~/notes` (the assistant) → append to
 Any other session: skip (not its repo).
 
 Tell the user: agent name, worktree label, report path to expect (herdr).
-The agent's message wakes you; relay its verdict, path, and step 4's
-outcome.
+No relay: the user works with the reviewer in its pane. Its "review done"
+message → step 5. Stack: per `stack.md`.
 
 ## Never
 

@@ -13,7 +13,8 @@ gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName 
   the user opens it (`gh-stack.md` → Flow per layer)
 - Per layer: steps 1-4 as above (herdr), own worktree, agent and report,
   brief with the stack line. Dispatch all at once; the QA desk queues their
-  QA. Others' stack: sync each layer's pending review as it reports
+  QA. Each layer's agent syncs its own pending review (step 4, in its
+  pane) and messages you its verdict and report path
 - Track the layers; each agent's message wakes you. When all are in (or
   blocked), write `$HOME/screenshots/<repo>/stack-<bottom head>/stack-review.md`
   as the shared report: Verdict per layer + overall; Findings merged across
