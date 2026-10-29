@@ -1,13 +1,13 @@
 ---
 name: review-stack
-description: Review a whole gh stack with claude-panel (one run per layer), judge findings together, then hand off to address-pr-comments.
+description: Review a whole gh stack with claude-panel + qa (one run each per layer), judge findings together, then hand off to address-pr-comments.
 disable-model-invocation: true
 argument-hint: "(none: the current stack)"
 ---
 
 # Review stack
 
-claude-panel on every layer, judged as one body of work, fixed bottom up.
+claude-panel and qa on every layer, judged as one body of work, fixed bottom up.
 
 Reviews are read-only and run in parallel. Fixes are sequential and
 bottom up, owned by `/address-pr-comments`.
@@ -25,7 +25,7 @@ parent ref (previous layer's branch, or `origin/<trunk>` for the bottom),
 `pr.number` if any. `needsRebase` on any layer → tell the user (`gh stack
 rebase`) and stop; reviewing stale layers wastes the run.
 
-**Cost check**: each layer is one panel workflow (~8-12 agents). More than 4
+**Cost check**: each layer is one panel workflow (~8-12 agents) plus a QA run. More than 4
 layers → state the count and ask before running.
 
 ## Step 1: Prepare each layer
@@ -62,6 +62,13 @@ Workflow({ scriptPath: "<claude-panel skill dir>/panel.workflow.js",
 Don't poll; completion notifications wake you. A failed run: re-invoke with
 `resumeFromRunId`. Save each result to `$SCRATCH/stack-<branch>-<head:0:8>.json`.
 
+## Step 2b: QA each layer
+
+Alongside the panels: follow the `qa` skill per layer from its worktree
+(`Code:` = layer worktree, commit `<head>`, base `<parentRef>`; Evidence
+`$HOME/screenshots/<repo>/stack-<bottom head>/<branch>/`). Its step 0
+picks app or probe; the QA desk queues app runs. Wait for every verdict.
+
 ## Step 3: Judge holistically
 
 Across all layers' results plus the existing PR threads:
@@ -70,6 +77,10 @@ Across all layers' results plus the existing PR threads:
   introduced the code (an upper layer often re-flags code it only calls)
 - **Cascades**: a fix in layer N that changes what N+1.. rely on → note it on
   the item so the upper layers get re-verified
+- **QA checks the panel**: a finding QA ran and didn't reproduce is
+  demoted (or refuted), with the run as evidence; one it reproduced is
+  confirmed. QA bugs join the findings, owned by the layer that introduced
+  them. A `BLOCKED` layer: say what's blocked; its findings stay unverified
 - **Re-check the panel's calls**: keep its fix/ticket/skip unless the
   stack-wide view changes it (e.g., an "inconsistent with codebase" finding
   that later layers establish as the new pattern)
@@ -82,5 +93,7 @@ table is the user's gate; nothing changes before approval.
 
 ## Step 5: Cleanup
 
-Remove this run's `stack-*-<RUN>-wt` worktrees (`git worktree remove`), then
+After every QA verdict is in (the tester reads code from the worktrees),
+and probe sandboxes per the `qa` skill's `probe.md` P3: remove this run's
+`stack-*-<RUN>-wt` worktrees (`git worktree remove`), then
 `git worktree prune`.

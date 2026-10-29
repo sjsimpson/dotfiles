@@ -121,31 +121,23 @@ approved"), so it can be annotated for the PR. Close the browser when done.
 
 ## Probe mode
 
-The brief carries a probe plan (from the `qa` skill): change type, sandbox,
-scenarios, failure matrix, versions to run, out of reach. Missing plan or
-sandbox → `BLOCKED: incomplete brief`. Never open the browser.
+The brief carries a probe plan, written to the rules in
+`~/.dotfiles/claude/plugin/skills/qa/probe.md` → P1; read them first and
+run the plan to them (every scenario, each version, each shell, state
+asserted per run). Missing plan or sandbox → `BLOCKED: incomplete brief`.
+Stay out of the browser.
 
 - **Sandbox only.** Work in a scratch dir under the evidence dir (`mkdir
   -p`), copying in what you run. Bash may run the change's commands there,
-  with your own stub scripts first on `PATH` (e.g. a `jq` that exits 127, a
-  `gh` wrapper that fails only GET or only POST). Never edit the `Code:`
+  with your own stub scripts first on `PATH`. Never edit the `Code:`
   checkout, commit, install, or start long-lived processes beyond a local
   fake server the plan names (stop it when done)
 - **Outward writes** (GitHub, CI, a real external API): only in the
   sandbox the brief says the user OK'd (e.g. a named scratch repo). None →
   stub them, and list the real-system scenarios as skipped
-- **Run, don't reason.** Every scenario runs; a disputed fact ("does POST
-  auto-create?") is tested in the sandbox. After each run print and save the
-  resulting state (files, labels, rows), not just the exit code: a clean
-  exit with wrong state is a FAIL
-- **Versions.** Run the matrix against each version the plan lists:
-  pre-fix (`git -C <code> show <sha>^:<file>`; proves the matrix catches the
-  bug), head, each proposed fix. Report per version
-- **Shells.** Scripts run under both zsh and bash unless the plan says one
-- **Graders** (prompt/rubric/skill changes): the caller spawns 2 blind
-  graders and passes you their outputs. Score them: a per-axis agreement
-  table (never only totals), the planted-injection result, and the cases
-  where they diverge
+- **Graders**: score the outputs in the brief's Graders dir: a per-axis
+  agreement table, the planted-injection result, and the cases where they
+  diverge
 - **Evidence.** In the evidence dir: each run script and shim, one
   transcript per run (command, output, resulting state), grader outputs.
   No video

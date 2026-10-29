@@ -395,6 +395,7 @@ for (const f of merged.findings) {
 const rank = { blocker: 0, major: 1, minor: 2, nit: 3 };
 
 // Real isn't the same as worth doing: one skeptical pass over what survived.
+// The blocking rule below mirrors reference/report.md → Verdict (harm test); change both.
 const toAdjudicate = [...confirmed, ...uncertain].filter(
   (f) => f.verdict !== "UNVALIDATED",
 );

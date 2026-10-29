@@ -1,6 +1,6 @@
 ---
 name: deep-review
-description: Full review + in-app QA of a PR (claude-panel + qa, prod data read-only), in this session or in its own herdr worktree + agent. Modes --fix, --status, --risky, --stack. Use for /deep-review or to review/QA a PR; proactively --fix (no PR needed) once code on my branch is finished, before reporting done.
+description: Full review + QA of a PR (claude-panel + qa in app or probe mode, prod data read-only), in this session or in its own herdr worktree + agent. Modes --fix, --status, --risky, --stack. Use for /deep-review or to review/QA a PR; proactively --fix (no PR needed) once code on my branch is finished, before reporting done.
 argument-hint: "[pr-number | pr-url] [--status] [--risky] [--stack] [--fix] [extra context]"
 ---
 
@@ -111,9 +111,9 @@ Setup
 Review (review mode)
 4. /sjsimpson:claude-panel <n>. Local only, post nothing
 5. /sjsimpson:qa, app or probe mode per change (its step 0), brief
-   Evidence: <report dir>. Probe mode: its plan, failure matrix, and
-   versions (pre-fix, head, each proposed fix). Both passes, neither
-   optional:
+   Evidence: <report dir>. Start it alongside step 4. Probe mode: its
+   plan, failure matrix, and versions (pre-fix, head, each proposed fix
+   from the panel or earlier threads). Both passes, neither optional:
    a. Prod: read-only via the prod data tool. Find real cases the change
       affects (accounts, periods, records) and confirm the new behavior on
       each, by reproducing the shape locally or reasoning from the code.
@@ -123,6 +123,10 @@ Review (review mode)
       prod shapes. Cover edge cases: empty/zero, mixed, error paths, and
       cases that must stay unchanged
    Flag-gated code: test flag on and off. <repo config: QA gotchas>
+   Then QA checks the panel: a finding QA ran and didn't reproduce is
+   demoted (or refuted), with the run as evidence; one it reproduced is
+   confirmed (its How tested says which). Verdict banner: QA coverage
+   full (every planned scenario ran) | partial | none
 6. Nit fixes (skip in a reused worktree; list them instead). Fix the
    non-blocking `fix` findings that are mechanical (no behavior change:
    naming, typos, dead code, formatting, an exact suggestion), validated,
@@ -180,10 +184,12 @@ form (report.md, after a sync). Stack layer: also SendMessage <reply-to>
 one line: verdict, report path.
 
 Done
-When the user submits their review (approve, request changes, comment) or
-says they're done: SendMessage <reply-to> one line, "<ticket> #<n> review
-done (<APPROVED | CHANGES_REQUESTED | COMMENTED | done>), ready to spin
-down", plus any uncommitted or unpushed work in the worktree. Then stop.
+When the user says in this pane that they're done (or that they
+submitted): read their latest review state (`gh pr view <n> -R
+<owner/repo> --json reviews`, theirs, newest; none → `done`), then
+SendMessage <reply-to> one line, "<ticket> #<n> review done (<state>),
+ready to spin down", plus any uncommitted or unpushed work in the
+worktree. Then stop.
 ```
 
 ## 3b. In-session
