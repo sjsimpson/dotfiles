@@ -175,8 +175,14 @@ const ADJUDICATED = {
             description:
               "one sentence: the cost/benefit call; for pattern conflicts, the existing pattern with path:line and whether to follow it here or change it everywhere",
           },
+          blocking: { type: "boolean" },
+          harm: {
+            type: "string",
+            description:
+              "blocking only: the concrete trigger and the harm it causes (wrong behavior, data loss/corruption, money or filings, security, a repo rule broken), with evidence; empty when not blocking",
+          },
         },
-        required: ["id", "action", "reason", "note"],
+        required: ["id", "action", "reason", "note", "blocking", "harm"],
       },
     },
   },
@@ -406,6 +412,8 @@ For each finding choose:
 
 Push back by default: a finding earns "fix" only with a concrete trigger and a proportionate fix. Blockers with a confirmed trigger are fix unless the fix is impractical.
 
+Then set blocking. A finding blocks the merge only if it passes the harm test: a concrete, reachable trigger causes wrong behavior, data loss or corruption, wrong money or filings, a security hole, or breaks a repo rule, and you can name the evidence in harm. Severity is advisory: a "major" readability or design call is not blocking. ticket and skip are never blocking. Nits, naming, style, and "could be cleaner" are never blocking. Unsure → not blocking.
+
 Findings (JSON):
 ${JSON.stringify(toAdjudicate.map(({ id, file, line, severity, claim, detail, fix, verdict, evidence }) => ({ id, file, line, severity, claim, detail, fix, verdict, evidence })))}`,
     { label: "adjudicate", phase: "Adjudicate", schema: ADJUDICATED },
@@ -414,7 +422,14 @@ ${JSON.stringify(toAdjudicate.map(({ id, file, line, severity, claim, detail, fi
   (adj ? adj.decisions : []).forEach((d) => (byId[d.id] = d));
   for (const f of toAdjudicate) {
     const d = byId[f.id];
-    if (d) Object.assign(f, { action: d.action, reason: d.reason, note: d.note });
+    if (d)
+      Object.assign(f, {
+        action: d.action,
+        reason: d.reason,
+        note: d.note,
+        blocking: d.action === "fix" && d.blocking,
+        harm: d.harm,
+      });
   }
 }
 const sort = (xs) =>

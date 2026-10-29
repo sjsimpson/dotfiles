@@ -123,8 +123,16 @@ Review (review mode)
       prod shapes. Cover edge cases: empty/zero, mixed, error paths, and
       cases that must stay unchanged
    Flag-gated code: test flag on and off. <repo config: QA gotchas>
+6. Nit fixes (skip in a reused worktree; list them instead). Fix the
+   non-blocking `fix` findings that are mechanical (no behavior change:
+   naming, typos, dead code, formatting, an exact suggestion), validated,
+   high confidence. <author is the user: every non-blocking `fix` finding
+   and non-blocking QA bug, not just mechanical>. Run the repo's
+   lint/typecheck/tests for the touched files; a fix that fails any →
+   revert it, keep it local only. One Conventional Commit on <head>
+   (`<type>(<ticket>): <subject>`). Never push
 
-Status (status mode, replaces 4-5)
+Status (status mode, replaces 4-6)
 4. CI: each failing job, root cause from its log
 5. Open threads, review decision, ruleset (dismiss-stale, thread
    resolution required), mergeable state; rebase dry run on a throwaway
@@ -144,8 +152,9 @@ Risky (only when risky) - read first
 
 Hard rules
 - No GitHub writes at all: no push, approve, request changes, comments,
-  or pending review (<reply-to> syncs that). No code edits (status mode:
-  only as above)
+  or pending review (<reply-to> syncs that). Push the nit commit only when
+  <reply-to> says to (step 4 there). No code edits beyond step 6 (status
+  mode: only as above)
 - Prod data read-only. Internal IDs only: no customer names, amounts,
   account numbers, or other customer details in the report
 - Don't block on questions: note assumptions and carry on. Hard blocker
@@ -158,14 +167,16 @@ Write <report path> (not a scratchpad or /tmp) as the shared report
 mergeable now / needs X, with the path to merge), Findings (drafts per the
 `voice.md` → PR feedback, only ones worth the author's time), Earlier asks,
 QA per pass with screenshot paths, Safety (risky only), Not verified.
-Review mode, author isn't the user: also write the findings that anchor to diff lines as
+Nit commit: its sha and one line per fix, under Findings.
+Review mode, author isn't the user: also write the blocking findings that
+anchor to diff lines as
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
 report.md (voice.md → Review bodies), then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
 the report). Approve with no findings → "body": "" and no comments
 (report.md → Approve with no findings).
 Then SendMessage <reply-to>: one line, verdict, report path, findings.json
-path if any.
+path if any, nit commit sha if any.
 ```
 
 ## 3b. In-session
@@ -182,10 +193,12 @@ Follow `fix-loop.md` (this skill's folder).
 
 ## 4. Findings → pending review or fixes (you)
 
-**My own PR** (not `--fix`): no pending review. Findings → offer to fix them
+**My own PR** (not `--fix`): no pending review. Non-blocking fixes are
+already committed (brief step 6), never pushed. Blocking findings → offer
+to fix them
 (`/address-pr-comments` with the report). Passing verdict → also offer
 `gh pr ready <n>` and adding merge prerequisites the review found to the PR
-body. Nothing without my OK.
+body. Nothing else without my OK.
 
 **Others' PR** (review mode): when the agent reports (or 3b finishes), sync
 its findings. QA `BLOCKED` → sync nothing; tell the user what's blocked and
@@ -203,6 +216,15 @@ user; `--replace-body` only on their OK. Never
 submits. Add its counts (added / replaced / removed / skipped + why) and
 the review link under the report's Verdict (rules: `report.md` → Verdict). Chat: the short form (report.md, after a sync), with the report
 path.
+
+Nit commit (brief step 6): ask me once, AskUserQuestion: push it to
+`<head>`? On OK, the session holding the worktree (the agent via
+SendMessage, or here in 3b): `git fetch origin <head>`; `origin/<head>`
+still at the reviewed sha → `git push origin HEAD:<head>`, never force;
+moved → don't push, tell me. After the push, add one line to
+findings.json `body` in my voice ("Pushed a couple of small fixes
+(<sha:7>): <what>.") and re-sync. No → it stays local, listed in the
+report. No blocking findings → verdict approve either way.
 
 ## 5. Cleanup (herdr)
 
@@ -228,6 +250,6 @@ outcome.
 
 ## Never
 
-Post publicly, submit, push, or approve; edit code outside `--fix` or status mode on the user's ask; write to prod data; run
-or brief a review without both claude-panel and qa (review mode). Your one
-GitHub write is `pr-pending sync` (others' PRs).
+Post publicly, submit, or approve; push, except the nit commit on the user's OK (step 4); edit code outside `--fix`, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
+or brief a review without both claude-panel and qa (review mode). Your
+GitHub writes: `pr-pending sync` (others' PRs) and that nit push.

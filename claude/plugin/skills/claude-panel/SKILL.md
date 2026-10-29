@@ -114,7 +114,8 @@ Build the shared report (`report.md` in the plugin's `reference/` dir, `<this sk
 
 1. **Verdict**: approve / request changes, never comment (advisory only; rules: `report.md` → Verdict), plus the banner (sensitive / large / conflicted / head moved), if any.
 2. **Findings** (confirmed + codified), grouped by `action`, then severity, then confidence:
-   - **Fix**: `**path:line** [sources · severity · conf] — claim` + one-line evidence + `fix` as a code block when present
+   - **Fix · blocking**: `**path:line** [sources · severity · conf] — claim` + one-line evidence + `harm` + `fix` as a code block when present
+   - **Fix · non-blocking**: same line, no `harm`. Never changes the verdict
    - **Ticket** (codebase-wide): same line + `note` (the pattern and where else it applies)
    - **Skip**: one line each with `reason` and `note`, so the user can override
    - **Uncertain** (major+ only, one-liners): worth a human look
@@ -140,7 +141,7 @@ My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ti
 
 **Pending review** (others' PRs, automatic after the report unless the caller said local only or QA is `BLOCKED`: then sync nothing, print the full report in chat with the blocker, and troubleshoot with the user; invisible to others until the user submits in the UI):
 
-- Comment body and which findings to post: `voice.md` → PR feedback. No sources or finding ids in the body.
+- Comment body and which findings to post: `voice.md` → PR feedback (blocking ones only; non-blocking stay in the report, and `deep-review` fixes the mechanical ones). No sources or finding ids in the body.
 - Review body: report.md → **Pending review body** (voice.md → Review bodies: 1-3 sentences, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone. Approve with no findings → empty body (report.md → Approve with no findings).
 - Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 

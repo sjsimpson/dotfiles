@@ -8,8 +8,9 @@ gate. Never push. Round k (cap 10):
    `address-pr-comments` Step 4 (owning branch, its commit mode,
    Conventional Commits with the ticket scope, verify). `ticket` / `skip`
    (separate effort, not worth it, codebase-wide) → not done, listed
-3. Steady state → stop: no `fix` findings and QA PASS, or only repeats of
-   earlier skips/tickets. Else next round on the new HEAD
+3. Steady state → stop: no blocking findings and QA PASS (non-blocking
+   fixes from this round applied; they don't force another round), or only
+   repeats of earlier skips/tickets. Else next round on the new HEAD
 
 Report (shared template, report path from step 1 with `-fix`): per round
 one line (found / fixed / commits), final verdict, Ticket candidates (not

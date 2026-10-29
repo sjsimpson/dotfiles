@@ -15,15 +15,20 @@ Head <sha:8> · <YYYY-MM-DD> · <mode, inputs: panel / QA desk / prod data / ...
 <approve | request changes> (status: mergeable now | needs X;
 QA: PASS | PARTIAL | FAIL | BLOCKED, with coverage: "7/9 scenarios run").
 PASS = every planned scenario ran; PARTIAL = some skipped, none blocking.
-Never comment: any `(blocking)` finding (panel
-severity `blocker`/`major` = `(blocking)`) or QA FAIL → request changes,
-else approve. QA BLOCKED → no verdict and nothing
+Never comment: any `(blocking)` finding or QA FAIL → request changes,
+else approve. Blocking = the harm test (panel adjudicator's `blocking`,
+the same test for QA bugs): a concrete trigger causes wrong behavior,
+data loss, wrong money/filings, a security hole, or a broken repo rule.
+Severity is advisory; nits and style never block. QA FAIL = any blocking
+QA bug. QA BLOCKED → no verdict and nothing
 to GitHub (no pending review sync); tell me in chat what's blocked so we
 troubleshoot, then re-run. One-paragraph why. Blocked → "Blocked on: <exactly
 what's missing and how to provide it>"
 
 ## Findings
-Most severe first. Each one a draft per `voice.md` → PR feedback:
+Blocking first, most severe first; then non-blocking, one line each (my
+PRs: fixed, with the commit; others': fixed in a nit commit, or kept
+local). Each one a draft per `voice.md` → PR feedback:
 ### N. `path:line`
 **label (decorations):** subject + 1-3 sentences. Evidence (repro steps,
 screenshot path, log line). Suggestion block if exact. Ends with

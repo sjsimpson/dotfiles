@@ -65,6 +65,11 @@ Findings, drafts, and posted comments, every skill and agent:
   ` ```suggestion ` block when it exactly replaces the anchored lines;
   `file:line` in drafts
 - Posted: the comment only, nothing around it
+- Blocking or not, never in between: every posted comment is decorated
+  `(blocking)` or `(non-blocking)` (blocking per `report.md` → Verdict).
+  Others' PRs: post only the blocking ones. Mechanical nits get fixed and
+  pushed on my OK (`deep-review` step 4), plus one line in the review body;
+  the rest stay in the local report. Nits never hold up a PR
 - Judicious: only what's worth the author's time. Drop duplicates of open
   or declined threads, speculative questions, follow-up-only concerns
   (→ ticket), nits CI/bots catch. Merge findings that share one fix
