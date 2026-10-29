@@ -1,7 +1,9 @@
 # Report template
 
 Every review/QA report (claude-panel, deep-review, qa-tester, the QA desk's
-reply, stack summaries) uses these sections, in this order. Skip a section
+reply, stack summaries) uses these sections, in this order. Every claim
+(finding, QA row) says how it was tested: ran it, read the code, or
+reasoned. Skip a section
 that doesn't apply; never rename one. Files go under
 `~/screenshots/<repo>/<branch>/` (branch `/` → `-`).
 
@@ -11,7 +13,9 @@ Head <sha:8> · <YYYY-MM-DD> · <mode, inputs: panel / QA desk / prod data / ...
 
 ## Verdict
 <approve | request changes> (status: mergeable now | needs X;
-QA: PASS | FAIL | BLOCKED). Never comment: any `(blocking)` finding (panel
+QA: PASS | PARTIAL | FAIL | BLOCKED, with coverage: "7/9 scenarios run").
+PASS = every planned scenario ran; PARTIAL = some skipped, none blocking.
+Never comment: any `(blocking)` finding (panel
 severity `blocker`/`major` = `(blocking)`) or QA FAIL → request changes,
 else approve. QA BLOCKED → no verdict and nothing
 to GitHub (no pending review sync); tell me in chat what's blocked so we
@@ -22,10 +26,11 @@ what's missing and how to provide it>"
 Most severe first. Each one a draft per `voice.md` → PR feedback:
 ### N. `path:line`
 **label (decorations):** subject + 1-3 sentences. Evidence (repro steps,
-screenshot path, log line). Suggestion block if exact.
+screenshot path, log line). Suggestion block if exact. Ends with
+`How tested: <ran X | read code | reasoned>`.
 QA bugs: `### N. <title>` with `**issue (blocking|non-blocking):**`, then
 Steps (numbered, minimal) / Expected / Actual / Evidence (files) / Suspect
-(`path:line`, only if grounded)
+(`path:line`, only if grounded) / How tested
 
 ## Earlier asks
 One line each, from `pr-threads`: `path:line — ask (author)`: resolved /
@@ -33,8 +38,18 @@ not / partly at head, with evidence. Re-runs: also each finding from the
 earlier report: posted? resolved?
 
 ## QA
-Per pass or app: PASS | FAIL | BLOCKED, scenarios run, evidence dir.
-Passed scenarios one line each
+Per pass or app: mode (app | probe), verdict, coverage, evidence dir.
+Probe: sandbox used and blast radius (what reads/triggers on the changed
+files). Scenario table: scenario · ran? · result · evidence. "reasoned"
+never backs a PASS row. Probe evidence in the dir: the run scripts and
+shims, one transcript per run with the resulting state, grader outputs
+plus a per-axis agreement table. Video only for app mode.
+Sandbox: what's still live (scratch repo, files, processes) and awaits my
+OK to tear down; "none" if all cleaned up
+
+## Deeper coverage
+PARTIAL/BLOCKED only. Per unrun scenario: `blocked` (needs X; how to
+provide it) or `skipped` (why; cost to run), and how to get it
 
 ## Safety
 Risky changes only: every path that can act for real, and its guards

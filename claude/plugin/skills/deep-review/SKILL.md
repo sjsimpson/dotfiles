@@ -110,8 +110,10 @@ Setup
 
 Review (review mode)
 4. /sjsimpson:claude-panel <n>. Local only, post nothing
-5. /sjsimpson:qa, mostly UI/in-app, brief Evidence: <report dir>. Both
-   passes, neither optional:
+5. /sjsimpson:qa, app or probe mode per change (its step 0), brief
+   Evidence: <report dir>. Probe mode: its plan, failure matrix, and
+   versions (pre-fix, head, each proposed fix). Both passes, neither
+   optional:
    a. Prod: read-only via the prod data tool. Find real cases the change
       affects (accounts, periods, records) and confirm the new behavior on
       each, by reproducing the shape locally or reasoning from the code.
