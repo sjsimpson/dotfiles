@@ -42,6 +42,11 @@ Query every source in parallel (one message, many tool calls). Per source:
   ("still open?")
 - Before naming **Focus** or any "do next" item, check it live (e.g. PR
   review state) so you don't recommend something already done
+- **Parked agents** (herdr source): each agent tied to a ticket or PR
+  (`<ticket>`, `<ticket>-N`, `<ticket> review`). Its PR merged or closed,
+  or its ticket canceled → SendMessage that agent one line, "`<ticket>`
+  `<MERGED | CLOSED | CANCELED>`: run Done (agent-lifecycle.md)"; list it
+  under FYI. Its done reply → the dispatcher's Cleanup
 
 ## 3. Snoozes
 
@@ -153,4 +158,5 @@ the chat summary.
 ## Never
 
 Post, comment, merge, send, archive, label, mark read, or change status in
-any source. Suggested actions are for the user.
+any source. Suggested actions are for the user. The one message out is the
+parked-agent ping (Gather), to the user's own agents.

@@ -16,8 +16,8 @@ GitHub (status moves on its own once a branch is pushed).
   PRs/branches. Done or canceled → stop and say so
 - Repo: the argument, else the current repo (`gh repo view --json
   nameWithOwner`), else ask. Checkout = that repo's main worktree
-- Agent name = ticket lowercased (`eng-1234`). `ListAgents` already shows it
-  → the ticket is started: tell the user, offer to message that agent, stop
+- Agent name = ticket lowercased (`eng-1234`); taken → `agent-lifecycle.md`
+  → Start (plugin `reference/`)
 - Reply-to: this session's name (`ListAgents`)
 
 ## 2. Worktree + agent
@@ -29,7 +29,8 @@ git -C <checkout> worktree list --porcelain   # branch already checked out?
 
 - Branch checked out in a worktree → use it (new tab there:
   `herdr tab create --workspace <id> --cwd <path> --label "<ticket>"`)
-- Branch exists (local or `origin/<branch>`) → worktree on it
+- Branch exists (local or `origin/<branch>`) → worktree on it, then
+  fast-forward it (`agent-lifecycle.md` → Start)
 - Else → new branch from the default branch:
 
 ```bash
@@ -49,17 +50,21 @@ Worktree on branch <branch>. <extra context, if any>
 
 1. Run the repo's normal worktree setup.
 2. /sjsimpson:spec-audit <ticket>. Show the user the full output in this
-   pane, and message <reply-to> the verdict + numbered questions.
+   pane; message <reply-to> the audit log ping only.
 3. Stop. Grill the questions with the user here (spec-audit step 5) until
    none are open, before writing code. Apply spec changes to Linear only
    when they say so.
 4. Then build per the user's global rules (WIP commit first, gh stack for
    big changes). Code done → /sjsimpson:deep-review --fix (includes qa),
    then report. Never push or open a PR unless asked.
+5. Lifecycle: ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md
+   (Handoff, Done). You stay until the PR (or stack) merges or closes, the
+   ticket is canceled, or the user says done.
 ```
 
 ## 4. Report
 
-Tell the user: agent name, worktree label, branch, and that the audit
-questions will come to this session. Assistant home: log
+Tell the user: agent name, worktree label, branch, and that the agent
+grills them in its own pane. Its messages here are log pings, blockers, or
+done (→ `agent-lifecycle.md` → Cleanup). Assistant home: log
 `- <date>: <ticket> started: herdr worktree "<ticket>", agent \`<agent>\``.

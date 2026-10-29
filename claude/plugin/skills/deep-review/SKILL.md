@@ -63,6 +63,9 @@ HERDR_ENV=1 herdr worktree create --cwd <checkout> --branch <head> \
 herdr-sort   # projects (incl. status) above reviews in the sidebar
 ```
 
+Naming and a stale local branch: `agent-lifecycle.md` → Start (plugin
+`reference/`).
+
 Branch already checked out in another worktree → reuse it (the brief gets
 the shared-worktree line); new tab for the agent:
 `herdr tab create --workspace <id> --cwd <path> --label "<ticket> <mode>"`.
@@ -183,13 +186,12 @@ Then run the deep-review skill's step 4 here and give the user the short
 form (report.md, after a sync). Stack layer: also SendMessage <reply-to>
 one line: verdict, report path.
 
-Done
-When the user says in this pane that they're done (or that they
-submitted): read their latest review state (`gh pr view <n> -R
-<owner/repo> --json reviews`, theirs, newest; none → `done`), then
-SendMessage <reply-to> one line, "<ticket> #<n> review done (<state>),
-ready to spin down", plus any uncommitted or unpushed work in the
-worktree. Then stop.
+Lifecycle
+~/.dotfiles/claude/plugin/reference/agent-lifecycle.md: Handoff and Done.
+After the user's review (their latest state from `gh pr view <n> -R
+<owner/repo> --json reviews`), send the review-round ping and stay for
+re-review: new pushes get the re-run rules above when the user asks.
+Spin down only at Done (merged, closed, or the user says done).
 ```
 
 ## 3b. In-session
@@ -242,13 +244,9 @@ report. No blocking findings → verdict approve either way.
 
 ## 5. Cleanup (herdr)
 
-The reviewer's "review done, ready to spin down" message wakes you (or the
-user says they're done; herdr has no agent kill). Check the worktree:
-`git -C <path> status --porcelain` and `git -C <path> log @{u}..` both
-empty → clean up without asking; else list what's there and ask first.
-Worktree created for the review → `herdr worktree remove --workspace
-<id>`; reused worktree → `herdr tab close <tab>`. Report, brief, findings, ledger, and
-pending review stay.
+On the reviewer's done message (PR merged or closed, or the user says
+done): `agent-lifecycle.md` → Cleanup. Report, brief, findings, ledger,
+and pending review stay.
 
 ## Stack (`--stack`)
 
@@ -262,8 +260,8 @@ This session works in `~/notes` (the assistant) → append to
 Any other session: skip (not its repo).
 
 Tell the user: agent name, worktree label, report path to expect (herdr).
-No relay: the user works with the reviewer in its pane. Its "review done"
-message → step 5. Stack: per `stack.md`.
+No relay (`agent-lifecycle.md` → Handoff): review-round pings get
+logged; the done message → step 5. Stack: per `stack.md`.
 
 ## Never
 
