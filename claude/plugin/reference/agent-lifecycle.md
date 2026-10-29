@@ -6,8 +6,8 @@ merge; in between the user works with it in its own pane.
 
 ## Start (dispatcher)
 
-- **Name**: `<ticket>` (reviewers: per `deep-review`). `ListAgents`
-  already shows it → tell the user and offer: message that agent, or start
+- **Name**: the ticket lowercased (`eng-1234`). `ListAgents` already
+  shows it → tell the user and offer: message that agent, or start
   `<ticket>-2` (then `-3`, …). Say the name you used
 - **Fresh branch**: a worktree created on an existing branch checks out the
   local one, which can be stale (`--base` only applies to new branches).
@@ -44,7 +44,8 @@ On a done message, check the worktree:
 
 - **Clean**: `git -C <wt> status --porcelain` empty, and nothing unpushed:
   `git -C <wt> log @{u}..` empty; upstream gone (a merge deletes the
-  branch) → `git -C <wt> fetch -q origin refs/pull/<n>/head` and HEAD is
+  branch) → PR number from `gh pr list --head <branch> --state all --json
+  number`, then `git -C <wt> fetch -q origin refs/pull/<n>/head`; HEAD is
   that sha or its ancestor (`git merge-base --is-ancestor HEAD
   FETCH_HEAD`). No PR and no upstream → not clean
 - Clean → remove without asking: worktree created for it → `herdr worktree

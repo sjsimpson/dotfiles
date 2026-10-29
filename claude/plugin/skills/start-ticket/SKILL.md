@@ -57,9 +57,8 @@ Worktree on branch <branch>. <extra context, if any>
 4. Then build per the user's global rules (WIP commit first, gh stack for
    big changes). Code done → /sjsimpson:deep-review --fix (includes qa),
    then report. Never push or open a PR unless asked.
-5. Lifecycle: ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md
-   (Handoff, Done). You stay until the PR (or stack) merges or closes, the
-   ticket is canceled, or the user says done.
+5. Then follow ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md →
+   Handoff and Done.
 ```
 
 ## 4. Report

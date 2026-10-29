@@ -43,7 +43,7 @@ Query every source in parallel (one message, many tool calls). Per source:
 - Before naming **Focus** or any "do next" item, check it live (e.g. PR
   review state) so you don't recommend something already done
 - **Parked agents** (herdr source): each agent tied to a ticket or PR
-  (`<ticket>`, `<ticket>-N`, `<ticket> review`). Its PR merged or closed,
+  (agent named `<ticket>` or `<ticket>-N`). Its PR merged or closed,
   or its ticket canceled → SendMessage that agent one line, "`<ticket>`
   `<MERGED | CLOSED | CANCELED>`: run Done (agent-lifecycle.md)"; list it
   under FYI. Its done reply → the dispatcher's Cleanup
