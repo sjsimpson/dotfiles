@@ -140,6 +140,11 @@ I used tmux before herdr. The config lives on the
   worktrees above reviews (`<ticket> review`); new worktrees append at the
   end, so `start-ticket` / `deep-review` run it after creating one.
   `install.sh` links it into `~/.local/bin`
+- `agent-docs-gate`: Claude PreToolUse hook (`claude/settings.json`). A
+  `git commit` that stages agent docs (skills, agents, CLAUDE.md/AGENTS.md,
+  plugin references, `*.workflow.js`) is denied once with "run the
+  writing-for-agents review first"; the retry with the same files passes,
+  `WIP:` commits skip it. `install.sh` links it into `~/.local/bin`
 - `basecamp-safe`: the `basecamp` CLI limited to reads + message drafts
   (`--draft` forced); the assistant may run only this
 - `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile

@@ -126,6 +126,9 @@ link bin/pr-pending "$HOME/.local/bin/pr-pending"
 link bin/herdr-sort "$HOME/.local/bin/herdr-sort"
 # assistant: Basecamp reads + message drafts only (raw basecamp denied)
 link bin/basecamp-safe "$HOME/.local/bin/basecamp-safe"
+# PreToolUse hook in claude/settings.json: writing-for-agents pass before
+# commits that stage skills/agents/CLAUDE.md
+link bin/agent-docs-gate "$HOME/.local/bin/agent-docs-gate"
 # qa-tester's MCP server launcher (absolute path in agents/qa-tester.md)
 link bin/qa-browser "$HOME/.local/bin/qa-browser"
 # user-level, not plugin: plugin agents can't declare their own MCP servers

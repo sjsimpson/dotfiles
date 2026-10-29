@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# PreToolUse hook (Bash): before a `git commit` that stages agent docs
+# (skills, agents, CLAUDE.md/AGENTS.md, plugin references, *.workflow.js),
+# deny once so Claude runs the writing-for-agents review first. The retry
+# with the same file set passes. WIP: snapshots skip the gate.
+set -euo pipefail
+
+input=$(cat)
+cmd=$(jq -r '.tool_input.command // ""' <<<"$input")
+cwd=$(jq -r '.cwd // "."' <<<"$input")
+session=$(jq -r '.session_id // "none"' <<<"$input")
+
+grep -Eq '(^|[;&|[:space:]])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+commit([[:space:]]|$)' <<<"$cmd" || exit 0
+grep -q 'WIP:' <<<"$cmd" && exit 0
+
+dir=$(sed -nE 's/.*git[[:space:]]+-C[[:space:]]+([^[:space:]]+)[[:space:]]+commit.*/\1/p' <<<"$cmd" | head -1)
+dir=${dir:-$cwd}
+dir=${dir/#\~/$HOME}
+top=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || exit 0
+
+files=$(git -C "$top" diff --cached --name-only)
+if grep -Eq '[[:space:]]-[a-zA-Z]*a' <<<"$cmd"; then
+  files+=$'\n'$(git -C "$top" diff --name-only)
+fi
+
+docs=$(grep -E '(^|/)SKILL\.md$|(^|/)skills/[^/]+/.+\.md$|(^|/)agents/[^/]+\.md$|(^|/)(CLAUDE|AGENTS)\.md$|(^|/)plugin/reference/.+\.md$|\.workflow\.js$' <<<"$files" | sort -u || true)
+[ -n "$docs" ] || exit 0
+
+key=$(printf '%s\n%s\n%s' "$session" "$top" "$docs" | shasum | cut -c1-16)
+mark="${TMPDIR:-/tmp}"; mark="${mark%/}/agent-docs-gate/$key"
+[ -e "$mark" ] && exit 0
+mkdir -p "$(dirname "$mark")" && touch "$mark"
+
+reason="Agent docs staged: $(tr '\n' ' ' <<<"$docs")
+Before committing, run the writing-for-agents skill as a review of these files (diff vs HEAD): ranked findings first, then ask which to apply (AskUserQuestion). Apply the picks, then commit again; the retry passes."
+jq -n --arg r "$reason" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $r}}'
