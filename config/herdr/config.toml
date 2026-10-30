@@ -16,11 +16,17 @@ type = "plugin_action"
 command = "sjsimpson.wt-env.runtimes"
 description = "runtimes dashboard"
 
-# Workspace name color: reviews yellow ("<ticket> review", as deep-review
-# names them), everything else blue
+# Workspace name color: tooling (listed by name; QA desks are labeled
+# "qa-desk <repo>") in the terminal foreground
+# (tokyonight-storm; rules can't unset the base fg), reviews yellow
+# ("<ticket> review", as deep-review names them), everything else blue
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", { token = "workspace", fg = "#61afef", rules = [
+    { equals = "assistant", fg = "#c0caf5" },
+    { equals = ".dotfiles", fg = "#c0caf5" },
+    { equals = "caffeinate", fg = "#c0caf5" },
+    { starts_with = "qa-desk", fg = "#c0caf5" },
     { contains = " review", fg = "#e5c07b" },
   ] }],
   ["branch", "git_status"],
@@ -29,6 +35,10 @@ rows = [
 [ui.sidebar.agents]
 rows = [
   ["state_icon", "machine", { token = "workspace", fg = "#61afef", rules = [
+    { equals = "assistant", fg = "#c0caf5" },
+    { equals = ".dotfiles", fg = "#c0caf5" },
+    { equals = "caffeinate", fg = "#c0caf5" },
+    { starts_with = "qa-desk", fg = "#c0caf5" },
     { contains = " review", fg = "#e5c07b" },
   ] }, "tab"],
   ["agent"],
