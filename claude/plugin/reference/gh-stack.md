@@ -19,7 +19,8 @@
 1. Layer below merged → `gh stack sync` (fetch, rebase the whole stack)
 2. `gh stack checkout <next>` → `/deep-review --fix`: review + QA on
    local commits, fix, repeat until steady state
-3. Report → the user opens it: `gh stack push`, `gh pr ready`
+3. Ready checklist (`ready-checklist.md`) all checked → the user opens it:
+   `gh stack push`, `gh pr ready`
 4. Merge one layer at a time, never the whole stack: `gh stack rebase` →
    `gh stack push` → CI green → `gh stack merge <bottom-pr> --yes`
 

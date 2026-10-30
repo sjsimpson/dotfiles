@@ -20,7 +20,8 @@ gate. Never push. Round k (cap 10):
 Report (shared template, report path from step 2 with `-fix`): per round
 one line (simplified / found / fixed / commits), final verdict, Ticket candidates (not
 created), Skips with reason, Not verified. Then offer: push (stack: `gh
-stack push`), `gh pr ready`, merge prerequisites into the PR body (short,
+stack push`), `gh pr ready` (only with `reference/ready-checklist.md`
+all checked; this loop is one of its boxes), merge prerequisites into the PR body (short,
 per `voice.md` → PR descriptions). Nothing
 without my OK, except attaching the best shots/video once the PR is opened
 (same rule).

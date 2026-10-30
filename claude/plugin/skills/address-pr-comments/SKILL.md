@@ -129,6 +129,9 @@ For each layer with approved fixes, lowest first:
 Return to the original branch (`gh stack top` or the starting branch) at the
 end.
 
+Then, per layer that got a commit, bottom up: work the ready checklist
+again (plugin `reference/ready-checklist.md`; the new commit cleared it).
+
 ## Step 5: Tickets
 
 Linear, for approved ticket items:
@@ -147,7 +150,8 @@ Linear, for approved ticket items:
 
 ## Step 6: Report
 
-- Per layer: commits (SHA · subject), verification result
+- Per layer: commits (SHA · subject), verification result, ready checklist
+  (all checked, or the open items)
 - Tickets: created/commented, with links
 - Skipped: reason each
 - Draft replies: ready to paste, per thread URL

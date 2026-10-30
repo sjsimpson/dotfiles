@@ -55,8 +55,11 @@ Worktree on branch <branch>. <extra context, if any>
    none are open, before writing code. Apply spec changes to Linear only
    when they say so.
 4. Then build per the user's global rules (WIP commit first, gh stack for
-   big changes). Code done → /sjsimpson:deep-review --fix (includes qa),
-   then report. Never push or open a PR unless asked.
+   big changes). Code done → work the ready checklist
+   (~/.dotfiles/claude/plugin/reference/ready-checklist.md; it includes
+   /sjsimpson:deep-review --fix), then report. Push or open a PR only when
+   asked; a PR opens as a draft and leaves draft only with every box
+   checked.
 5. Then follow ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md →
    Handoff and Done.
 ```
