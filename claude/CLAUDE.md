@@ -50,6 +50,10 @@
 - WET over DRY: duplicate until the third copy proves the abstraction. No
   speculative helpers; reviews and cleanups (`/simplify`, deep-review)
   leave duplication alone below three copies
+- Readability is a reason on its own: humans maintain the code, so
+  "cosmetic" never justifies skipping a confident readability finding
+  (premature abstraction, single-caller helper/export, stale name,
+  needless indirection) on code my branch adds
 - Code finished on my own branch → run `/deep-review --fix` (it includes
   qa) before saying done. Run it, don't suggest it
 
