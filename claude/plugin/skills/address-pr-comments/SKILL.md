@@ -129,8 +129,9 @@ For each layer with approved fixes, lowest first:
 Return to the original branch (`gh stack top` or the starting branch) at the
 end.
 
-Then, per layer that got a commit, bottom up: work the ready checklist
-again (plugin `reference/ready-checklist.md`; the new commit cleared it).
+Then, per layer whose HEAD changed (fix commits or the upstack rebase),
+bottom up: work the ready checklist again (plugin
+`reference/ready-checklist.md`; the new HEAD cleared it).
 
 ## Step 5: Tickets
 

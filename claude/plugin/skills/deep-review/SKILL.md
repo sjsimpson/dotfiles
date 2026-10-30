@@ -215,9 +215,9 @@ its pane (herdr; the user works with it there, nothing is relayed).
 already committed (brief step 6), never pushed. Blocking findings → offer
 to fix them
 (`/address-pr-comments` with the report). Passing verdict → also offer
-adding merge prerequisites the review found to the PR body, and `gh pr
-ready <n>` only with the ready checklist all checked (plugin
-`reference/ready-checklist.md`). Nothing else without my OK.
+adding merge prerequisites the review found to the PR body; `gh pr ready
+<n>` → plugin `reference/ready-checklist.md` → Ready. Nothing else without
+my OK.
 
 **Others' PR** (review mode): after the report, sync its findings. QA `BLOCKED` → sync nothing; tell the user what's blocked and
 troubleshoot here, then re-run:

@@ -58,8 +58,7 @@ Worktree on branch <branch>. <extra context, if any>
    big changes). Code done → work the ready checklist
    (~/.dotfiles/claude/plugin/reference/ready-checklist.md; it includes
    /sjsimpson:deep-review --fix), then report. Push or open a PR only when
-   asked; a PR opens as a draft and leaves draft only with every box
-   checked.
+   asked; it opens as a draft (leaving draft: the checklist's Ready).
 5. Then follow ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md →
    Handoff and Done.
 ```

@@ -16,9 +16,12 @@ HEAD: <sha>
 
 - [ ] History: no `WIP:` commits; Conventional Commits with the ticket
       scope; rebased on base (stack: `gh stack sync`)
-- [ ] Deep review: `/deep-review --fix` reached steady state
-- [ ] Checks: the repo's lint, typecheck, tests pass
-- [ ] Spec: no open spec-audit questions; the diff covers the ticket
+- [ ] Deep review: a `/deep-review --fix` run reached steady state and its
+      last round committed nothing
+- [ ] Checks: the repo's lint, typecheck, tests pass for the packages the
+      branch touches
+- [ ] Spec: no open spec-audit questions (no audit ran → skip that part);
+      the diff covers the ticket
 - [ ] PR description: body per `voice.md` → PR descriptions (screenshots
       or video for UI changes); title matches the repo's CI title regex
 - [ ] Threads: every review thread fixed, replied (draft posted on the
@@ -32,9 +35,9 @@ Check a box as its item finishes: `- [x] <item> · <YYYY-MM-DD> · <evidence>`
 
 Any new commit clears the list. Before reading or checking a box, compare
 `HEAD:` with `git rev-parse HEAD`; different → uncheck every box, write the
-new sha, start again from the top. Items run top to bottom because only the
-first two can commit (history rewrite, fix loop), and a commit restarts the
-list. Done = every box checked and `HEAD:` equals HEAD.
+new sha. Walk the items top to bottom; a commit sends you back to the
+top (only the first two commit: history rewrite, fix loop). Done = every
+box checked and `HEAD:` equals HEAD.
 
 ## Ready
 
