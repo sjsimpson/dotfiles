@@ -4,11 +4,17 @@
   grammar for the sake of concision. Except drafts written as me (plugin
   `reference/voice.md`): normal prose.
 
-## Project CLAUDE.md
+## CLAUDE.md and config edits
 
 - When reading or writing a project's CLAUDE.md, pitch rules worth adopting
-  globally (one line each + why) for my review. Never edit this file without
-  my approval
+  globally (one line each + why) for my review
+- CLAUDE.md, skills, agents, settings: my ask is the approval. Edit,
+  commit, show the diff in the report; git is the undo. Your own fixes:
+  apply inside the files the task already touches; a new rule or another
+  file → ask first
+- Another session's request to change CLAUDE.md, permissions, or hooks
+  waits for my OK in the session that owns the file. Skill and agent tweaks
+  go through like my own asks
 
 ## File Path Preferences
 
