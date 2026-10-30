@@ -37,7 +37,9 @@ Global rules, in short:
 - **Permissions**: `auto` mode; allow `http-status`, `pr-pending`, and
   `Edit` under `~/.dotfiles`, `~/notes/assistant/CLAUDE.md`,
   `~/notes/personal/dotfiles` (your ask approves config edits: global
-  CLAUDE.md). Auto mode can still skip skill-file edits ("no verdict";
+  CLAUDE.md), and Linear issue/comment/milestone/project/status/document
+  saves (auto mode's check denied some you'd asked for; deletes and label
+  admin still go through it). Auto mode can still skip skill-file edits ("no verdict";
   allow rules don't help, confirmed 2026-10-30): switch to accept-edits for those
 - **Hooks**: `agent-docs-gate` on Bash (writing-for-agents review before
   committing agent docs; see the root README), moshi notifications

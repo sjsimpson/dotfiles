@@ -13,7 +13,13 @@
       "Bash(pr-pending:*)",
       "Edit(~/.dotfiles/**)",
       "Edit(~/notes/assistant/CLAUDE.md)",
-      "Edit(~/notes/personal/dotfiles/**)"
+      "Edit(~/notes/personal/dotfiles/**)",
+      "mcp__claude_ai_Linear__save_issue",
+      "mcp__claude_ai_Linear__save_comment",
+      "mcp__claude_ai_Linear__save_milestone",
+      "mcp__claude_ai_Linear__save_project",
+      "mcp__claude_ai_Linear__save_status_update",
+      "mcp__claude_ai_Linear__save_document"
     ],
     "additionalDirectories": [
       "~/.dotfiles/claude/plugin",
