@@ -406,17 +406,21 @@ if (toAdjudicate.length) {
 
 For each finding choose:
 - fix (reason worth-it): real, reachable, and the benefit clearly beats the churn
-- skip, reason not-worth-it: churn or risk outweighs benefit (taste, micro-optimizations, nits on code about to change)
+- skip, reason not-worth-it: churn or risk outweighs benefit (micro-optimizations, nits on code about to change)
 - skip, reason unrealistic: the trigger is implausible in practice, or the fix is impractical to execute in this PR
 - pattern-conflict: the finding or its fix goes against how the codebase already does this. Grep for the existing pattern and cite it. If the pattern is fine, skip (follow the pattern here). If the pattern itself is the problem, choose ticket
 - ticket, reason codebase-wide: a real improvement that belongs everywhere, not just in this PR; do it via a follow-up ticket (optionally fixed here first and propagated)
 
-Push back by default: a finding earns "fix" only with a concrete trigger and a proportionate fix. Blockers with a confirmed trigger are fix unless the fix is impractical.
+Push back by default on bug claims: a bug earns "fix" only with a concrete trigger and a proportionate fix. Blockers with a confirmed trigger are fix unless the fix is impractical.
+
+Readability is worth it: humans read and maintain this code. "Cosmetic" is not a skip reason. Readability findings on code this PR adds need no trigger, and unmerged code costs no churn to change. The author stays WET: no premature abstractions, and duplication waits for its third copy. A helper, export, or layer the PR adds with fewer than 3 real callers, needless indirection, dead code, or a name that no longer fits what the code does → fix when validated with confidence 80+, small, and behavior-preserving, unless a written repo rule or existing pattern calls for it. Never fix by extracting a helper for duplication below three copies.
+
+Judge every claim in a finding. A finding that bundles claims (e.g. "one caller, and the contract is split") is skipped only if each claim is; rebutting one part doesn't skip the rest.
 
 Then set blocking. A finding blocks the merge only if it passes the harm test: a concrete, reachable trigger causes wrong behavior, data loss or corruption, wrong money or filings, a security hole, or breaks a repo rule, and you can name the evidence in harm. Severity is advisory: a "major" readability or design call is not blocking. ticket and skip are never blocking. Nits, naming, style, and "could be cleaner" are never blocking. Unsure → not blocking.
 
 Findings (JSON):
-${JSON.stringify(toAdjudicate.map(({ id, file, line, severity, claim, detail, fix, verdict, evidence }) => ({ id, file, line, severity, claim, detail, fix, verdict, evidence })))}`,
+${JSON.stringify(toAdjudicate.map(({ id, file, line, severity, claim, detail, fix, verdict, confidence, evidence }) => ({ id, file, line, severity, claim, detail, fix, verdict, confidence, evidence })))}`,
     { label: "adjudicate", phase: "Adjudicate", schema: ADJUDICATED },
   );
   const byId = {};
