@@ -10,7 +10,10 @@
     "defaultMode": "auto",
     "allow": [
       "Bash(http-status:*)",
-      "Bash(pr-pending:*)"
+      "Bash(pr-pending:*)",
+      "Edit(~/.dotfiles/**)",
+      "Edit(~/notes/assistant/CLAUDE.md)",
+      "Edit(~/notes/personal/dotfiles/**)"
     ],
     "additionalDirectories": [
       "~/.dotfiles/claude/plugin",

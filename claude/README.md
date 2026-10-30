@@ -34,10 +34,11 @@ Global rules, in short:
 
 ## settings.json
 
-- **Permissions**: `auto` mode; allow `http-status`, `pr-pending`; ask
-  before editing `claude/settings.json` itself. Auto mode can skip
-  skill-file edits ("no verdict"; allow rules don't help): switch to
-  accept-edits for those
+- **Permissions**: `auto` mode; allow `http-status`, `pr-pending`, and
+  `Edit` under `~/.dotfiles`, `~/notes/assistant/CLAUDE.md`,
+  `~/notes/personal/dotfiles` (your ask approves config edits: global
+  CLAUDE.md). Auto mode can still skip skill-file edits ("no verdict";
+  allow rules haven't helped so far): switch to accept-edits for those
 - **Hooks**: `agent-docs-gate` on Bash (writing-for-agents review before
   committing agent docs; see the root README), moshi notifications
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
