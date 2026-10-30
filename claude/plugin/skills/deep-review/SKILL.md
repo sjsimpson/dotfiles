@@ -134,7 +134,8 @@ Review (review mode)
    non-blocking `fix` findings that are mechanical (no behavior change:
    naming, typos, dead code, formatting, an exact suggestion), validated,
    high confidence. <author is the user: every non-blocking `fix` finding
-   and non-blocking QA bug, not just mechanical>. Run the repo's
+   and non-blocking QA bug, not just mechanical>. Duplicated code stays
+   duplicated (WET, global CLAUDE.md). Run the repo's
    lint/typecheck/tests for the touched files; a fix that fails any →
    revert it, keep it local only. One Conventional Commit on <head>
    (`<type>(<ticket>): <subject>`). Never push

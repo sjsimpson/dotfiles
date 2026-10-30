@@ -228,7 +228,7 @@ const LENSES = [
     key: "smells",
     model: finderModel,
     focus:
-      "Design smells in added code, always judgement calls labeled 'possible <smell>': mysterious name, duplicated code across hunks, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, speculative generality, message chains, middle man. A written repo rule or the codebase's existing pattern overrides any smell. At most 3 findings, only ones a reviewer would ask to change in this PR.",
+      "Design smells in added code, always judgement calls labeled 'possible <smell>': mysterious name, premature abstraction (a helper or layer with fewer than 3 real callers), duplication only at its third copy, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, message chains, middle man. A written repo rule or the codebase's existing pattern overrides any smell. At most 3 findings, only ones a reviewer would ask to change in this PR.",
   },
   {
     key: "skeptic",

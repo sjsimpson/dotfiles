@@ -41,6 +41,9 @@
   review context → PR/commit, not comments. Unsure → leave out, mention in chat
 - Before writing or reviewing code, load the repo's conventions skills (e.g.
   `patterns`) and read the sections the change touches
+- WET over DRY: duplicate until the third copy proves the abstraction. No
+  speculative helpers; reviews and cleanups (`/simplify`, deep-review)
+  leave duplication alone below three copies
 - Code finished on my own branch → run `/deep-review --fix` (it includes
   qa) before saying done. Run it, don't suggest it
 
