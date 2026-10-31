@@ -228,7 +228,7 @@ const LENSES = [
     key: "smells",
     model: finderModel,
     focus:
-      "Design smells in added code, always judgement calls labeled 'possible <smell>': mysterious name, premature abstraction (a helper or layer with fewer than 3 real callers), duplication only at its third copy, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, message chains, middle man. A written repo rule or the codebase's existing pattern overrides any smell. At most 3 findings, only ones a reviewer would ask to change in this PR.",
+      "Design smells in added code, always judgement calls labeled 'possible <smell>': mysterious name, premature abstraction (a helper or layer with fewer than 3 real callers; a helper that only isolates a try/catch around one fallible call and returns a Result is exempt), duplication only at its third copy, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, message chains, middle man. A written repo rule or the codebase's existing pattern overrides any smell. At most 3 findings, only ones a reviewer would ask to change in this PR.",
   },
   {
     key: "skeptic",
@@ -413,7 +413,7 @@ For each finding choose:
 
 Push back by default on bug claims: a bug earns "fix" only with a concrete trigger and a proportionate fix. Blockers with a confirmed trigger are fix unless the fix is impractical.
 
-Readability is worth it: humans read and maintain this code. "Cosmetic" is not a skip reason. Readability findings on code this PR adds need no trigger, and unmerged code costs no churn to change. The author stays WET: no premature abstractions, and duplication waits for its third copy. A helper, export, or layer the PR adds with fewer than 3 real callers, needless indirection, dead code, or a name that no longer fits what the code does → fix when validated with confidence 80+, small, and behavior-preserving, unless a written repo rule or existing pattern calls for it. Never fix by extracting a helper for duplication below three copies.
+Readability is worth it: humans read and maintain this code. "Cosmetic" is not a skip reason. Readability findings on code this PR adds need no trigger, and unmerged code costs no churn to change. The author stays WET: no premature abstractions, and duplication waits for its third copy. A helper, export, or layer the PR adds with fewer than 3 real callers, needless indirection, dead code, or a name that no longer fits what the code does → fix when validated with confidence 80+, small, and behavior-preserving, unless a written repo rule or existing pattern calls for it. Never fix by extracting a helper for duplication below three copies. Exception: a helper that only isolates a try/catch around one fallible call and returns a Result is wanted, whatever its caller count.
 
 Judge every claim in a finding. A finding that bundles claims (e.g. "one caller, and the contract is split") is skipped only if each claim is; rebutting one part doesn't skip the rest.
 

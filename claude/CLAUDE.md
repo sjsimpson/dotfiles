@@ -49,7 +49,10 @@
   `patterns`) and read the sections the change touches
 - WET over DRY: duplicate until the third copy proves the abstraction. No
   speculative helpers; reviews and cleanups (`/simplify`, deep-review)
-  leave duplication alone below three copies
+  leave duplication alone below three copies. Exception: isolating a
+  try/catch is reason enough to extract. Wrap the fallible call in a small
+  helper that returns a Result, so callers stay free of try/catch; reviews
+  don't flag these as speculative
 - Readability is a reason on its own: humans maintain the code, so
   "cosmetic" never justifies skipping a confident readability finding
   (premature abstraction, single-caller helper/export, stale name,
