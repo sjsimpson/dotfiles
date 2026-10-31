@@ -40,11 +40,14 @@ Global rules, in short:
   CLAUDE.md), and Linear issue/comment/milestone/project/status/document
   saves (auto mode's check denied some you'd asked for; deletes and label
   admin still go through it). Auto mode can still skip skill-file edits ("no verdict";
-  allow rules don't help, confirmed 2026-10-30): switch to accept-edits for those
+  allow rules don't help, confirmed 2026-10-30): trying the local classifier
+  (`CLAUDE_CODE_AUTO_MODE_SERVER=0`, below); still skipped → accept-edits
 - **Hooks**: `agent-docs-gate` on Bash (writing-for-agents review before
   committing agent docs; see the root README), moshi notifications
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
-- **Env**: `CLAUDE_CODE_PLUGIN_DIRS` loads `plugin/` and moshi straight from disk
+- **Env**: `CLAUDE_CODE_PLUGIN_DIRS` loads `plugin/` and moshi straight from disk;
+  `CLAUDE_CODE_AUTO_MODE_SERVER=0` runs auto mode's classifier locally
+  (needs 2.1.281+, billed as tokens, temporary flag)
 - **Marketplace path**: `~/.dotfiles/claude`, kept portable. `claude plugin
   marketplace add` rewrites it to an absolute path, so `install.sh` restores
   the file afterwards

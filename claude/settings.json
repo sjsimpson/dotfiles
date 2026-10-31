@@ -1,6 +1,7 @@
 {
   "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/moshi-plugin:~/.dotfiles/claude/plugin"
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/moshi-plugin:~/.dotfiles/claude/plugin",
+    "CLAUDE_CODE_AUTO_MODE_SERVER": "0"
   },
   "attribution": {
     "commit": "",
