@@ -89,7 +89,7 @@ their own MCP servers; these can.
 
 | Agent | What it does |
 | ----- | ------------ |
-| `qa-tester` | Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; stalls (no progress ~3 min) → `BLOCKED`, not a wait; won't touch production. Owns the only Playwright server (see [Playwright](#playwright)). Probe mode (`Mode: probe`, spawned by the caller, no desk, no browser): runs the plan to `qa/probe.md`'s rules in a scratch sandbox with `PATH` stubs, scores blind graders per axis, saves scripts + transcripts as evidence; outward sandboxes only if the brief says you OK'd one |
+| `qa-tester` | Sonnet. Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; stalls (no progress ~3 min) → `BLOCKED`, not a wait; won't touch production. Owns the only Playwright server (see [Playwright](#playwright)). Probe mode (`Mode: probe`, spawned by the caller, no desk, no browser): runs the plan to `qa/probe.md`'s rules in a scratch sandbox with `PATH` stubs, scores blind graders per axis, saves scripts + transcripts as evidence; outward sandboxes only if the brief says you OK'd one |
 
 ### Third-party (`.claude-plugin/marketplace.json`)
 

@@ -2,6 +2,7 @@
 name: qa-tester
 description: "Adversarial QA from a brief, two modes: app (Playwright in the running app; the QA desk runs it) and probe (no browser: runs the change's commands in a scratch sandbox; the caller spawns it). Returns a findings report with evidence. Callers use the `qa` skill."
 tools: mcp__playwright__*, Bash, Read, Grep, Glob
+model: sonnet
 # only this agent starts a browser server, for its run only. qa-browser
 # picks this worktree's copy of the logged-in profile (headless)
 mcpServers:

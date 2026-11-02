@@ -73,6 +73,12 @@
 - Edits = source/config changes. Tool side effects (DB writes, caches, dev
   server files, QA desk worktree switches) are fine
 
+## Token usage
+
+- Recurring watches (cron, `/loop`, polling a thread or PR) never run inside
+  a long working session: every tick re-reads its whole context. Run them
+  in a fresh small session or a script that pings only on change
+
 ## Git
 
 - [IMPORTANT] Comment, update pull requests, or push code changes only when
