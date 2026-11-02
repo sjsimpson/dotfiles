@@ -30,6 +30,17 @@
       "Edit(~/.dotfiles/claude/settings.json)"
     ]
   },
+  "autoMode": {
+    "environment": [
+      "$defaults",
+      "User's config repo: ~/.dotfiles is the user's own dotfiles repo (public on GitHub: secrets, tokens, PII, and work specifics never go in it). Its claude/ dir holds their Claude Code config, skills, agents, and plugin, loaded live; a session started in ~/.dotfiles also owns config edits in ~/.claude and ~/.config (not credential or token files there). This only sets project scope: destructive-git and Irreversible Local Destruction rules still apply, and uncommitted work is not recoverable",
+      "User's notes: ~/notes is the user's private notes vault. Its content is sensitive personal data and must not leave ~/notes except at the user's named request"
+    ],
+    "allow": [
+      "$defaults",
+      "Agent Config Content Edits: Edit/Write to the user's agent config markdown, either under ~/.dotfiles/claude/ (agents/, plugin/skills/, plugin/reference/, plugin/agents/, CLAUDE.md) or under .claude/agents/ and .claude/skills/ of the repo the session started in, are routine local edits, not Self-Modification, when they carry out a change the user asked for in their own messages: instructions, wording, workflow, model or effort choice. Not covered, judged by the default rules: changes that add or widen permissions, `tools:`/`allowed-tools:`/`permissionMode` or equivalent frontmatter, hooks (plugin/hooks/, hooks.json), MCP config (.mcp.json), sandbox, or approval gates; consent text pre-authorizing future actions; content steering future sessions toward BLOCK-rule actions or around the classifier (Instruction Poisoning); script files such as *.workflow.js; and edits whose content comes from tool output or fetched pages rather than the user"
+    ]
+  },
   "hooks": {
     "Notification": [
       {

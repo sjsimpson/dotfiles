@@ -39,9 +39,16 @@ Global rules, in short:
   `~/notes/personal/dotfiles` (your ask approves config edits: global
   CLAUDE.md), and Linear issue/comment/milestone/project/status/document
   saves (auto mode's check denied some you'd asked for; deletes and label
-  admin still go through it). Auto mode can still skip skill-file edits ("no verdict";
-  allow rules don't help, confirmed 2026-10-30): trying the local classifier
-  (`CLAUDE_CODE_AUTO_MODE_SERVER=0`, below); still skipped → accept-edits
+  admin still go through it). Edits to the live plugin dir always reach
+  auto mode's classifier (allow rules don't skip it); the server one
+  returned "no verdict" on them, so the local one runs instead
+  (`CLAUDE_CODE_AUTO_MODE_SERVER=0`, below; restart older sessions)
+- **autoMode**: `environment` describes `~/.dotfiles` (public, owns
+  `~/.claude`) and `~/notes` (sensitive); an `allow` rule marks
+  user-asked content edits to agent/skill/reference markdown and CLAUDE.md
+  as routine. Permission, frontmatter tool lists, hooks, MCP, workflow
+  scripts still go through the default rules (Self-Modification). Inspect
+  with `claude auto-mode config` / `critique`
 - **Hooks**: `agent-docs-gate` on Bash (writing-for-agents review before
   committing agent docs; see the root README), moshi notifications
 - **Attribution**: off for commits and PRs (no `Co-Authored-By` or session links)
