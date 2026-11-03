@@ -2,6 +2,7 @@
 
 Rules for anything written as me: Linear issues and comments, PR
 descriptions and replies, review bodies, Basecamp posts and check-ins, email.
+The `voice` skill runs these rules as a final pass on a draft.
 
 **Drafts are persisted text.** Write them in normal prose, never terse,
 compressed, or caveman, whatever style the session uses. Only the chat

@@ -1,8 +1,8 @@
 # Specs: Linear issues and docs
 
-How to write, edit, and audit a ticket or spec doc. Used by `spec-audit`,
-`start-ticket`, and any agent creating or editing a ticket. Voice:
-`voice.md`. Real examples (private, optional): `~/notes/work/specs-examples.md`
+How to write, edit, and audit a ticket or spec doc. Used by `spec-writing`
+(drafts), `spec-audit`, `start-ticket`, and any agent creating or editing a
+ticket. Voice: `voice.md` (the `voice` skill runs the pass). Real examples (private, optional): `~/notes/work/specs-examples.md`
 if it exists.
 
 Specs live only in Linear issues and docs. Requirements also arrive from
@@ -81,8 +81,8 @@ audit output. Within that:
 
 1. State the problem in 1-2 plain sentences; confirm the user understands
    and agrees
-2. Draft it in this shape and run the **Audit flags** below on the draft
-   (`spec-audit` when code is at hand); fix what you can
+2. Draft it with the `spec-writing` skill and run the **Audit flags** below
+   on the draft (`spec-audit` when code is at hand); fix what you can
 3. Show the draft plus anything still flagged
 4. `save_issue` only after approval. Sub-issue of the originating ticket when
    there is one; link the origin either way

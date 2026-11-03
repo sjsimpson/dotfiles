@@ -61,24 +61,18 @@ or the review; drop style nits.
 2. **Findings**: one plain sentence each, then its `file:line` evidence.
    Every conflict-with-code finding, always. The rest: top ~5 by impact,
    then "N more on request"
-3. **Proposed spec**: written as the user, per `voice.md` (drafts are
-   persisted text), shaped per specs.md. The code evidence stays in the findings; the spec keeps only
-   the 1-3 names a builder needs. Show it as a diff against the current
-   text. Started ticket → an `## Update MM-DD-YYYY` block plus the
-   `Spec updated:` comment, never a rewrite
+3. **Proposed spec**: the `spec-writing` skill's output, given the current
+   spec and these findings. Shown as a diff against the current text, or
+   (started ticket) its `## Update` block plus `Spec updated:` comment
 4. **Questions**: numbered, each with who should answer
 5. **Not checked**: unreachable sources, code you couldn't find
-
-Before printing, reread the proposed spec against `voice.md` and its
-samples. Anything that reads like a checklist dump or audit output: rewrite
-it.
 
 ## 5. Grill
 
 Questions the user owns → run them through the `grilling` skill's rounds
 (round 1 = those questions), each round asked via AskUserQuestion per
-global CLAUDE.md → Questions to me, not as a chat list. After each round, fold the answers into the
-proposed spec and rerun the checklist on what changed: an answer can open a
+global CLAUDE.md → Questions to me, not as a chat list. After each round, rerun `spec-writing` with the
+answers folded in and rerun the checklist on what changed: an answer can open a
 new conflict or edge case, which feeds the next round. Questions others own
 stay in the spec's **Open questions** and never block a round. Done when the
 frontier is empty: print the final spec diff and verdict.
