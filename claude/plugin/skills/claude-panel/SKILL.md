@@ -10,7 +10,7 @@ Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file)
 
 ## Rules
 
-- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → never a pending review. Checkbox tick / public comments only on explicit request.
+- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → never a pending review. Checkbox tick only on explicit request or from `deep-review` on my own PR; public comments only on explicit request.
 - **Read-only everywhere.** No edits, `pnpm install`, or test runs in any worktree — safe on fork PRs.
 - Never touch the user's working tree for someone else's PR; use a disposable worktree.
 - Each Bash call is a fresh shell — start every call with `SCRATCH="${TMPDIR:-/tmp}"; SCRATCH="${SCRATCH%/}/claude-panel"`.
@@ -119,7 +119,7 @@ My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ti
 - Review body: report.md → **Pending review body** (voice.md → Review bodies: 1-3 sentences, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone. Approve with no findings → empty body (report.md → Approve with no findings).
 - Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 
-**Tick the template checkbox** (only when asked; re-fetch body first — author may have edited):
+**Tick the template checkbox** (when asked, or when `deep-review` runs it on my own PR; re-fetch body first — author may have edited):
 
 ```bash
 gh api 'repos/{owner}/{repo}/pulls/<n>' --jq '.body // ""' > "$SCRATCH/pr-<n>-body.md"

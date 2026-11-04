@@ -211,7 +211,10 @@ Follow `fix-loop.md` (this skill's folder).
 Run by the session holding the worktree: you in 3b, the reviewer agent in
 its pane (herdr; the user works with it there, nothing is relayed).
 
-**My own PR** (not `--fix`): no pending review. Non-blocking fixes are
+**My own PR** (not `--fix`): no pending review. Panel finished with no
+failed agents → tick the PR's "Reviewed by AI review panel" checkbox
+unasked (claude-panel Step 4 → Tick the template checkbox); say so in the
+report. Non-blocking fixes are
 already committed (brief step 6), never pushed. Blocking findings → offer
 to fix them
 (`/address-pr-comments` with the report). Passing verdict → also offer

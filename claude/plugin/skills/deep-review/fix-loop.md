@@ -23,4 +23,7 @@ candidates (not created), Skips with reason, Not verified. Then offer:
 push (stack: `gh stack push`), merge prerequisites into the PR body
 (short, per `voice.md` → PR descriptions), `gh pr ready` →
 `reference/ready-checklist.md` → Ready. Nothing without my OK, except
-attaching the best shots/video once the PR is opened (same rule).
+attaching the best shots/video once the PR is opened (same rule), and,
+once the PR exists with the reviewed HEAD pushed and the last panel round
+had no failed agents, ticking its "Reviewed by AI review panel" checkbox
+(claude-panel Step 4 → Tick the template checkbox).

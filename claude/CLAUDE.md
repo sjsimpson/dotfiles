@@ -91,6 +91,9 @@
     `address-pr-comments` does), post only when I ask
   - PR just opened (by you on my ask, or I say I opened it): adding its
     screenshots/video (`voice.md` → PR descriptions) needs no extra OK
+  - My own PR, after `/deep-review` ran claude-panel on its pushed head
+    with no failed agents: tick the template's "Reviewed by AI review
+    panel" checkbox (claude-panel Step 4) without asking
 - Commits (except `WIP:`): Conventional Commits, ticket ID as scope when
   known, e.g. `feat(ENG-6659): add supported locations page`
 - PR titles are not Conventional Commits: the repo's CI title check wins.
