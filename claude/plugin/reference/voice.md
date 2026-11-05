@@ -152,13 +152,18 @@ Body: the repo's template headings, filled to the size of the diff.
   break and how far, as a `> [!WARNING]` (or `> [!NOTE]`) at the top. No
   "one-way door" / "two-way door" / "blast radius" wording; low-risk PRs
   say nothing, or "Low risk, this is purely organizational"
-- **Testing**: "Tested locally!" plus the screenshot or video, or a few
-  "should …" bullets for UI behavior. Never an inventory of every test
+- **Testing**: honest, in my voice. What I actually tested and how
+  ("Tested locally!" plus the screenshot or video, or "should …" bullets
+  for UI behavior), the tests this PR adds (what they cover, grouped in a
+  line or two, not every case), and in one sentence any gap a reviewer
+  should know about ("didn't get to test the CSV path, it's a bear to set
+  up locally"). Never claim testing that didn't happen
 - **Notes for reviewers**: the template's checkboxes; a numbered setup
-  recipe when testing isn't obvious (a joke at the end is fine); an offer
-  to pair ("Happy to test this sync with you"). Else "N/A"
-- No per-flow walkthroughs, "not covered" lists, prod numbers, or QA
-  narratives. Detailed QA and review results stay in the local report
+  recipe when testing isn't obvious (a joke at the end is fine). Offer to
+  pair only for a large or architectural change, or a concept that's hard
+  to grok from the diff. Else "N/A"
+- No per-flow walkthroughs, prod numbers, or QA narratives. Detailed QA
+  and review results stay in the local report
 - **Screenshots/video** (UI changes): annotated by default, so a reviewer
   gets the point without context. Pair them when possible: an uncropped
   context shot with the changed area outlined, so the reader knows where
@@ -192,7 +197,10 @@ so they lose events and we hear about it a week later. Now we retry:
 - exhausted events show as `failed` in the partner log
 
 ## Testing and risk reduction
+Added unit tests for the backoff timing and for ordering within a partner.
 Tested locally! Forced 500s and watched it retry 5 times, then land in `failed`.
+I didn't test a partner coming back mid-retry, that path is the same as a
+normal success.
 
 ### Partner log with a failed event
 ![Partner log with a failed event](./after.png)
@@ -203,7 +211,6 @@ Tested locally! Forced 500s and watched it retry 5 times, then land in `failed`.
 3. Wait ~30s and refresh the log
 4. PROFIT
 
-Happy to walk through this sync if that's easier!
 - [x] Reviewed by AI review panel
 ```
 
