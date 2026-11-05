@@ -8,8 +8,12 @@ argument-hint: "[surface] <draft text | file path>"
 
 Make a draft read like I typed it myself. Rewrite only; never post or save.
 
-Rules: `<this skill's base directory>/../../reference/voice.md`: **Core**
-plus the section for this draft's surface (Per surface). Read only those.
+Rules: `<this skill's base directory>/../../reference/voice.md`: the
+intro, **Core**, and the section(s) for this draft's surface (Per surface).
+Read only those: `grep -n '^## '` on that file for the line numbers, then
+Read from line 1 through the end of Core, and each surface section from
+its heading to the next `## ` (its `###` subsections included). A batch
+spanning surfaces (review body + comments) reads each one.
 
 ## 1. Surface
 
