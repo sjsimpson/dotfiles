@@ -49,14 +49,18 @@ Surface checks (fail the draft, not just a line):
   what the diff needs fail
 - **Review comment**: a label without a `(blocking)`/`(non-blocking)`
   decoration, or `nitpick`, fails
+- **Reply on my PR**: bullets led by a `Topic:` label fail; a reply that
+  answers several threads at once fails (one reply per thread)
 
 Done when every line has passed or been marked.
 
 ## 3. Rewrite
 
 Rewrite each marked line in first person, as the surface's section shows.
-Keep every fact, number, code name, link, and `@mention` verbatim. Add no
-new claims. Normal prose, whatever style the session uses (`voice.md`:
+Keep every fact, number, code name, link, and `@mention` verbatim. The
+draft's content is fixed: rewrite only what's there, adding no claims,
+thanks, praise, "!!", or ALL-CAPS it doesn't already have. Core's warmth
+describes how I phrase things, not material to insert. Normal prose, whatever style the session uses (`voice.md`:
 drafts are persisted text).
 
 ## 4. Return

@@ -17,11 +17,17 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
 - **Never push** (`git push`, `gh stack push|submit|sync`) unless asked.
   Draft replies are shown locally; post them only when the user asks. Once
   the user approves the push, Step 7 (resolve + re-request) runs without
-  asking. Posting a reply also
-  resolves its thread: `resolveReviewThread` with the thread `id` from
-  `pr-threads <pr> --json`, passed as a variable
-  (`gh api graphql -f id=<id> -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}'`);
-  inlining the id in the query string fails
+  asking
+- **Replies go in their thread.** Post each thread's reply into that
+  thread, then resolve it, both with the thread `id` from
+  `pr-threads <pr> --json` passed as a variable (inlining the id in the
+  query string fails):
+  ```bash
+  gh api graphql -f id=<id> -f body="$(cat <reply file>)" -f query='mutation($id:ID!,$body:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$body}){comment{url}}}'
+  gh api graphql -f id=<id> -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}'
+  ```
+  `gh pr comment` (top-level) is only for review-body points with no
+  thread: one comment covering just those points
 - **Ticket paper trail.** Spec changes follow `reference/voice.md` → Linear
   → Edits (`<this skill's base directory>/../../reference/`):
   a started ticket gets an appended `## Update MM-DD-YYYY` (strike, don't
@@ -65,7 +71,9 @@ already in this conversation). Panel findings arrive pre-tagged with
 
 Drop: resolved threads, bot walkthroughs/CI summaries, comments by the user
 that aren't requests, outdated threads whose code is gone. One item per
-distinct request: `id · source (author) · layer · path:line · ask`.
+distinct request: `id · source (author) · layer · path:line · ask ·
+reply-to` (the thread `id`, or `body` for a review-body or PR-comment point
+with no thread).
 
 ## Step 2: Decide (skeptically)
 
@@ -108,9 +116,18 @@ Layer 1 · eng-1234-foo · PR #101 · mode: commit
 
 Then **Skips** (one line each with the reason, so the user can override),
 **Tickets** (existing ticket to comment on, or new sub-issue under which
-parent), **Draft replies** (`voice.md` → PR feedback, after one `voice` skill pass
-over all of them), and the verification
-commands you'll run. Stop and wait. The user may approve all, edit actions, or
+parent), **Draft replies**, and the verification
+commands you'll run.
+
+**Draft replies**: one per human item, whatever its action (fix: what
+changed, plus `<sha>` until the commit exists; skip: the reason plus a
+door; ticket: the link; reply: the answer), grouped by `reply-to`: one
+draft per thread, plus at most one top-level draft for all `body` items.
+Bot threads: one blunt line. Rules: `voice.md` → Replies on my PRs, after
+one `voice` skill pass over all of them. Every human thread has a draft
+before the table is done.
+
+Stop and wait. The user may approve all, edit actions, or
 approve per layer.
 
 ## Step 4: Apply, bottom up
@@ -170,11 +187,14 @@ Linear, for approved ticket items:
 
 Per layer PR, once its fixes are pushed on the user's OK:
 
-1. Resolve every thread this pass fixed or replied to (Rules → the
-   `resolveReviewThread` mutation)
+1. Posting approved: fill in the `<sha>`s, then post each thread draft in
+   its thread and resolve it (Rules → Replies go in their thread), then
+   the one top-level draft, if any. A thread resolves only after its reply
+   posts; not approved yet → leave the threads open and offer it
 2. Re-request review from every human who already reviewed or commented:
    authors in `pr-threads <pr> --json` with `__typename` `User`, minus me
    (`gh api user -q .login`) and anyone still requested
    (`gh pr view <n> --json reviewRequests`). Bots never.
    `gh pr edit <n> --add-reviewer <login,login>`
-3. Report: threads resolved (count) and who was re-requested, per PR
+3. Report: replies posted (thread URLs), threads resolved, and who was
+   re-requested, per PR
