@@ -107,8 +107,11 @@
   `pr-threads <pr>` (threads with status, reviews, comments, my pending
   review)
 - Issue tracker: Linear (MCP). Writing/editing an issue or doc → plugin
-  `reference/specs.md`; anything written as me → `reference/voice.md`. Show
-  the draft before `save_issue`
+  `reference/specs.md`. Show the draft before `save_issue`
+- Anything written as me (PR descriptions, review comments and bodies,
+  thread replies, tickets and ticket comments, Basecamp, email), from a
+  skill or ad hoc: run the `voice` skill on the final draft before showing,
+  saving, or posting it. Rules: plugin `reference/voice.md`
 - Third-party skills (e.g. mattpocock's): use their process, but
   `voice.md`/`specs.md` override their templates for anything written as me
 - Big changes: one gh stack of small reviewable PRs; only the bottom PR is

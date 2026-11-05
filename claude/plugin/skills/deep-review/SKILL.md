@@ -181,7 +181,7 @@ anchor to diff lines as
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
 report.md (voice.md → Review bodies), then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
-the report). Approve with no findings → "body": "" and no comments
+the report, after one `voice` skill pass over the body and all comments). Approve with no findings → "body": "" and no comments
 (report.md → Approve with no findings).
 Then run the deep-review skill's step 4 here and give the user the short
 form (report.md, after a sync). Stack layer: also SendMessage <reply-to>
@@ -242,7 +242,7 @@ Nit commit (brief step 6): ask me once, AskUserQuestion: push it to
 `<head>`? On OK: `git fetch origin <head>`; `origin/<head>`
 still at the reviewed sha → `git push origin HEAD:<head>`, never force;
 moved → don't push, tell me. After the push, add one line to
-findings.json `body` in my voice ("Pushed a couple of small fixes
+findings.json `body` in my voice (`voice` skill pass) ("Pushed a couple of small fixes
 (<sha:7>): <what>.") and re-sync. No → it stays local, listed in the
 report. No blocking findings → verdict approve either way.
 

@@ -108,7 +108,8 @@ Layer 1 · eng-1234-foo · PR #101 · mode: commit
 
 Then **Skips** (one line each with the reason, so the user can override),
 **Tickets** (existing ticket to comment on, or new sub-issue under which
-parent), **Draft replies** (`voice.md` → PR feedback), and the verification
+parent), **Draft replies** (`voice.md` → PR feedback, after one `voice` skill pass
+over all of them), and the verification
 commands you'll run. Stop and wait. The user may approve all, edit actions, or
 approve per layer.
 
@@ -152,7 +153,8 @@ Linear, for approved ticket items:
   No edits to the parent's description
 - Scope changed in this pass → update the layer's ticket per specs.md Edits
   (e.g., "fixed X here; propagation tracked in ENG-1240")
-- All ticket text in `reference/voice.md`'s voice
+- All ticket text in `reference/voice.md`'s voice: `voice` skill pass
+  before `save_issue` / `save_comment`
 
 ## Step 6: Report
 

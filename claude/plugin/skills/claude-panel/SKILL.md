@@ -117,6 +117,7 @@ My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ti
 
 - Comment body and which findings to post: `voice.md` → PR feedback (blocking ones only; non-blocking stay in the report, and `deep-review` fixes the mechanical ones). No sources or finding ids in the body.
 - Review body: report.md → **Pending review body** (voice.md → Review bodies: 1-3 sentences, then unanchored findings). Only diff lines anchor; others go in the body. Each comment stands alone. Approve with no findings → empty body (report.md → Approve with no findings).
+- Run the `voice` skill once over the review body plus every comment body (surfaces: Review bodies, PR feedback) and use what it returns.
 - Write `$SCRATCH/pr-<n>-findings.json` (`{body, comments:[{path, line, startLine?, body}]}`), then `pr-pending sync <n> "$SCRATCH/pr-<n>-findings.json" --ledger "$SCRATCH/pr-<n>-pending-comments.json"`. It appends to my existing pending review or starts one, never submits. Give its counts and link at the end of the report.
 
 **Tick the template checkbox** (when asked, or when `deep-review` runs it on my own PR; re-fetch body first — author may have edited):

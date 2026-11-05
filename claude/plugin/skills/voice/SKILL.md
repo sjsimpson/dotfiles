@@ -37,6 +37,15 @@ Go line by line. A line fails when it:
 - Uses a relative date ("Friday") or an unnamed actor ("it gets retried")
 - Pastes a message body, log, or customer data instead of linking
 
+Surface checks (fail the draft, not just a line):
+
+- **PR description**: Summary ends with the links line, the Linear ticket
+  as a link (`[ENG-1234](https://linear.app/…)`; a bare ID fails); any stack
+  info ("part of stack", "stacked on #…") fails; sections filled beyond
+  what the diff needs fail
+- **Review comment**: a label without a `(blocking)`/`(non-blocking)`
+  decoration, or `nitpick`, fails
+
 Done when every line has passed or been marked.
 
 ## 3. Rewrite
@@ -47,6 +56,10 @@ new claims. Normal prose, whatever style the session uses (`voice.md`:
 drafts are persisted text).
 
 ## 4. Return
+
+Several drafts in one call (a review's comments and body, a batch of
+replies): one pass, each returned in place, same order and keys, so the
+caller can write them back (e.g. into `findings.json`).
 
 The revised draft, then one line: what changed and why (e.g. "Cut the
 restated parent context; Problem 7 → 3 sentences"). No changes needed →
