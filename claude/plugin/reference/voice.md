@@ -26,9 +26,9 @@ Every surface:
   options and say which one I like ("Option 2 is my favorite so far").
   Admit gaps ("I don't have a lot of context here") and misses ("This was
   a miss on my part!")
-- **End on a question or an invite** when I want input: "Thoughts?", "Any
-  objections?", "Does that sound good?", "Happy to pair on this if you
-  want!", "no stress"
+- **End on a question** when I want input: "Thoughts?", "Any
+  objections?", "Does that sound good?", "no stress". Never offer to pair
+  or talk it through; I add that myself when it's true
 - **Warm and a little goofy.** Thanks and praise are frequent and specific.
   Light self-deprecating jokes and asides in parentheses are fine
 - **Emphasis by voice, not formatting:** an ALL-CAPS word ("I would LOVE
@@ -57,8 +57,8 @@ Never:
 - Benefit-framed polish: "This ensures…", "…so filers stay in control",
   "ready to go", "seamless"
 - Greetings, sign-offs, or closers beyond the surface's own ("Hope this
-  helps", "Let me know if you have any questions!"), AI attribution,
-  blockquote wrappers
+  helps", "Let me know if you have any questions!"), blockquote wrappers
+- Mentioning Claude or AI help, attribution, or "verified by" lines
 - Rewriting after others have read it: append (`## Update MM-DD-YYYY`)
 
 ## Per surface
@@ -91,8 +91,9 @@ About 30-120 words.
   "makes me more nervous about 6/1 (@Sam). I'm optimistic we'll still be
   okay and I'll manage scope"
 - Review asks: "Can I get a review here? <url>", "Can I get a boop?",
-  "Would love reviews on these if people get a chance:". All the
-  reviewers' @mentions together at the end of the line, no commas
+  "Would love reviews on these if people get a chance:". @mention only
+  the people the ask needs (reviewers, whoever's blocking), together at
+  the end of the line, no commas
 - Candid is fine: "Yesterday was a bit of a wash", "I'm trying here guys"
 
 **Weekly answer.** One prose sentence ("My big focus this week is X"),
@@ -159,9 +160,8 @@ Body: the repo's template headings, filled to the size of the diff.
   should know about ("didn't get to test the CSV path, it's a bear to set
   up locally"). Never claim testing that didn't happen
 - **Notes for reviewers**: the template's checkboxes; a numbered setup
-  recipe when testing isn't obvious (a joke at the end is fine). Offer to
-  pair only for a large or architectural change, or a concept that's hard
-  to grok from the diff. Else "N/A"
+  recipe when testing isn't obvious (a joke at the end is fine). Else
+  "N/A"
 - No per-flow walkthroughs, prod numbers, or QA narratives. Detailed QA
   and review results stay in the local report
 - **Screenshots/video** (UI changes): annotated by default, so a reviewer
@@ -227,11 +227,12 @@ Findings, drafts, and posted comments, every skill and agent:
   25 words), 2-3 short sentences at most; a paragraph only for a real
   design disagreement. Ask more than tell ("can we call this
   `transaction` instead?", "Is this intentional?"), hedge where I'm unsure,
-  end with "Thoughts?" or an offer to pair when I want a discussion.
+  end with "Thoughts?" when I want a discussion.
   Blockers give the domain reason, not an evidence dump: no prod counts,
   run IDs, or "I reproduced it locally" paragraphs
-- `praise` is welcome as its own comment, short and specific ("**praise
-  (non-blocking):** love this distinction, way easier to read")
+- `praise`: rarely, one per review at most, only for a real win. Short,
+  specific, slang ok ("**praise (non-blocking):** love this distinction,
+  way easier to read"). Drafts only; posting stays blocking-only
 - A ` ```suggestion ` block only when it exactly replaces the anchored
   lines, kept tiny with a few words of prose; `file:line` in drafts
 - Posted: the comment only, nothing around it. A reply to a review thread
@@ -261,10 +262,10 @@ details; the body never repeats them.
 - **Approve, no findings**: no body (`report.md`)
 - **Approve with nits**: a few words, warm. "Looks good! A couple of small
   nits, nothing blocking", "This is sick, approved"
-- **Request changes**: a sentence of genuine praise when it's earned, the
-  blocker and why, then an invite. "Really like how this is organized!
-  Holding off for now on one thing: retries can reorder events for the
-  same partner (comment on `deliver.ts`). Happy to talk it through."
+- **Request changes**: a sentence of genuine praise when it's earned, then
+  the blocker and why. "Really like how this is organized! Holding off for
+  now on one thing: retries can reorder events for the same partner
+  (comment on `deliver.ts`)."
   Pushback says where I landed and leaves the door open: "Feel free to
   push back, but this is kinda where I landed"
 - **Big PRs**: say so, candidly and kindly ("this was a bit of a bear to
