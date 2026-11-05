@@ -27,9 +27,13 @@ first.
 
 ## 2. Ground in the code
 
-Read the code the spec touches before judging it. Load the repo's
-conventions skills (e.g. `patterns`) for the areas involved. Find the real
-names, call sites, data shapes, and existing behavior the spec assumes.
+Spawn one `Explore` subagent (`model: "sonnet"`) to map the code the spec
+touches; your context keeps its report, not the file reads. Brief it with
+the spec's claims as a list and the repo's conventions skills (e.g.
+`patterns`) to load. Its report: per claim, the real names, call sites,
+data shapes, and existing behavior, each fact with `file:line`, plus what
+it couldn't find. Before a finding or question rests on a fact, read its
+cited lines yourself; a fact you didn't check goes in as "per explore".
 
 ## 3. Checklist
 
