@@ -15,9 +15,10 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
   only after the user approves the decision table (Step 3). Approval covers
   exactly what's in the table
 - **Never push** (`git push`, `gh stack push|submit|sync`) unless asked.
-  Draft replies are shown locally; post them only when the user asks. Once
-  the user approves the push, Step 7 (resolve + re-request) runs without
-  asking
+  Draft replies are shown locally. Approving the push also approves
+  posting the replies from the approved table: Step 7 (post, resolve,
+  re-request) then runs without asking. Without a push, post only when
+  the user asks
 - **Replies go in their thread.** Post each thread's reply into that
   thread, then resolve it, both with the thread `id` from
   `pr-threads <pr> --json` passed as a variable (inlining the id in the
@@ -187,10 +188,10 @@ Linear, for approved ticket items:
 
 Per layer PR, once its fixes are pushed on the user's OK:
 
-1. Posting approved: fill in the `<sha>`s, then post each thread draft in
-   its thread and resolve it (Rules → Replies go in their thread), then
-   the one top-level draft, if any. A thread resolves only after its reply
-   posts; not approved yet → leave the threads open and offer it
+1. Fill in the `<sha>`s, then post each thread draft from the approved
+   table in its thread and resolve it (Rules → Replies go in their
+   thread), then the one top-level draft, if any. A thread resolves only
+   after its reply posts
 2. Re-request review from every human who already reviewed or commented:
    authors in `pr-threads <pr> --json` with `__typename` `User`, minus me
    (`gh api user -q .login`) and anyone still requested

@@ -95,8 +95,9 @@
   - My own PR, after `/deep-review` ran claude-panel on its pushed head
     with no failed agents: tick the template's "Reviewed by AI review
     panel" checkbox (claude-panel Step 4) without asking
-  - After a push I approved for `address-pr-comments` fixes: resolve the
-    fixed threads and re-request prior human reviewers (its Step 7)
+  - After a push I approved for `address-pr-comments` fixes: post the
+    thread replies I saw in its table, each in its thread, resolve those
+    threads, and re-request prior human reviewers (its Step 7)
 - Commits (except `WIP:`): Conventional Commits, ticket ID as scope when
   known, e.g. `feat(ENG-6659): add supported locations page`
 - PR titles are not Conventional Commits: the repo's CI title check wins.
