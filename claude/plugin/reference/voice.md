@@ -144,10 +144,14 @@ Body: the repo's template headings, filled to the size of the diff.
   `NonRetriableError` and it stopped the backfill for everyone after it.
   To fix it, we:" then fragment bullets for the distinct changes. Flag
   stopgaps plainly ("for now", "that's for another time I think").
-  Ticket link only when it isn't in the title (e.g. "Closes [ENG-x](…)").
   When the shape of the change is easier to see than to read, one small
   visual: a `diff` sketch of a call/component/file tree, or a small Mermaid
   diagram
+- **Links line**, last in Summary: the Linear ticket, always linked
+  (`[ENG-1234](https://linear.app/…)`, a bare ID doesn't link), then any
+  other resources the work came from: Basecamp thread, Figma, docs,
+  related PRs. Joined with " · ". Never stack info ("part of stack",
+  "stacked on #123"): GitHub already shows the stack
 - **Risk**: only when it's real (migrations, external writes, deletes,
   anything hard to roll back). One or two plain sentences on what could
   break and how far, as a `> [!WARNING]` (or `> [!NOTE]`) at the top. No
@@ -195,6 +199,8 @@ We've been dropping webhook deliveries whenever a partner's endpoint blips,
 so they lose events and we hear about it a week later. Now we retry:
 - retries 5 times with backoff (1m to 16m)
 - exhausted events show as `failed` in the partner log
+
+[ENG-1234](https://linear.app/acme/issue/ENG-1234) · [Basecamp thread](https://example.com/thread) · [Figma](https://example.com/design)
 
 ## Testing and risk reduction
 Added unit tests for the backoff timing and for ordering within a partner.
