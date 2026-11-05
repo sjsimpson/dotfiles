@@ -34,7 +34,7 @@ grep "\"pr\":<n>," ~/.claude/claude-panel-runs.jsonl 2>/dev/null | tail -1
 Pin `headSha` from REST (`gh pr` GraphQL caches stale heads). Then:
 
 - Closed/merged → stop. Draft → ask.
-- Last run log line has same `headSha` → already done for this head; ask before re-running. Different `headSha` → `git diff --name-only <old> <headSha> -- <PR paths>`: empty = rebase only, ask; non-empty = delta pass, pass those files as `focusFiles`.
+- Last run log line has same `headSha` → already done for this head; ask before re-running. Different `headSha` → `git diff --name-only <old> <headSha> -- <PR paths>`: empty = rebase only, ask; non-empty = delta pass: those files as `focusFiles`, `<old>` as `deltaBase` (finders read only that delta; `spec` and `smells` skip it).
 - **Raised list**: `pr-threads` lines (threads any status, my `PENDING` comments, substantive review bodies and PR comments; any author). Drop bot noise (CI summaries, walkthroughs). Resolved/declined threads stay in: findings that repeat them are dropped too.
 
 ## Step 1: Workspace
@@ -69,8 +69,8 @@ Workflow({
     workdir: <absolute WORKDIR>, base, headSha, diffPath: <absolute>,
     raised: <raised list text, or "">,
     repoAgents: [<names>],
-    escalate: <true if sensitive paths touched>,
-    focusFiles: <delta files or null>,
+    escalate: <true if sensitive paths touched: correctness + security go Opus>,
+    focusFiles: <delta files or null>, deltaBase: <old headSha or null>,
     skipLenses: <e.g. ["tests"] for docs/config-only PRs, else []>
   }
 })

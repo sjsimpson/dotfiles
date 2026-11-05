@@ -193,6 +193,7 @@ const A = args;
 // baseRef: any ref/SHA (stack layers diff against their parent); default origin/<base>
 const BASE = A.baseRef || `origin/${A.base}`;
 const finderModel = A.escalate ? undefined : "sonnet";
+const DELTA = !!(A.focusFiles && A.focusFiles.length && A.deltaBase);
 
 const LENSES = [
   {
@@ -209,24 +210,24 @@ const LENSES = [
   },
   {
     key: "conventions",
-    model: finderModel,
+    model: "sonnet",
     focus:
       "Violations of WRITTEN project rules only: CLAUDE.md, AGENTS.md, .coderabbit.yaml, and .claude/skills/patterns/ (read the sections relevant to touched areas). Every finding must quote or cite the rule it violates. Taste is not a finding.",
   },
   {
     key: "tests",
-    model: finderModel,
+    model: "sonnet",
     focus:
       "Missing tests that would let a real regression through; untested error paths; tests that cannot fail or pin incidental text instead of behavior. Search the whole test tree before claiming a gap. Not coverage percentage. Read-only: do not install deps or run tests.",
   },
   {
     key: "spec",
-    model: finderModel,
+    model: "sonnet",
     focus: `Compare the diff to the ticket spec below, not to code quality. Report: requirements the spec asks for that are missing or partial; behavior the diff adds that the spec didn't ask for (scope creep); requirements that look implemented but wrong. Quote the spec line in every finding.\n\nSpec:\n${A.spec || ""}`,
   },
   {
     key: "smells",
-    model: finderModel,
+    model: "sonnet",
     focus:
       "Design smells in added code, always judgement calls labeled 'possible <smell>': mysterious name, premature abstraction (a helper or layer with fewer than 3 real callers; a helper that only isolates a try/catch around one fallible call and returns a Result is exempt), duplication only at its third copy, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, message chains, middle man. A written repo rule or the codebase's existing pattern overrides any smell. At most 3 findings, only ones a reviewer would ask to change in this PR.",
   },
@@ -237,7 +238,9 @@ const LENSES = [
   },
 ].filter(
   (l) =>
-    !(A.skipLenses || []).includes(l.key) && (l.key !== "spec" || A.spec),
+    !(A.skipLenses || []).includes(l.key) &&
+    (l.key !== "spec" || A.spec) &&
+    !(DELTA && (l.key === "spec" || l.key === "smells")),
 );
 
 const common = `PR #${A.number}: ${A.title}
@@ -245,8 +248,11 @@ Author intent:
 ${A.intent || "(none given)"}
 
 Checkout (READ-ONLY — do not edit, install, run tests, commit, or delete anything): ${A.workdir}
-Diff: \`git -C ${A.workdir} diff ${BASE}...${A.headSha}\` (saved at ${A.diffPath}).
-${A.focusFiles && A.focusFiles.length ? `Delta pass — these files changed since the last review; weight them: ${A.focusFiles.join(", ")}\n` : ""}
+${
+  DELTA
+    ? `Delta pass: the PR was reviewed at ${A.deltaBase}. Review ONLY \`git -C ${A.workdir} diff ${A.deltaBase} ${A.headSha} -- ${A.focusFiles.join(" ")}\`. Full PR diff for context only: ${A.diffPath}.`
+    : `Diff: \`git -C ${A.workdir} diff ${BASE}...${A.headSha}\` (saved at ${A.diffPath}).`
+}
 Review ONLY lines this diff adds or changes. Before claiming something is missing, read the full file — the missing guard/handler/caller is usually just outside the hunk. Don't flag pre-existing code, things CI catches (types, lint, format), or work the PR intent says is deferred.
 Already raised on the PR — do NOT re-report:
 ${A.raised || "none"}
@@ -322,7 +328,13 @@ ${A.raised || "none"}
 
 Findings (JSON):
 ${JSON.stringify(raw)}`,
-  { label: "merge", phase: "Merge", schema: MERGED, effort: "medium" },
+  {
+    label: "merge",
+    phase: "Merge",
+    schema: MERGED,
+    effort: "medium",
+    model: "sonnet",
+  },
 );
 
 const toValidate = merged.findings.filter((f) => !f.codified);
