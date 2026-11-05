@@ -13,12 +13,13 @@ assistant() {
     --disallowedTools "Bash(basecamp *)" --allowedTools "Bash(basecamp-safe:*)" "$@")
 }
 # QA desk: from anywhere in a repo, open Claude in its main worktree as
-# qa-desk-<repo>, the session other agents send QA briefs to
+# qa-desk-<repo>, the session other agents send QA briefs to (Sonnet: it routes,
+# qa-tester does the testing)
 qa-desk() {
   local common
   common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) ||
     { echo "qa-desk: not in a git repo" >&2; return 1; }
-  cd "${common:h}" && claude -n "qa-desk-${common:h:t}" "/qa-desk"
+  cd "${common:h}" && claude --model sonnet -n "qa-desk-${common:h:t}" "/qa-desk"
 }
 
 # docker
