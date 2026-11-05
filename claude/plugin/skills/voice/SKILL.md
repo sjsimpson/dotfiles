@@ -8,10 +8,8 @@ argument-hint: "[surface] <draft text | file path>"
 
 Make a draft read like I typed it myself. Rewrite only; never post or save.
 
-Rules: `<this skill's base directory>/../../reference/voice.md`, the whole
-file plus the section for this draft's surface (Per surface). Real samples
-(private, optional): `~/notes/work/specs-examples.md` → Voice samples.
-Read both first.
+Rules: `<this skill's base directory>/../../reference/voice.md`: **Core**
+plus the section for this draft's surface (Per surface). Read only those.
 
 ## 1. Surface
 
@@ -23,13 +21,19 @@ The surface the caller or argument names; else infer it from the draft
 
 Go line by line. A line fails when it:
 
-- Reads like **audit output**: labels (`Verdict:`, `Priorities:`), arrow
-  chains, fragment bullets carrying what should be prose, tool names
-- Hedges, fills, or signs off ("just", "I think maybe", "Hope this helps")
-- Restates what a link, parent ticket, or earlier section already says
-- Spends more words than the point needs: two sentences where one
-  carries it, a list of one
-- Bolds more than the one thing nobody can miss
+- Reads like **audit output**: labels (`Verdict:`, `Priorities:`,
+  `Why:`), tables, prod numbers, arrow chains, tool names, a "because"
+  crammed into a fragment bullet
+- Reads like **AI polish**: em dashes, benefit framing ("This ensures…",
+  "…so X stays in control"), parallel full-sentence bullets, settled
+  verdicts where I'd ask ("Thoughts?") or hedge honestly
+- Fills or signs off beyond the surface's own ("Hope this helps", "Let me
+  know if you have any questions!")
+- Is longer than the surface allows, or than the point needs: two
+  sentences where one carries it, a list of one, every template section
+  filled for a small change
+- Bolds for emphasis where my voice would use an ALL-CAPS word or "!!"
+- Is impersonal where I'd say "I"/"we" or name a teammate
 - Uses a relative date ("Friday") or an unnamed actor ("it gets retried")
 - Pastes a message body, log, or customer data instead of linking
 
@@ -37,7 +41,7 @@ Done when every line has passed or been marked.
 
 ## 3. Rewrite
 
-Rewrite each marked line in first person, point first, then the why.
+Rewrite each marked line in first person, as the surface's section shows.
 Keep every fact, number, code name, link, and `@mention` verbatim. Add no
 new claims. Normal prose, whatever style the session uses (`voice.md`:
 drafts are persisted text).

@@ -13,10 +13,10 @@ what they decided.
 
 Issues. Skip a section that would be empty, except **Problem** and **Scope**.
 
-- **Title**: the outcome, imperative, ≤70 chars. "Retry failed webhook
-  deliveries", not "Webhook issue"
-- **Problem**: prose, first person (`voice.md`): who hits it, what goes
-  wrong, and why it matters. A few sentences; code names only where a
+- **Title**: verb + noun, about 3-8 words, no "so that"/"when" clauses.
+  "Retry failed webhook deliveries", not "Webhook issue"
+- **Problem**: prose, first person (`voice.md` → Linear): starts from
+  today ("Currently, …"), what goes wrong, and why it matters. A few sentences; code names only where a
   builder needs them (1-3)
 - **Scope**: checkboxes, each one checkable as written. Plain language;
   "must" is optional, for the criterion that can't bend, never on every line
