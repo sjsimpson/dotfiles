@@ -25,7 +25,9 @@ HEAD: <sha>
 - [ ] PR description: body per `voice.md` → PR descriptions (screenshots
       or video for UI changes); title matches the repo's CI title regex
 - [ ] Threads: every review thread fixed, replied (draft posted on the
-      user's OK), or ticketed (`pr-threads <pr>`); no PR or no threads → n/a
+      user's OK), or ticketed (`pr-threads <pr>`); after an approved push,
+      fixed threads resolved and prior human reviewers re-requested
+      (`address-pr-comments` Step 7); no PR or no threads → n/a
 ```
 
 Check a box as its item finishes: `- [x] <item> · <YYYY-MM-DD> · <evidence>`

@@ -14,9 +14,10 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
 - **Gate before changing anything.** Edits, commits, and ticket writes happen
   only after the user approves the decision table (Step 3). Approval covers
   exactly what's in the table
-- **Never push** (`git push`, `gh stack push|submit|sync`) and never resolve
-  threads or re-request review unless asked. Draft replies are shown
-  locally; post them only when the user asks. Posting a reply also
+- **Never push** (`git push`, `gh stack push|submit|sync`) unless asked.
+  Draft replies are shown locally; post them only when the user asks. Once
+  the user approves the push, Step 7 (resolve + re-request) runs without
+  asking. Posting a reply also
   resolves its thread: `resolveReviewThread` with the thread `id` from
   `pr-threads <pr> --json`, passed as a variable
   (`gh api graphql -f id=<id> -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}'`);
@@ -162,3 +163,16 @@ Linear, for approved ticket items:
 - Draft replies: ready to paste, per thread URL
 - Not done: push (`gh stack push` / `gh stack submit`) and posting replies,
   waiting on the user. Offer them in one line
+
+## Step 7: After an approved push
+
+Per layer PR, once its fixes are pushed on the user's OK:
+
+1. Resolve every thread this pass fixed or replied to (Rules → the
+   `resolveReviewThread` mutation)
+2. Re-request review from every human who already reviewed or commented:
+   authors in `pr-threads <pr> --json` with `__typename` `User`, minus me
+   (`gh api user -q .login`) and anyone still requested
+   (`gh pr view <n> --json reviewRequests`). Bots never.
+   `gh pr edit <n> --add-reviewer <login,login>`
+3. Report: threads resolved (count) and who was re-requested, per PR
