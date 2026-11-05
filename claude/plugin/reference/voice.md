@@ -69,8 +69,7 @@ Never:
 - Review bodies (approve, comment, request changes): **Review bodies**;
   the pending-review mechanics are in `report.md`
 - Replies on my own PRs: **Replies on my PRs**
-- Linear issues and docs: `specs.md` for the shape, **Linear** below for
-  the voice
+- Linear issues, docs, and comments: **Linear** (shape, language, edits)
 - Email: **Email**
 - Commits: Conventional Commits, ticket ID as scope (global `CLAUDE.md`)
 
@@ -300,19 +299,91 @@ details; the body never repeats them.
 
 ## Linear
 
-Shape, sections, and edit rules: `specs.md`. Inside that shape, my voice:
+Issues, docs, and ticket comments. Specs live only in Linear; requirements
+that arrive from threads, email, and meetings are **Sources**, and the spec
+carries what they decided.
 
-- **Problem** starts from today: "Currently, …" / "We don't currently …",
-  then "We want to …" / "We need to …" and the why in a sentence or two.
-  Stakeholder asks name the team ("The support team needs …")
+### Shape
+
+Issues. Skip a section that would be empty, except **Problem** and **Scope**.
+
+- **Title**: verb + noun, about 3-8 words, no "so that"/"when" clauses.
+  "Retry failed webhook deliveries", not "Webhook issue"
+- **Problem**: prose, a few sentences. Start from today: "Currently, …" /
+  "We don't currently …", then "We want to …" / "We need to …" and the why.
+  Stakeholder asks name the team ("The support team needs …"). Code names
+  only where a builder needs them (1-3)
+- **Scope**: checkboxes, each one checkable as written. Plain language;
+  "must" only for the criterion that can't bend
+- **Out of scope**: what a reader might assume is included but isn't
+- **Accepted risks** (optional): known gaps we're shipping with, and why
+- **Open questions**: numbered, each with an owner. `@name` notifies them in
+  Linear; a plain first name if it shouldn't
+- **Sources**: links (threads, docs, PRs), "Original context: [link]" for
+  the main one. Paraphrase; never paste message bodies or customer data
+
+Docs (technical proposals etc.): sections can differ, but **Problem** and
+**Open questions** are required, and Language, Edits, and Sources apply.
+
+Made-up example:
+
+```markdown
+## Problem
+Currently, when a partner's webhook endpoint blips, we lose their events
+for good: `deliverWebhook` logs the 5xx and drops the payload. Partners
+then ask us why their data is missing, and we can't replay it.
+
+We want to retry instead. Backoff in the worker is probably simplest
+(a queue might be overkill for now).
+
+## Scope
+- [ ] Failed deliveries retry 5 times with backoff (1m to 16m)
+- [ ] After the last retry, the event shows as `failed` in the partner log
+- [ ] Retries must never reorder events for the same partner
+
+## Out of scope
+- Manual replay UI (another ticket)
+
+## Open questions
+1. Do 4xx responses retry? (me)
+
+## Sources
+Original context: [Basecamp thread](https://example.com/thread)
+```
+
+### Language
+
 - Options listed plainly with my pick: "(simplest)", "might be overkill",
-  "Option 2 is my favorite so far". Unresolved ones still go to **Open
-  questions**
-- Asides as `> [!NOTE]` callouts; context link as "Original context:
-  [link]" in **Sources**
-- Comments: mostly under 15 words ("@Kim yes, this is stale", "Good
-  callout, updated"). Longer ones open with the `@mention`, think out
-  loud, and end on a question ("…right?")
+  "Option 2 is my favorite so far"
+- Hedges belong in Problem and options, never in Scope: "something like…",
+  "maybe", "not sure" go to **Open questions** with an owner
+- One term per concept, matching the code's names
+- Concrete values: "5 retries, 1m to 16m", not "a few retries"
+- Name the actor: "the worker retries", not "it is retried"
+- A real branch says what happens on both sides
+- Say whether a list is exhaustive when it matters ("only these 3 states")
+- Asides as `> [!NOTE]` callouts
+
+### Edits
+
+- **Not started** (status before In Progress, no branch or PR): edit in place
+- **Started**: don't rewrite. Append to the description:
+
+  ```markdown
+  ## Update MM-DD-YYYY
+  <what changed> because <why>. <source link>
+  ```
+
+  Strike superseded criteria (`~~old~~`), don't delete them. Then post a
+  one-line comment in my voice so subscribers get notified ("Updated the
+  spec: 4xx responses don't retry anymore, per @Kim")
+- Comments count as part of the spec: read them before auditing or building
+
+### Comments
+
+Mostly under 15 words ("@Kim yes, this is stale", "Good callout,
+updated"). Longer ones open with the `@mention`, think out loud, and end
+on a question ("…right?").
 
 ## Email
 

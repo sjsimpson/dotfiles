@@ -9,8 +9,9 @@ argument-hint: "<linear issue ID | issue URL | doc URL>"
 Find what's wrong or missing in a spec before anyone builds it. Read-only:
 no code edits, no Linear writes unless the user asks.
 
-Rules: `specs.md` (Shape, Language, Edits, Audit flags) and `voice.md`, both
-in `<this skill's base directory>/../../reference/`. Read both first.
+Rules: `voice.md` → **Core** and **Linear** (Shape, Language, Edits) in
+`<this skill's base directory>/../../reference/`, plus §3 below. Read them
+first.
 
 ## 1. Load the spec
 
@@ -22,7 +23,7 @@ in `<this skill's base directory>/../../reference/`. Read both first.
   note the ones you can't under **Not checked**
 - Parent and sibling issues: titles + status, to see what's already split
   out
-- Started or not (specs.md Edits): decides how the spec diff gets applied
+- Started or not (Linear → Edits): decides how the spec diff gets applied
 
 ## 2. Ground in the code
 
@@ -63,7 +64,7 @@ or the review; drop style nits.
    then "N more on request"
 3. **Proposed spec**: the `spec-writing` skill's output, given the current
    spec and these findings. Shown as a diff against the current text, or
-   (started ticket) its `## Update` block plus `Spec updated:` comment
+   (started ticket) its `## Update` block plus the one-line update comment
 4. **Questions**: numbered, each with who should answer
 5. **Not checked**: unreachable sources, code you couldn't find
 
@@ -77,5 +78,5 @@ new conflict or edge case, which feeds the next round. Questions others own
 stay in the spec's **Open questions** and never block a round. Done when the
 frontier is empty: print the final spec diff and verdict.
 
-Then offer in one line to apply the diff to Linear; apply it per specs.md
+Then offer in one line to apply the diff to Linear; apply it per Linear →
 Edits only on the user's OK.

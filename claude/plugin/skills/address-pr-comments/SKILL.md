@@ -22,10 +22,10 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
   `pr-threads <pr> --json`, passed as a variable
   (`gh api graphql -f id=<id> -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}'`);
   inlining the id in the query string fails
-- **Ticket paper trail.** Spec changes follow `reference/specs.md`
-  (`<this skill's base directory>/../../reference/`) Edits:
+- **Ticket paper trail.** Spec changes follow `reference/voice.md` → Linear
+  → Edits (`<this skill's base directory>/../../reference/`):
   a started ticket gets an appended `## Update MM-DD-YYYY` (strike, don't
-  delete) plus a `Spec updated:` comment; never rewrite the title or edit
+  delete) plus a one-line update comment; never rewrite the title or edit
   existing comments. Progress notes (not spec changes) are plain dated
   comments
 - Follow the user's global git rules (WIP commit of existing work first,
@@ -144,14 +144,14 @@ bottom up: work the ready checklist again (plugin
 Linear, for approved ticket items:
 
 - **Existing ticket fits** (the layer's ticket, or one found via search):
-  scope change → specs.md Edits (description update + `Spec updated:`
+  scope change → Linear → Edits (description update + one-line update
   comment); otherwise `save_comment` with `**Update MM-DD-YYYY:**` + what
   and why + PR link
 - **Otherwise**: `save_issue` as a sub-issue (`parentId` = the layer's ticket,
   same team), title = the improvement, description = pattern, where it
-  applies (`path:line` list), origin PR link, shaped per `reference/specs.md`.
+  applies (`path:line` list), origin PR link, shaped per `voice.md` → Linear.
   No edits to the parent's description
-- Scope changed in this pass → update the layer's ticket per specs.md Edits
+- Scope changed in this pass → update the layer's ticket per Linear → Edits
   (e.g., "fixed X here; propagation tracked in ENG-1240")
 - All ticket text in `reference/voice.md`'s voice: `voice` skill pass
   before `save_issue` / `save_comment`
