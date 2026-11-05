@@ -130,8 +130,8 @@ I used tmux before herdr. The config lives on the
 - `qa-login <url>`: log in by hand to `qa-tester`'s golden Chrome profile;
   every worktree's copy re-seeds from it
 - `pr-threads <pr> [--json]`: every piece of feedback on a PR (threads with
-  open/resolved/outdated, reviews, comments, my pending review); the review
-  skills read it. `install.sh` links it into `~/.local/bin`
+  open/resolved/outdated, `--json` adds thread ids, reviews, comments, my
+  pending review); the review skills read it. `install.sh` links it into `~/.local/bin`
 - `pr-pending list|sync <pr>`: findings into my pending review, never
   submits; sets/updates the review body (short, in my voice); only touches
   comments and a body it posted that I haven't edited (`--replace-body`

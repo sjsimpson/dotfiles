@@ -88,7 +88,8 @@
     submit, and always report them locally too. My own PRs: no pending
     review; report findings and offer to fix them
   - Public comments/replies/submits: draft locally (as
-    `address-pr-comments` does), post only when I ask
+    `address-pr-comments` does), post only when I ask. Posting a review
+    thread reply also resolves that thread
   - PR just opened (by you on my ask, or I say I opened it): adding its
     screenshots/video (`voice.md` → PR descriptions) needs no extra OK
   - My own PR, after `/deep-review` ran claude-panel on its pushed head

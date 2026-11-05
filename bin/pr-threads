@@ -25,7 +25,7 @@ done
 data=$(gh api graphql -F o="${repo%/*}" -F r="${repo#*/}" -F n="$pr" -f query='
 query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){
   headRefOid
-  reviewThreads(first:100){nodes{isResolved isOutdated path line originalLine
+  reviewThreads(first:100){nodes{id isResolved isOutdated path line originalLine
     comments(first:50){totalCount nodes{author{login __typename} body url createdAt}}}}
   reviews(first:100){nodes{author{login __typename} state body url submittedAt
     comments(first:100){nodes{path line originalLine body url}}}}

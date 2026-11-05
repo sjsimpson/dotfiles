@@ -65,7 +65,8 @@ Findings, drafts, and posted comments, every skill and agent:
   `**label (decorations):** subject`, then 1-3 sentences in my voice; a
   ` ```suggestion ` block when it exactly replaces the anchored lines;
   `file:line` in drafts
-- Posted: the comment only, nothing around it
+- Posted: the comment only, nothing around it. A reply to a review thread
+  (posted on my ask) also resolves that thread
 - Blocking or not, never in between: every posted comment is decorated
   `(blocking)` or `(non-blocking)` (blocking per `report.md` → Verdict).
   Others' PRs: post only the blocking ones. Mechanical nits get fixed and

@@ -16,7 +16,11 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
   exactly what's in the table
 - **Never push** (`git push`, `gh stack push|submit|sync`) and never resolve
   threads or re-request review unless asked. Draft replies are shown
-  locally; post them only when the user asks
+  locally; post them only when the user asks. Posting a reply also
+  resolves its thread: `resolveReviewThread` with the thread `id` from
+  `pr-threads <pr> --json`, passed as a variable
+  (`gh api graphql -f id=<id> -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}'`);
+  inlining the id in the query string fails
 - **Ticket paper trail.** Spec changes follow `reference/specs.md`
   (`<this skill's base directory>/../../reference/`) Edits:
   a started ticket gets an appended `## Update MM-DD-YYYY` (strike, don't
