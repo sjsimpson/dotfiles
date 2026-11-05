@@ -27,8 +27,9 @@ Feedback in, approved changes out, in the right branch, with a paper trail.
   gh api graphql -f id=<id> -f body="$(cat <reply file>)" -f query='mutation($id:ID!,$body:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$body}){comment{url}}}'
   gh api graphql -f id=<id> -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}'
   ```
-  `gh pr comment` (top-level) is only for review-body points with no
-  thread: one comment covering just those points
+  `gh pr comment` (top-level) only answers a standalone comment or review
+  body that asks something: one comment covering just those points. No
+  such point → no top-level comment
 - **Ticket paper trail.** Spec changes follow `reference/voice.md` → Linear
   → Edits (`<this skill's base directory>/../../reference/`):
   a started ticket gets an appended `## Update MM-DD-YYYY` (strike, don't

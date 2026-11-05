@@ -284,8 +284,9 @@ details; the body never repeats them.
 
 ## Replies on my PRs
 
-- One reply per thread, posted in that thread. A top-level PR comment only
-  answers review-body points that have no thread, and never sums up the
+- One reply per thread, posted in that thread. A top-level PR comment
+  only when someone's standalone comment or review body asks something
+  that needs an answer; never a thanks-only comment or a summary of the
   thread replies
 - To people: short and warm. "Good callout, I'll update this", "Good
   catch, updated the test", "Done!". A fix reply can name the commit in
@@ -299,8 +300,8 @@ details; the body never repeats them.
   this to be exhaustive")
 - Several review-body points in one comment: a short sentence or two per
   point, in the reviewer's order, each opening with the point itself in
-  plain words ("The blocks thing wasn't planned, but…"). Thanks, if any,
-  names what was good
+  plain words ("The blocks thing wasn't planned, but…"). Open with the
+  answer, not a thanks
 - Not this: "Fixed in `abc1234`: moved the validation ahead of the write
   so partial records can't persist." / "Intentional. <paragraph>" /
   "- Blocks: <three sentences>" / "Thanks, this was a super thorough
