@@ -133,6 +133,6 @@
 
 - For in-app/browser testing, use the `qa` skill: you brief the repo's QA
   desk (`/qa-desk`), which sets up the main worktree and runs `qa-tester`.
-  Playwright only loads inside `qa-tester`
+  Playwright and Chrome DevTools MCP only load inside `qa-tester`
 - A repo's main worktree belongs to its QA desk while one runs: never switch
   branches or edit there; work in a linked worktree

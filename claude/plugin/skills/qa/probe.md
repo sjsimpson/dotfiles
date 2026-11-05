@@ -7,7 +7,16 @@ and the run (`qa-tester`).
 
 ## P1. Plan: how would you test this for real?
 
-Write the probe plan from the diff, the intent, and the code:
+Write the probe plan from the diff, the intent, and the code. Presumed
+broken: the plan's job is to prove the change safe, and anything it can't
+prove stays unsafe.
+
+- **Break hypotheses** (required): every way the change could break
+  production (trigger → harm), including panel findings handed to you.
+  Each maps to scenarios that end it `disproven`, `confirmed`, or
+  `unproven`. Coverage claims ("no test catches X") are settled by
+  mutation: break the line, confirm the test goes red and its siblings
+  stay green, revert
 
 - **Change type → sandbox**:
   - Script/CLI: the exact commands from the change with the real tools,

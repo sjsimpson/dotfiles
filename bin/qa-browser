@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 #
-# qa-browser — start qa-tester's Playwright MCP on this worktree's profile.
+# qa-browser [devtools] — start qa-tester's Playwright MCP (default) or
+# Chrome DevTools MCP (`devtools`) on this worktree's profile.
 #
 # Golden profile (~/.cache/qa-tester/profile) is the one qa-login logs into.
 # Each worktree gets a copy (profiles/<repo>/<worktree>), seeded on first use
 # and re-seeded after every qa-login. Copies keep their own refreshed cookies;
 # profiles of deleted worktrees are pruned. Run by qa-tester's MCP config.
+# Each server launches its own Chrome, and two Chromes can't share a profile
+# dir, so devtools gets a sibling copy (<worktree>-devtools).
 
 set -euo pipefail
 
@@ -24,6 +27,7 @@ if top=$(git rev-parse --show-toplevel 2>/dev/null); then
 else
   top="" profile="$root/profiles/_/default"
 fi
+[[ "${1:-}" == devtools ]] && profile="$profile-devtools"
 
 # Chrome leaves SingletonLock (-> host-pid) behind if killed; only a live pid counts
 in_use() { local t; t=$(readlink "$1/SingletonLock" 2>/dev/null) && kill -0 "${t##*-}" 2>/dev/null; }
@@ -43,5 +47,9 @@ fi
 mkdir -p "$profile"
 [[ -n "$top" ]] && echo "$top" >"$profile/.worktree"
 
+if [[ "${1:-}" == devtools ]]; then
+  exec npx -y chrome-devtools-mcp@latest --headless --userDataDir="$profile" \
+    --workspace="$HOME/screenshots" --no-usage-statistics --no-performance-crux
+fi
 exec npx -y @playwright/mcp@latest --headless --caps=devtools \
   --output-dir="$HOME/screenshots" --user-data-dir="$profile"

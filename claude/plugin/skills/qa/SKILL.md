@@ -18,8 +18,10 @@ From the diff (`git diff --name-only <base>...HEAD`):
 - Both apply → run both; each gets its own QA verdict
 - Docs-only prose → no QA; say so and why
 
-PASS covers only what ran. Fewer scenarios than planned → `PARTIAL`, never
-PASS. Report per `report.md` (plugin `reference/`).
+Presumed broken: the change breaks production until a run proves otherwise.
+PASS covers only what ran, and needs every break hypothesis disproven by a
+run with evidence. Fewer scenarios than planned, or any hypothesis
+unproven → `PARTIAL`, never PASS. Report per `report.md` (plugin `reference/`).
 
 ## App mode
 
@@ -43,6 +45,9 @@ From the change and the code:
 - **Flows**: the user-facing flows to exercise, happy path first
 - **Async**: how background work gets triggered, and the states to watch
   (e.g. queued → done | failed)
+- **Hypotheses**: ways this could break prod that QA must disprove: panel
+  findings (blocking, uncertain, skeptic) and your own worries, one line
+  each (trigger → harm). The tester adds its own
 - **Data**: the records/accounts/states needed, and how to create them. A
   seed script can live anywhere (your scratchpad is fine); give its absolute
   path and the exact command. The desk reads it first and runs it only if it
@@ -78,6 +83,7 @@ Flows: <...>
 Async: <how to trigger; states to watch>
 Data: <what must exist, how to create it>
 Login: <saved session, or test credentials>
+Hypotheses: <trigger → harm, one per line; "none beyond the diff">
 Evidence: <dir the caller wants evidence in; default $HOME/screenshots/<repo>/<this worktree's branch, / → ->/>
 Out of scope: <anything deliberately not tested>
 ```

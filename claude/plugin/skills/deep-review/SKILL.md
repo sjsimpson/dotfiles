@@ -23,8 +23,12 @@ Where it runs:
 - Repo name = last part of `owner/repo`. Local checkout: the main worktree
   of that repo (ask if you can't find it)
 - Private repo config: `~/.config/claude-repos/<repo>/review.md` (prod data source,
-  setup notes, QA gotchas, risky areas). Read it; missing → say so, carry on
+  setup notes, QA gotchas, risky areas, review skill). Read it; missing → say so, carry on
   without a prod pass (the report must then say prod wasn't checked)
+- Panel: config line `Review skill: <name>` (the repo's own panel, e.g.
+  `review-panel`) → others' PRs in review mode run that skill instead of
+  claude-panel, so the team's review stays one process. My own PRs, `--fix`,
+  `--status`, and no-PR runs always use claude-panel
 - Mode: `--status` (my own PR), else review. Never pass or assume a mode
   the user didn't give; ask (step 1). `--risky` adds on to either. Also
   risky, unasked, when the diff touches an area the repo config lists as
@@ -112,7 +116,11 @@ Setup
    not / partly, with evidence
 
 Review (review mode)
-4. /sjsimpson:claude-panel <n>. Local only, post nothing
+4. <panel: /sjsimpson:claude-panel <n>. Local only, post nothing |
+   /<review skill> <n>. It owns its GitHub delivery (pending review,
+   labels, checkbox). At its delivery question pick the pending review;
+   never push a fix or submit. Map its merged findings into the report
+   (blocking = its correctness/security ones that pass the harm test)>
 5. /sjsimpson:qa, app or probe mode per change (its step 0), brief
    Evidence: <report dir>. Start it alongside step 4. Probe mode: its
    plan, failure matrix, and versions (pre-fix, head, each proposed fix
@@ -126,9 +134,13 @@ Review (review mode)
       prod shapes. Cover edge cases: empty/zero, mixed, error paths, and
       cases that must stay unchanged
    Flag-gated code: test flag on and off. <repo config: QA gotchas>
-   Then QA checks the panel: a finding QA ran and didn't reproduce is
+   Then QA checks the panel, presumed broken: when the panel finishes,
+   send QA a follow-up brief (same commit) whose `Hypotheses:` are the
+   panel's blocking, uncertain, and skeptic findings, plus test-coverage
+   claims to mutation-test. A finding QA ran and didn't reproduce is
    demoted (or refuted), with the run as evidence; one it reproduced is
-   confirmed (its How tested says which). Verdict banner: QA coverage
+   confirmed (its How tested says which); one QA couldn't run stays as
+   the panel left it, listed under Not verified. Verdict banner: QA coverage
    full (every planned scenario ran) | partial | none
 6. Nit fixes (skip in a reused worktree; list them instead). Fix the
    non-blocking `fix` findings that are mechanical (no behavior change:
@@ -177,7 +189,8 @@ mergeable now / needs X, with the path to merge), Findings (drafts per the
 QA per pass with screenshot paths, Safety (risky only), Not verified.
 Nit commit: its sha and one line per fix, under Findings.
 Review mode, author isn't the user: also write the blocking findings that
-anchor to diff lines as
+anchor to diff lines (repo review skill: QA findings only, its own are
+already in the pending review) as
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
 report.md (voice.md → Review bodies), then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
@@ -270,5 +283,6 @@ logged; the done message → step 5. Stack: per `stack.md`.
 ## Never
 
 Post publicly, submit, or approve; push, except the nit commit on the user's OK (step 4); edit code outside `--fix`, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
-or brief a review without both claude-panel and qa (review mode). Your
+or brief a review without both a panel (claude-panel or the repo's review
+skill) and qa (review mode). Your
 GitHub writes: `pr-pending sync` (others' PRs) and that nit push.

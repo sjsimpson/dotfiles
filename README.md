@@ -147,8 +147,9 @@ I used tmux before herdr. The config lives on the
   `WIP:` commits skip it. `install.sh` links it into `~/.local/bin`
 - `basecamp-safe`: the `basecamp` CLI limited to reads + message drafts
   (`--draft` forced); the assistant may run only this
-- `qa-browser`: `qa-tester`'s Playwright MCP launcher (per-worktree profile
-  copy, headless); `install.sh` links it into `~/.local/bin`
+- `qa-browser [devtools]`: `qa-tester`'s Playwright MCP launcher, or its
+  Chrome DevTools MCP with `devtools` (per-worktree profile copy each,
+  headless); `install.sh` links it into `~/.local/bin`
 
 ## Claude Code
 

@@ -49,7 +49,7 @@ commit and brief that sha.
 
 Fields: **from** (sender session), **code** (its worktree path), **commit**
 (sha), **base**, **apps**, **goal**, **flows**, **async**, **data**,
-**login**, **evidence** (dir), **out of scope**. Missing code, commit, apps, or flows, or a
+**login**, **evidence** (dir), **hypotheses**, **out of scope**. Missing code, commit, apps, or flows, or a
 commit not in this repo (`git cat-file -e <sha>^{commit}`) → reply
 `incomplete brief: <what's missing>`.
 

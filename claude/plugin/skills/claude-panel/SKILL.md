@@ -1,7 +1,7 @@
 ---
 name: claude-panel
 description: "Local Claude PR review panel: parallel lens finders + repo `*-reviewer` agents, blind validation, no QA (callers run `qa`); report in chat, and on others' PRs the findings go into my pending review (never submitted). Use for /claude-panel, or when deep-review / review-stack call it."
-argument-hint: "[pr-number | pr-url | --local] (optional — defaults to current branch's PR)"
+argument-hint: "[pr-number | pr-url | --local] [--claude] (optional — defaults to current branch's PR)"
 ---
 
 # Claude Review Panel (local)
@@ -21,6 +21,8 @@ Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file)
 First, alone: `ps -p $$ >/dev/null 2>&1 || echo SANDBOXED`. Sandboxed → tell the user the panel needs unsandboxed Bash and stop.
 
 Arg: PR number or URL (extract number); none → `gh pr view --json number -q .number`.
+
+**Repo review skill**: `~/.config/claude-repos/<repo>/review.md` has `Review skill: <name>` and the PR isn't mine (not `--local`, author ≠ me) → run that skill instead and stop here, so the team's review stays one process. Say which ran. `--claude` or a caller that already chose (deep-review) → stay.
 
 **`--local`**: review the current branch's local commits instead of the PR head on GitHub, so fixes can change before pushing. Uncommitted changes → stop, ask for a `WIP:` commit. `headSha` = `git rev-parse HEAD`; base = the PR's base if one exists, else the gh stack parent (`gh stack view --json`), else the default branch. No PR → number `local-<branch>`, intent from `git log origin/<base>..HEAD`, empty raised list. Skip the REST pin and the draft/closed checks; `WORKDIR` = repo root; never a pending review (own work).
 

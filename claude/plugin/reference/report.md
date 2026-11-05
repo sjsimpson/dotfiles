@@ -20,8 +20,9 @@ then a one-paragraph why.
   is advisory; nits and style never block
 - Any blocking finding or QA FAIL (= any blocking QA bug) → request
   changes; else approve. Never comment
-- QA: PASS = every planned scenario ran; PARTIAL = some skipped, none
-  blocking
+- QA: PASS = every planned scenario ran and every break hypothesis was
+  disproven by a run with evidence; PARTIAL = some skipped or unproven,
+  none blocking
 - QA BLOCKED → no verdict and nothing to GitHub (no pending review sync);
   tell me in chat, "Blocked on: <exactly what's missing and how to provide
   it>", so we troubleshoot, then re-run
@@ -46,7 +47,9 @@ earlier report: posted? resolved?
 Per pass or app: mode (app | probe), verdict, coverage, evidence dir.
 Probe: sandbox used and blast radius (what reads/triggers on the changed
 files). Scenario table: scenario · ran? · result · evidence (How tested;
-"reasoned" never backs a PASS row). Probe evidence in the dir: the run scripts and
+"reasoned" never backs a PASS row; app mode: every row cites a screenshot,
+every multi-step flow a video). Break hypotheses table: hypothesis ·
+disproven / confirmed / unproven · evidence. Probe evidence in the dir: the run scripts and
 shims, one transcript per run with the resulting state, grader outputs
 plus a per-axis agreement table. Video only for app mode.
 Sandbox: what's still live (scratch repo, files, processes) and awaits my
