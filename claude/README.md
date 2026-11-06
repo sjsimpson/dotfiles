@@ -163,7 +163,7 @@ agents, hooks) and its token cost.
   decision table, both await your OK; CI green on the bottom draft with the
   ready checklist done → offers `gh pr ready`, and again for the next layer
   once the bottom merges; reviewer: new push or re-request → delta re-review into the
-  pending review), done at merge/close/cancel, dispatcher cleanup
+  pending review, rebase-only pushes skipped), done at merge/close/cancel, dispatcher cleanup
   (clean = nothing dirty or unpushed, or HEAD in the PR head)
 - **Ready checklist**: [`plugin/reference/ready-checklist.md`](plugin/reference/ready-checklist.md),
   what a PR needs before leaving draft (history, `deep-review --fix` steady

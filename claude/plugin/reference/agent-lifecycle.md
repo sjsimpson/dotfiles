@@ -33,22 +33,26 @@ agent's questions. Messages to `<reply-to>`, one line each:
 Once a PR exists, the agent keeps a watcher armed on it: `pr-watch <n> -R
 <owner/repo> --as <author | reviewer>` via Bash `run_in_background`. It
 polls gh for free and exits on the first change; the exit wakes the agent.
-Arm it after opening the PR or pushing (project agent) and after each
-review round (reviewer). One watcher per PR, and a stack gets one per
-layer: stop a PR's old watcher (`TaskStop`) before re-arming it. On wake,
-handle every event line, then re-arm:
+Arm it when the PR opens (project agent; its own pushes restart CI
+tracking without a wake) or after the first review round (reviewer). One
+watcher per PR, and a stack gets one per layer. On wake, handle every
+event line, then re-arm that PR's watcher:
 
 - **Merged / closed**: the last open PR → Done. A lower stack layer → the
-  next layer up is now the bottom: `gh stack sync`, then the CI-passed
-  path below for it
+  next layer up is now the bottom: `gh stack sync`; it rewrote layers →
+  offer the push (user's OK); the next CI pass runs the ready step below
 - **Project agent** (`author`): CI failed → root cause from the log (`gh
   run view <id> --log-failed`) and a proposed fix. New comments or reviews
   → `address-pr-comments` decision table. Both wait for the user's OK in
   the pane before any commit. CI passed → walk `ready-checklist.md`; a
   draft that is the bottom layer (or a lone PR) with every box checked →
   offer "CI green, checklist done: mark #`<n>` ready?" and run `gh pr
-  ready <n>` on the user's OK. Anything else → one line to the user
-- **Reviewer**: new push or re-review requested → re-run the review on
+  ready <n>` on the user's OK. Not ready → "CI green; not ready:
+  `<open checklist items>`"
+- **Reviewer**: new push that only rebases (`git range-diff <base at
+  review>..<reviewed sha> <base now>..<new sha>` marks every commit `=`) →
+  one line "rebased, no change", no re-run. Otherwise, new push or re-review requested →
+  re-run the review on
   the delta (deep-review brief's re-run line: panel + QA on what changed
   since the report's head), sync the pending review, then tell the user
   in the pane and log-ping `<reply-to>`: "`<ticket>` #`<n>` re-reviewed

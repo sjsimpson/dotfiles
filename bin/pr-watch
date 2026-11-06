@@ -3,10 +3,11 @@
 # pr-watch <pr> [-R owner/repo] [--as author|reviewer] [--every SECS] [--max-hours H]
 #
 # Polls a PR (default every 120s, gh only, no tokens) and exits on the
-# first change, printing one line per event: MERGED/CLOSED, new push, CI
-# finished (author: pass or failing checks), new comments/reviews/thread
-# replies from humans other than me, review re-requested from me
-# (reviewer). Run it in the background; exit = wake-up. Read-only.
+# first change, printing one line per event: MERGED/CLOSED, new
+# comments/reviews/thread replies from humans other than me; author: CI
+# finished (pass or failing checks; a new push restarts CI tracking, no
+# wake); reviewer: new push, review re-requested from me. Run it in the
+# background; exit = wake-up. Read-only.
 
 set -euo pipefail
 
@@ -68,8 +69,10 @@ while :; do
   events=()
   state=$(jq -r .state <<<"$cur")
   [[ $state != OPEN ]] && events+=("PR #$pr $state")
-  [[ $(jq -r .head <<<"$cur") != $(jq -r .head <<<"$prev") ]] &&
-    events+=("new push $(jq -r '.head[0:7]' <<<"$cur")")
+  if [[ $(jq -r .head <<<"$cur") != $(jq -r .head <<<"$prev") ]]; then
+    if [[ $as == reviewer ]]; then events+=("new push $(jq -r '.head[0:7]' <<<"$cur")")
+    else ci_open=true; fi
+  fi
   new_talk=$(( $(jq .talk <<<"$cur") - $(jq .talk <<<"$prev") ))
   (( new_talk > 0 )) && events+=("$new_talk new comment(s)/review(s) from others")
   if [[ $as == reviewer ]]; then
