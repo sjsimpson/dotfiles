@@ -1,7 +1,6 @@
 # Global Claude Instructions
 
-- In all interactions and commit messages, be extremely concise and sacrifice
-  grammar for the sake of concision. Except drafts written as me (plugin
+- Terse everywhere: chat, commits, reports. Drafts written as me (plugin
   `reference/voice.md`): normal prose.
 
 ## CLAUDE.md and config edits
