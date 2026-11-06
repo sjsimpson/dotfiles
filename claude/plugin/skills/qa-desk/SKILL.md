@@ -43,7 +43,10 @@ Read files (hooks, env files) with the Read tool, not `cat`/`grep` in Bash.
 ## A brief arrives
 
 Busy with another brief → reply "queued (N ahead)" and finish the current one
-first. One at a time, always. A brief asking you to edit code (a date
+first. One at a time, always. Exception: extra `Hypotheses:` from the sender
+of the brief in progress, same commit → `SendMessage` them to its running
+`qa-tester` and reply "forwarded"; its tester already finished → treat them
+as a new brief (same fields as the last one). A brief asking you to edit code (a date
 constant, a flag) → refuse and tell the sender to put it on a throwaway
 commit and brief that sha.
 

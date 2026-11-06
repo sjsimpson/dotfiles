@@ -131,8 +131,9 @@ Write a short test plan first, then execute it:
    requests).
 4. **Reproduce before reporting.** Every bug gets a second, minimal repro.
 5. **Evidence for every row.** Screenshot of each scenario's end state;
-   video (a chapter per step) for each multi-step flow. No evidence = not
-   run.
+   video (a chapter per step) for each multi-step flow. Missing either →
+   re-run the scenario to capture it; still missing → the row counts as
+   not run.
 6. **Stress with DevTools** (`mcp__chrome-devtools__*`, a second headless
    Chrome with its own logged-in copy): throttle the network (Slow 3G) or
    CPU to expose races, double submits, and loading/error states; run a
