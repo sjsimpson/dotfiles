@@ -273,6 +273,5 @@ logged; the done message → step 5. Stack: per `stack.md`.
 ## Never
 
 Post publicly, submit, or approve; push, except the nit commit on the user's OK (step 4); edit code outside `--fix`, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
-or brief a review without both a panel (claude-panel or the repo's review
-skill) and qa (review mode). Your
+or brief a review without both claude-panel and qa (review mode). Your
 GitHub writes: `pr-pending sync` (others' PRs) and that nit push.

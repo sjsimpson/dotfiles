@@ -36,7 +36,7 @@ polls gh for free and exits on the first change; the exit wakes the agent.
 Arm it when the PR opens (project agent; its own pushes restart CI
 tracking without a wake) or after the first review round (reviewer). One
 watcher per PR, and a stack gets one per layer. On wake, handle every
-event line, then re-arm that PR's watcher:
+event line, then re-arm the watcher of each PR still open:
 
 - **Merged / closed**: the last open PR → Done. A lower stack layer →
   `gh-stack.md` → Flow per layer step 1; a sync that rewrote layers →
@@ -47,10 +47,12 @@ event line, then re-arm that PR's watcher:
   the pane before any commit. CI passed (the watcher reports it only on a
   draft based on the default branch: the bottom layer or a lone PR) →
   `ready-checklist.md` → Ready; not ready → "CI green; not ready: `<open
-  checklist items>`"
+  checklist items>`", and an open Threads item → `address-pr-comments`
+  decision table
 - **Reviewer**: new push or re-review requested → `git range-diff <base
   at review>..<reviewed sha> <base now>..<new sha>` marks every commit
-  `=` (rebase only) → one line "rebased, no change". Else re-run the
+  `=` (rebase only) → tell the user in the pane "rebased, no change",
+  no log-ping. Else re-run the
   review on the delta (deep-review brief's re-run line), sync the pending
   review, tell the user in the pane, and log-ping `<reply-to>`:
   "`<ticket>` #`<n>` re-reviewed (`<sha7>`): `<verdict>`". New comments

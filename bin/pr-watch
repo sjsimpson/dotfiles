@@ -2,17 +2,17 @@
 #
 # pr-watch <pr> [-R owner/repo] [--as author|reviewer] [--every SECS] [--max-hours H]
 #
-# Polls a PR (default every 120s, gh only, no tokens) and exits on the
-# first change, printing one line per event: MERGED/CLOSED, new
-# comments/reviews/thread replies from humans other than me; author: CI
-# failed, or passed on a draft based on the default branch (a new push
-# restarts CI tracking, no wake); reviewer: new push, review re-requested
-# from me. Run it in the
-# background; exit = wake-up. Read-only.
+# Polls a PR (default every 120s, gh only, no tokens). Run it in the
+# background: it exits on the first change, one line per event.
+#   both:     merged/closed; comments, reviews, replies from other humans
+#   author:   CI failed; CI passed on a draft based on the default branch
+#             (own pushes restart CI tracking without exiting)
+#   reviewer: new push; review re-requested from me
+# Read-only.
 
 set -euo pipefail
 
-usage() { sed -n '3,9p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+usage() { sed -n '3,/^$/p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 pr="" repo="" as=author every=120 max_hours=72
 while [[ $# -gt 0 ]]; do
   case $1 in

@@ -19,10 +19,21 @@ dir=${dir/#\~/$HOME}
 top=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || exit 0
 
 files=$(git -C "$top" diff --cached --name-only)
-# `git add … && git commit` stages after this hook runs: count the unstaged too
-if grep -Eq '[[:space:]]-[a-zA-Z]*a|git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+add[[:space:]]' <<<"$cmd"; then
+if grep -Eq '[[:space:]]-[a-zA-Z]*a' <<<"$cmd"; then
   files+=$'\n'$(git -C "$top" diff --name-only)
-  files+=$'\n'$(git -C "$top" ls-files --others --exclude-standard -- '*.md' '*.workflow.js')
+fi
+# `git add … && git commit` stages after this hook runs: count what the add names
+add=$(grep -oE 'git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+add[[:space:]]+[^;&|]*' <<<"$cmd" | head -1 | sed -E 's/^.*[[:space:]]add[[:space:]]+//' || true)
+if [[ -n $add ]]; then
+  pending=$(git -C "$top" diff --name-only; git -C "$top" ls-files --others --exclude-standard -- '*.md' '*.workflow.js')
+  for p in $add; do
+    case $p in
+      -A|--all|.|-u|--update) files+=$'\n'$pending; break ;;
+      -*) continue ;;
+    esac
+    p=${p%/}
+    files+=$'\n'$(awk -v p="$p" '$0 == p || index($0, p "/") == 1' <<<"$pending")
+  done
 fi
 
 docs=$(grep -E '(^|/)SKILL\.md$|(^|/)skills/[^/]+/.+\.md$|(^|/)agents/[^/]+\.md$|(^|/)(CLAUDE|AGENTS)\.md$|(^|/)plugin/reference/.+\.md$|\.workflow\.js$' <<<"$files" | sort -u || true)
