@@ -191,10 +191,10 @@ form (report.md, after a sync). Stack layer: also SendMessage <reply-to>
 one line: verdict, report path.
 
 Lifecycle
-~/.dotfiles/claude/plugin/reference/agent-lifecycle.md: Handoff and Done.
-After the user's review (their latest state from `gh pr view <n> -R
-<owner/repo> --json reviews`), send the review-round ping and stay for
-re-review: new pushes get the re-run rules above when the user asks.
+~/.dotfiles/claude/plugin/reference/agent-lifecycle.md: Handoff, Watch,
+and Done. After the user's review (their latest state from `gh pr view <n>
+-R <owner/repo> --json reviews`), send the review-round ping and arm the
+watcher (`--as reviewer`).
 ```
 
 ## 3b. In-session

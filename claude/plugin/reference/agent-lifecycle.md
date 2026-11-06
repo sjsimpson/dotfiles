@@ -23,17 +23,40 @@ agent's questions. Messages to `<reply-to>`, one line each:
 
 - **Log pings**: "`<ticket>` audit: `<verdict>`, N questions, grilling in
   pane" (start-ticket); "`<ticket>` #`<n>` review round done (`<state>`),
-  parked until merge" (deep-review: after the user's review, the reviewer
-  stays for re-review on new pushes when the user asks)
+  watching" (deep-review: after the user's review, the reviewer stays and
+  re-reviews on new pushes, per Watch)
 - **Blockers**: setup broken, QA desk down, login expired (`qa-login
   <url>`). The dispatcher passes these on
+
+## Watch (agent)
+
+Once a PR exists, the agent keeps a watcher armed on it: `pr-watch <n> -R
+<owner/repo> --as <author | reviewer>` via Bash `run_in_background`. It
+polls gh for free and exits on the first change; the exit wakes the agent.
+Arm it after opening the PR or pushing (project agent) and after each
+review round (reviewer). One watcher per PR: stop the old one before
+re-arming. On wake, handle every event line, then re-arm:
+
+- **Merged / closed** → Done
+- **Project agent** (`author`): CI failed → root cause from the log (`gh
+  run view <id> --log-failed`) and a proposed fix. New comments or reviews
+  → `address-pr-comments` decision table. Both wait for the user's OK in
+  the pane before any commit. CI passed → one line to the user
+- **Reviewer**: new push or re-review requested → re-run the review on
+  the delta (deep-review brief's re-run line: panel + QA on what changed
+  since the report's head), sync the pending review, then tell the user
+  in the pane and log-ping `<reply-to>`: "`<ticket>` #`<n>` re-reviewed
+  (`<sha7>`): `<verdict>`". New comments only → re-read threads
+  (`pr-threads`), update Earlier asks; re-run only if they change a
+  finding
+- **No change in 72h** → re-arm
 
 ## Done (agent)
 
 Work ends when the PR (or the whole stack) is merged or closed, the Linear
 ticket is canceled, or the user says done. A review round ending is not
-the end. The agent can't see merges: the dispatcher's triage messages it
-with the event. Verify (`gh pr view <n> --json state`, `get_issue`), then
+the end. The watcher reports merges and closes; a canceled ticket arrives
+from the dispatcher's triage. Verify (`gh pr view <n> --json state`, `get_issue`), then
 SendMessage `<reply-to>`: "`<ticket>` done (`<MERGED | CLOSED | CANCELED |
 done>`), ready to spin down", plus any uncommitted or unpushed work. Then
 stop.

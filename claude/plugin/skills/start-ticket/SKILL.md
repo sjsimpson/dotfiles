@@ -60,7 +60,7 @@ Worktree on branch <branch>. <extra context, if any>
    /sjsimpson:deep-review --fix), then report. Push or open a PR only when
    asked; it opens as a draft (leaving draft: the checklist's Ready).
 5. Then follow ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md →
-   Handoff and Done.
+   Handoff, Watch (from the PR's opening on), and Done.
 ```
 
 ## 4. Report

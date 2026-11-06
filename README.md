@@ -136,6 +136,10 @@ I used tmux before herdr. The config lives on the
   submits; sets/updates the review body (short, in my voice); only touches
   comments and a body it posted that I haven't edited (`--replace-body`
   overrides, on my OK)
+- `pr-watch <pr> [--as author|reviewer]`: polls a PR (gh only) and exits
+  on the first change (merge/close, new push, CI finished, human comments,
+  review re-requested); herdr agents run it in the background as a
+  wake-up
 - `herdr-sort [--dry-run]`: inside each repo's herdr group, project
   worktrees above reviews (`<ticket> review`); new worktrees append at the
   end, so `start-ticket` / `deep-review` run it after creating one.

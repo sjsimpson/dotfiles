@@ -12,6 +12,7 @@
     "allow": [
       "Bash(http-status:*)",
       "Bash(pr-pending:*)",
+      "Bash(pr-watch:*)",
       "Edit(~/.dotfiles/**)",
       "Edit(~/notes/assistant/CLAUDE.md)",
       "Edit(~/notes/personal/dotfiles/**)",
