@@ -6,14 +6,6 @@
   "description": "Third-party skills I use, pinned to just the parts I want",
   "plugins": [
     {
-      "name": "caveman",
-      "description": "Compressed output, on by default each session",
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
-    },
-    {
       "name": "gh-stack",
       "description": "Stacked PRs with the gh stack extension",
       "source": {

@@ -176,7 +176,6 @@
   "enabledPlugins": {
     "rust-analyzer-lsp@claude-plugins-official": true,
     "vercel@claude-plugins-official": true,
-    "caveman@dotfiles": true,
     "gh-stack@dotfiles": true,
     "find-skills@dotfiles": true
   },
