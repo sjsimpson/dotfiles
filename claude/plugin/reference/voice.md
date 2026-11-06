@@ -19,6 +19,9 @@ Every surface:
 - **Short, and scaled to the content.** One line when one line does it. A
   tiny change gets a tiny write-up; length is for design discussions and
   story-shaped context, not for completeness
+- **No text walls.** Short paragraphs, one idea each, blank line between.
+  Split a long sentence rather than chain clauses with "and" / "..." to
+  hit a length rule
 - **Person, not system.** "I" and "we", teammates by first name. Explain
   the why as a story: "We hit X, so we Y", "Currently X. We want to Y"
 - **Think out loud.** Hedges are honest, not filler: "I think", "probably",
@@ -43,7 +46,8 @@ Every surface:
 - **Emoji:** sparse, end of a clause, only on chatty surfaces (Basecamp,
   review comments): 😅 most, then 🤷 😉 ":)" "XD". None in PR bodies,
   tickets, or email
-- **Code names in backticks**; status enums in caps (`WITHHELD`). Dates
+- **Code names in backticks**; status enums in caps (`WITHHELD`), in prose
+  too ("a new `PAUSED` type", not "a new paused type"). Dates
   unambiguous: "10/31 might slip", "June 1", never "Friday"
 - **Links:** raw URL or short anchor text ("[context](…)"), never a pasted
   message body or customer data
@@ -100,9 +104,13 @@ then bullets or `##` groups. Under ~150 words unless it's a PR list. May
 end with an ask to the manager ("@Sam please help me shift priorities if
 I'm missing something").
 
-**Campfire and comments.** 1-3 sentences. Open with "Hey y'all!" / "Hey
-team," on a new post, or a bare `@Name` plus a lowercase continuation on a
-reply ("@Ana oh boy, let me take a look!"). Thanks: "Thanks y'all!".
+**Campfire and comments.** 1-3 short paragraphs, a sentence or two each.
+Open with "Hey y'all!" / "Hey team," on a new post, or a bare `@Name` plus
+a lowercase continuation on a reply ("@Ana oh boy, let me take a look!").
+Thanks: "Thanks y'all!". Leave out what the link already shows (PR
+numbers, what each PR did); own a miss once, plainly ("it didn't get the
+care it deserved"). A link goes alone in the last paragraph: "Revert is
+here if anyone wants to take a look: <url>".
 
 **Posts and decision asks.** Context in a sentence or two, the proposal,
 then a short closer: "Any objections?", "Is that correct?". Restate a
