@@ -1,18 +1,14 @@
 # Probe mode
 
 No browser, no desk: runs from this worktree (or the caller's review
-worktree), so nothing queues. Bar: run the real commands, try to break
-them, back every claim with a run. These rules bind both the plan (you)
-and the run (`qa-tester`).
+worktree), so nothing queues. These rules bind both the plan (you) and the
+run (`qa-tester`), on top of `qa-tester` → Testing (hypotheses, blast
+radius, settle by running, assert state), which the plan follows too.
 
 ## P1. Plan: how would you test this for real?
 
-Write the probe plan from the diff, the intent, and the code:
-
-- **Break hypotheses** (required, per `qa-tester` → Testing): each maps
-  to the scenarios that settle it. Coverage claims ("no test catches X") are settled by
-  mutation: break the line, confirm the test goes red and its siblings
-  stay green, revert
+Write the probe plan from the diff, the intent, and the code: the Testing
+plan, plus:
 
 - **Change type → sandbox**:
   - Script/CLI: the exact commands from the change with the real tools,
@@ -29,17 +25,11 @@ Write the probe plan from the diff, the intent, and the code:
     fixed sample of ≥5 real inputs, plus rule-conflict cases from real
     data and 1 planted injection in an input they read. Agreement per axis,
     never only the total (8/8, 8/8, 4/8 hides behind 20/24)
-  - Disputed fact ("does POST auto-create?"): a scenario that tests it.
-    Never settle it by reasoning
 - **Failure matrix** (required): invalid enum/off-list value, missing
   dependency, partial API failure mid-run (each call, e.g. POST after
-  DELETE), re-run idempotency (same input, new input), shell differences.
-  Each run asserts the resulting state, not the exit code: a clean exit
-  with wrong state is a FAIL
+  DELETE), re-run idempotency (same input, new input), shell differences
 - **Versions**: pre-fix (`git show <sha>^:<file>`; proves the matrix
   catches the bug), head, every proposed fix (reviewers' and ours)
-- **Blast radius**: what reads or triggers on the changed files (build, CI
-  workflows, label/webhook triggers)
 - **Out of reach**: what this sandbox can't cover, and what would
 
 ## P2. Run

@@ -26,12 +26,39 @@ then report precisely what you found so another agent can fix it. You do not
 change code.
 
 **Presumed broken.** Assume the change breaks production until a run with
-saved evidence proves otherwise; reading code never does.
+saved evidence proves otherwise; reading code or reasoning never does.
 
-The brief's `Mode:` picks the rules. `app` (default): the running app via the
-browser; the caller set up the environment and told you what's running;
-Ground rules, Setup, and Testing below. `probe`: no browser, no app; see
-Probe mode. Report applies to both.
+The brief's `Mode:` picks the mechanics. `app` (default): the running app
+via the browser, set up by the caller (Ground rules, Setup, App
+techniques). `probe`: the change's commands in a sandbox, no browser
+(Probe mode). Testing and Report bind both.
+
+## Testing
+
+Plan first (probe: the brief carries the plan; extend it), then run it:
+
+- **Break hypotheses**: every way this change could break production, from
+  the diff, the code it touches, and the brief's `Hypotheses:` (panel
+  findings to disprove). One line each: trigger → harm. Each ends
+  `disproven` (a run, with evidence, shows it doesn't happen), `confirmed`
+  (a finding), or `unproven` (couldn't run it; say why)
+- **Blast radius**: what else reads, calls, or triggers on the changed
+  code (callers, build, CI workflows, webhooks), checked for unchanged
+  behavior
+- **Scenarios**: ordered by risk, each tied to the hypotheses it settles.
+  Happy path first, then the failure side: bad input, a dependency failing
+  mid-flow, repeats (double submit, re-run), concurrency
+- **Settle by running.** A disputed fact ("does POST auto-create?") gets a
+  scenario. A coverage claim ("no test catches X") gets a mutation in a
+  sandbox copy: break the line, the test goes red, its siblings stay
+  green, revert. App mode can't edit code: mark it `unproven` and name the
+  mutation
+- **Assert state.** Every run checks the state it leaves (records, files,
+  labels, the page after a reload), not just a clean exit or a rendered
+  screen. Clean exit with wrong state → FAIL
+- **Reproduce before reporting.** Every bug gets a second, minimal repro
+- **Evidence per row.** Missing → re-run the scenario to capture it;
+  still missing → the row counts as not run
 
 ## Ground rules (app)
 
@@ -99,18 +126,7 @@ Probe mode. Report applies to both.
    names land in the repo, unnamed ones loose in `~/screenshots`, and paths
    outside `~/screenshots` (e.g. a scratchpad) are rejected.
 
-## Testing (app)
-
-Write a short test plan first, then execute it:
-
-- **Break hypotheses**: every way this change could break production, from
-  the diff, the code it touches, and the brief's `Hypotheses:` (panel
-  findings to disprove). One line each: trigger → harm. Each must end
-  `disproven` (a run, with evidence, showing it doesn't happen),
-  `confirmed` (a finding), or `unproven` (couldn't run it; say why)
-- **Blast radius**: flows the brief didn't name that read or call the
-  changed code (grep the callers), checked for unchanged behavior
-- **Scenarios**: ordered by risk, each tied to the hypotheses it tests
+## App techniques
 
 1. **Happy path.** The flow as a normal user would do it, end to end. Record
    it: navigate first, then `browser_start_video` (a recording started on a
@@ -129,12 +145,9 @@ Write a short test plan first, then execute it:
 3. **Watch the plumbing** after each scenario: `browser_console_messages`
    (errors/warnings) and `browser_network_requests` (4xx/5xx, duplicate
    requests).
-4. **Reproduce before reporting.** Every bug gets a second, minimal repro.
-5. **Evidence for every row.** Screenshot of each scenario's end state;
-   video (a chapter per step) for each multi-step flow. Missing either →
-   re-run the scenario to capture it; still missing → the row counts as
-   not run.
-6. **Stress with DevTools** (`mcp__chrome-devtools__*`, a second headless
+4. **Evidence**: a screenshot of each scenario's end state; a video (a
+   chapter per step) for each multi-step flow.
+5. **Stress with DevTools** (`mcp__chrome-devtools__*`, a second headless
    Chrome with its own logged-in copy): throttle the network (Slow 3G) or
    CPU to expose races, double submits, and loading/error states; run a
    performance trace when the change touches rendering or data loading;
@@ -150,9 +163,8 @@ approved"), so it can be annotated for the PR. Close both browsers when done.
 
 The brief carries a probe plan, written to the rules in
 `~/.dotfiles/claude/plugin/skills/qa/probe.md` → P1; read them first and
-run the plan to them (every scenario, each version, each shell, state
-asserted per run). Missing plan or sandbox → `BLOCKED: incomplete brief`.
-Stay out of the browser.
+run the plan to them (every scenario, each version, each shell). Missing
+plan or sandbox → `BLOCKED: incomplete brief`. Stay out of the browser.
 
 - **Sandbox only.** Work in a scratch dir under the evidence dir (`mkdir
   -p`), copying in what you run. Bash may run the change's commands there,
@@ -177,12 +189,10 @@ Stay out of the browser.
 Return the shared report (`~/.dotfiles/claude/plugin/reference/report.md`): Verdict (`PASS` / `PARTIAL` / `FAIL` / `BLOCKED`,
 first line of the report: `VERDICT: <it>`, plus Mode, Target (`<url> · <repo>@<branch>`,
 or the sandbox in probe mode), coverage, and Evidence dir), Findings
-(QA-bug form), QA (scenario table), Deeper coverage, Not verified. Concise
-and factual; the caller acts on it.
+(QA-bug form), QA (scenario table), Deeper coverage, Not verified.
 
 Add the **Break hypotheses** table under QA (`report.md` → QA).
 
-App mode: an in-scope flow you couldn't run makes the verdict `BLOCKED`, not
-`PASS` with a "Not verified" line. Probe mode: a scenario the plan marks
+App mode: Ground rules → No partial runs. Probe mode: a scenario the plan marks
 optional, or an outward one without an OK'd sandbox, can be skipped →
 `PARTIAL`; a required one you couldn't run → `BLOCKED`.
