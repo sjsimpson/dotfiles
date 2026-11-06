@@ -59,6 +59,8 @@ event line, then re-arm the watcher of each PR still open:
   only → re-read threads (`pr-threads`), update Earlier asks; re-run only
   if they change a finding
 - **No change in 72h** → re-arm
+- **Exited with an error** (e.g. gh failed on the first poll) → re-arm
+  once; fails again → tell the user
 
 ## Done (agent)
 

@@ -19,7 +19,7 @@ dir=${dir/#\~/$HOME}
 top=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || exit 0
 
 files=$(git -C "$top" diff --cached --name-only)
-if grep -Eq '[[:space:]]-[a-zA-Z]*a' <<<"$cmd"; then
+if grep -Eq 'commit([[:space:]]+-[a-zA-Z]+)*[[:space:]]+-[a-zA-Z]*a[a-zA-Z]*([[:space:]]|$)' <<<"$cmd"; then
   files+=$'\n'$(git -C "$top" diff --name-only)
 fi
 # `git add … && git commit` stages after this hook runs: count what the add names
