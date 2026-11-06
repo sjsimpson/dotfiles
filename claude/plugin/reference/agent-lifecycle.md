@@ -38,27 +38,24 @@ tracking without a wake) or after the first review round (reviewer). One
 watcher per PR, and a stack gets one per layer. On wake, handle every
 event line, then re-arm that PR's watcher:
 
-- **Merged / closed**: the last open PR → Done. A lower stack layer → the
-  next layer up is now the bottom: `gh stack sync`; it rewrote layers →
-  offer the push (user's OK); the next CI pass runs the ready step below
+- **Merged / closed**: the last open PR → Done. A lower stack layer →
+  `gh-stack.md` → Flow per layer step 1; a sync that rewrote layers →
+  offer the push (user's OK)
 - **Project agent** (`author`): CI failed → root cause from the log (`gh
   run view <id> --log-failed`) and a proposed fix. New comments or reviews
   → `address-pr-comments` decision table. Both wait for the user's OK in
-  the pane before any commit. CI passed → walk `ready-checklist.md`; a
-  draft that is the bottom layer (or a lone PR) with every box checked →
-  offer "CI green, checklist done: mark #`<n>` ready?" and run `gh pr
-  ready <n>` on the user's OK. Not ready → "CI green; not ready:
-  `<open checklist items>`"
-- **Reviewer**: new push that only rebases (`git range-diff <base at
-  review>..<reviewed sha> <base now>..<new sha>` marks every commit `=`) →
-  one line "rebased, no change", no re-run. Otherwise, new push or re-review requested →
-  re-run the review on
-  the delta (deep-review brief's re-run line: panel + QA on what changed
-  since the report's head), sync the pending review, then tell the user
-  in the pane and log-ping `<reply-to>`: "`<ticket>` #`<n>` re-reviewed
-  (`<sha7>`): `<verdict>`". New comments only → re-read threads
-  (`pr-threads`), update Earlier asks; re-run only if they change a
-  finding
+  the pane before any commit. CI passed (the watcher reports it only on a
+  draft based on the default branch: the bottom layer or a lone PR) →
+  `ready-checklist.md` → Ready; not ready → "CI green; not ready: `<open
+  checklist items>`"
+- **Reviewer**: new push or re-review requested → `git range-diff <base
+  at review>..<reviewed sha> <base now>..<new sha>` marks every commit
+  `=` (rebase only) → one line "rebased, no change". Else re-run the
+  review on the delta (deep-review brief's re-run line), sync the pending
+  review, tell the user in the pane, and log-ping `<reply-to>`:
+  "`<ticket>` #`<n>` re-reviewed (`<sha7>`): `<verdict>`". New comments
+  only → re-read threads (`pr-threads`), update Earlier asks; re-run only
+  if they change a finding
 - **No change in 72h** → re-arm
 
 ## Done (agent)

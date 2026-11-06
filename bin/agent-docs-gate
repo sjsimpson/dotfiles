@@ -6,9 +6,9 @@
 set -euo pipefail
 
 input=$(cat)
+[[ $input == *commit* ]] || exit 0
 cmd=$(jq -r '.tool_input.command // ""' <<<"$input")
-cwd=$(jq -r '.cwd // "."' <<<"$input")
-session=$(jq -r '.session_id // "none"' <<<"$input")
+{ IFS=$'\t' read -r cwd session; } < <(jq -r '[.cwd // ".", .session_id // "none"] | @tsv' <<<"$input")
 
 grep -Eq '(^|[;&|[:space:]])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+commit([[:space:]]|$)' <<<"$cmd" || exit 0
 grep -q 'WIP:' <<<"$cmd" && exit 0
@@ -22,7 +22,7 @@ files=$(git -C "$top" diff --cached --name-only)
 # `git add … && git commit` stages after this hook runs: count the unstaged too
 if grep -Eq '[[:space:]]-[a-zA-Z]*a|git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+add[[:space:]]' <<<"$cmd"; then
   files+=$'\n'$(git -C "$top" diff --name-only)
-  files+=$'\n'$(git -C "$top" ls-files --others --exclude-standard)
+  files+=$'\n'$(git -C "$top" ls-files --others --exclude-standard -- '*.md' '*.workflow.js')
 fi
 
 docs=$(grep -E '(^|/)SKILL\.md$|(^|/)skills/[^/]+/.+\.md$|(^|/)agents/[^/]+\.md$|(^|/)(CLAUDE|AGENTS)\.md$|(^|/)plugin/reference/.+\.md$|\.workflow\.js$' <<<"$files" | sort -u || true)

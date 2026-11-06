@@ -106,7 +106,7 @@ their own MCP servers; these can.
 repo's own diffs. Flags public-repo leaks (secrets, PII, work specifics,
 commit messages included), missing `install.sh`/README/Brewfile upkeep,
 agent-doc problems per writing-for-agents (dangling or unreachable
-pointers, duplication, no-ops, negation), and bash pitfalls in `bin/`.
+pointers, duplication, no-ops, negation), and non-macOS tool flags in `bin/`.
 
 ### Third-party (`.claude-plugin/marketplace.json`)
 
@@ -166,12 +166,9 @@ agents, hooks) and its token cost.
 - **Agent lifecycle**: [`plugin/reference/agent-lifecycle.md`](plugin/reference/agent-lifecycle.md),
   herdr agents from `start-ticket` / `deep-review`: naming (`<ticket>-2`),
   fast-forwarding a stale branch, handoff (log pings, no relay, blockers
-  only), a `pr-watch` watcher per PR (every stack layer) once one exists
-  (project agent: CI failure → root cause + proposed fix, new comments →
-  decision table, both await your OK; CI green on the bottom draft with the
-  ready checklist done → offers `gh pr ready`, and again for the next layer
-  once the bottom merges; reviewer: new push or re-request → delta re-review into the
-  pending review, rebase-only pushes skipped), done at merge/close/cancel, dispatcher cleanup
+  only), a `pr-watch` watcher per PR and stack layer (CI red → diagnosis;
+  CI green on the bottom draft → ready offer; reviewer: delta re-review
+  per real push), done at merge/close/cancel, dispatcher cleanup
   (clean = nothing dirty or unpushed, or HEAD in the PR head)
 - **Ready checklist**: [`plugin/reference/ready-checklist.md`](plugin/reference/ready-checklist.md),
   what a PR needs before leaving draft (history, `deep-review --fix` steady

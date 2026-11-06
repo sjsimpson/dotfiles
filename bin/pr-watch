@@ -5,8 +5,9 @@
 # Polls a PR (default every 120s, gh only, no tokens) and exits on the
 # first change, printing one line per event: MERGED/CLOSED, new
 # comments/reviews/thread replies from humans other than me; author: CI
-# finished (pass or failing checks; a new push restarts CI tracking, no
-# wake); reviewer: new push, review re-requested from me. Run it in the
+# failed, or passed on a draft based on the default branch (a new push
+# restarts CI tracking, no wake); reviewer: new push, review re-requested
+# from me. Run it in the
 # background; exit = wake-up. Read-only.
 
 set -euo pipefail
@@ -29,8 +30,8 @@ me=$(gh api user -q .login)
 
 snap() {
   gh api graphql -F o="${repo%/*}" -F r="${repo#*/}" -F n="$pr" -f query='
-query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){
-  state headRefOid
+query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){defaultBranchRef{name} pullRequest(number:$n){
+  state headRefOid isDraft baseRefName
   reviewRequests(first:50){nodes{requestedReviewer{... on User{login}}}}
   comments(last:100){nodes{author{login __typename}}}
   reviews(last:100){nodes{author{login __typename} state}}
@@ -47,6 +48,7 @@ query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(nu
   | {
       state: $p.state,
       head: $p.headRefOid,
+      bottom_draft: ($p.isDraft and $p.baseRefName == .data.repository.defaultBranchRef.name),
       requested: ([$p.reviewRequests.nodes[].requestedReviewer.login] | index($me) != null),
       talk: (([$p.comments.nodes[] | select(human)] | length)
            + ([$p.reviews.nodes[] | select(human) | select(.state != "PENDING")] | length)
@@ -69,19 +71,20 @@ while :; do
   events=()
   state=$(jq -r .state <<<"$cur")
   [[ $state != OPEN ]] && events+=("PR #$pr $state")
-  if [[ $(jq -r .head <<<"$cur") != $(jq -r .head <<<"$prev") ]]; then
-    if [[ $as == reviewer ]]; then events+=("new push $(jq -r '.head[0:7]' <<<"$cur")")
-    else ci_open=true; fi
-  fi
+  pushed=$([[ $(jq -r .head <<<"$cur") != $(jq -r .head <<<"$prev") ]] && echo true || echo false)
+  [[ $as == author && $pushed == true ]] && ci_open=true
   new_talk=$(( $(jq .talk <<<"$cur") - $(jq .talk <<<"$prev") ))
   (( new_talk > 0 )) && events+=("$new_talk new comment(s)/review(s) from others")
   if [[ $as == reviewer ]]; then
+    [[ $pushed == true ]] && events+=("new push $(jq -r '.head[0:7]' <<<"$cur")")
     [[ $(jq .requested <<<"$cur") == true && $(jq .requested <<<"$prev") == false ]] &&
       events+=("re-review requested from $me")
   elif [[ $ci_open == true ]] && jq -e '.checks > 0 and .pending == 0' <<<"$cur" >/dev/null; then
+    ci_open=false
     failing=$(jq -r '.failing | join(", ")' <<<"$cur")
     if [[ -n $failing ]]; then events+=("CI finished: FAILED: $failing")
-    else events+=("CI finished: all passed"); fi
+    elif jq -e .bottom_draft <<<"$cur" >/dev/null; then events+=("CI finished: all passed (draft on the default branch)")
+    fi
   fi
   if (( ${#events[@]} )); then
     printf 'pr-watch %s#%s (%s):\n' "$repo" "$pr" "$as"
