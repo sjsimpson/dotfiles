@@ -23,12 +23,8 @@ Where it runs:
 - Repo name = last part of `owner/repo`. Local checkout: the main worktree
   of that repo (ask if you can't find it)
 - Private repo config: `~/.config/claude-repos/<repo>/review.md` (prod data source,
-  setup notes, QA gotchas, risky areas, review skill). Read it; missing → say so, carry on
+  setup notes, QA gotchas, risky areas). Read it; missing → say so, carry on
   without a prod pass (the report must then say prod wasn't checked)
-- Panel: config line `Review skill: <name>` (the repo's own panel, e.g.
-  `review-panel`) → others' PRs in review mode run that skill instead of
-  claude-panel, so the team's review stays one process. My own PRs, `--fix`,
-  `--status`, and no-PR runs always use claude-panel
 - Mode: `--status` (my own PR), else review. Never pass or assume a mode
   the user didn't give; ask (step 1). `--risky` adds on to either. Also
   risky, unasked, when the diff touches an area the repo config lists as
@@ -116,10 +112,7 @@ Setup
    not / partly, with evidence
 
 Review (review mode)
-4. <panel: /sjsimpson:claude-panel <n>. Local only, post nothing |
-   /<review skill> <n>. It posts its own pending review: pick that at its
-   delivery question, never push or submit; map its findings into the
-   report>
+4. /sjsimpson:claude-panel <n>. Local only, post nothing
 5. /sjsimpson:qa, app or probe mode per change (its step 0), brief
    Evidence: <report dir>. Start it alongside step 4. Probe mode: its
    plan, failure matrix, and versions (pre-fix, head, each proposed fix
@@ -187,7 +180,7 @@ mergeable now / needs X, with the path to merge), Findings (drafts per the
 QA per pass with screenshot paths, Safety (risky only), Not verified.
 Nit commit: its sha and one line per fix, under Findings.
 Review mode, author isn't the user: also write the blocking findings that
-anchor to diff lines (repo review skill: QA findings only) as
+anchor to diff lines as
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
 report.md (voice.md → Review bodies), then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
