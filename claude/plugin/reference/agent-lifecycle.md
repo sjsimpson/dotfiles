@@ -34,8 +34,8 @@ Once a PR exists, the agent keeps a watcher armed on it: `pr-watch <n> -R
 <owner/repo> --as <author | reviewer>` via Bash `run_in_background`. It
 polls gh for free and exits on the first change; the exit wakes the agent.
 Arm it after opening the PR or pushing (project agent) and after each
-review round (reviewer). One watcher per PR: stop the old one before
-re-arming. On wake, handle every event line, then re-arm:
+review round (reviewer). One watcher per PR: stop the old one
+(`TaskStop`) before re-arming. On wake, handle every event line, then re-arm:
 
 - **Merged / closed** → Done
 - **Project agent** (`author`): CI failed → root cause from the log (`gh

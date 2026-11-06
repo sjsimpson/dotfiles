@@ -2,8 +2,8 @@
 
 No browser, no desk: runs from this worktree (or the caller's review
 worktree), so nothing queues. These rules bind both the plan (you) and the
-run (`qa-tester`), on top of `qa-tester` → Testing (hypotheses, blast
-radius, settle by running, assert state), which the plan follows too.
+run (`qa-tester`), on top of `~/.dotfiles/claude/agents/qa-tester.md` →
+Testing; read it first.
 
 ## P1. Plan: how would you test this for real?
 
