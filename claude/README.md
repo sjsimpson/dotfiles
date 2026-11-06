@@ -100,6 +100,14 @@ their own MCP servers; these can.
 | ----- | ------------ |
 | `qa-tester` | Sonnet. Adversarial in-app QA via Playwright: happy path + edge cases, evidence under the screenshot rules, severity-ranked report for the main agent to act on. One Testing core for both modes, presumed broken: break hypotheses (trigger → harm, incl. panel findings from the brief), blast radius, disputed facts and coverage claims settled by a run or a mutation, the resulting state asserted on every run (clean exit with wrong state = FAIL), every bug reproduced twice; PASS only when every hypothesis is disproven by a run with evidence (app: screenshot per row, video per multi-step flow), else `PARTIAL`. Chrome DevTools MCP (trial) for throttling and perf traces. Platform-agnostic: needs a brief (goal, verified environment, flows, async, data), reads the code for the how. Never sets up or starts anything; anything missing → `BLOCKED`, never a partial run; stalls (no progress ~3 min) → `BLOCKED`, not a wait; won't touch production. Owns the only Playwright server (see [Playwright](#playwright)). Probe mode (`Mode: probe`, spawned by the caller, no desk, no browser): runs the plan to `qa/probe.md`'s rules in a scratch sandbox with `PATH` stubs, scores blind graders per axis, saves scripts + transcripts as evidence; outward sandboxes only if the brief says you OK'd one |
 
+### Repo reviewer (`/.claude/agents/`)
+
+`dotfiles-reviewer` (Sonnet, read-only): `claude-panel` runs it on this
+repo's own diffs. Flags public-repo leaks (secrets, PII, work specifics,
+commit messages included), missing `install.sh`/README/Brewfile upkeep,
+agent-doc problems per writing-for-agents (dangling or unreachable
+pointers, duplication, no-ops, negation), and bash pitfalls in `bin/`.
+
 ### Third-party (`.claude-plugin/marketplace.json`)
 
 | Plugin                    | Source                                                            | What                                                       |
