@@ -20,6 +20,8 @@ HEAD: <sha>
       last round committed nothing
 - [ ] Checks: the repo's lint, typecheck, tests pass for the packages the
       branch touches
+- [ ] CI: every GitHub check green on HEAD (`gh pr checks <n>`); not
+      pushed yet or no PR → n/a
 - [ ] Spec: no open spec-audit questions (no audit ran → skip that part);
       the diff covers the ticket
 - [ ] PR description: body per `voice.md` → PR descriptions (screenshots

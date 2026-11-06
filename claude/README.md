@@ -158,14 +158,16 @@ agents, hooks) and its token cost.
 - **Agent lifecycle**: [`plugin/reference/agent-lifecycle.md`](plugin/reference/agent-lifecycle.md),
   herdr agents from `start-ticket` / `deep-review`: naming (`<ticket>-2`),
   fast-forwarding a stale branch, handoff (log pings, no relay, blockers
-  only), a `pr-watch` watcher once a PR exists (project agent: CI failure
-  → root cause + proposed fix, new comments → decision table, both await
-  your OK; reviewer: new push or re-request → delta re-review into the
+  only), a `pr-watch` watcher per PR (every stack layer) once one exists
+  (project agent: CI failure → root cause + proposed fix, new comments →
+  decision table, both await your OK; CI green on the bottom draft with the
+  ready checklist done → offers `gh pr ready`, and again for the next layer
+  once the bottom merges; reviewer: new push or re-request → delta re-review into the
   pending review), done at merge/close/cancel, dispatcher cleanup
   (clean = nothing dirty or unpushed, or HEAD in the PR head)
 - **Ready checklist**: [`plugin/reference/ready-checklist.md`](plugin/reference/ready-checklist.md),
   what a PR needs before leaving draft (history, `deep-review --fix` steady
-  state, checks, spec, PR description, threads), kept per branch in
+  state, local checks, GitHub CI green, spec, PR description, threads), kept per branch in
   `~/screenshots/<repo>/<branch>/ready.md`; any new commit clears it. Used
   by `start-ticket` agents and after `address-pr-comments` fixes
 - **Voice**: [`plugin/reference/voice.md`](plugin/reference/voice.md),
