@@ -47,8 +47,7 @@ earlier report: posted? resolved?
 Per pass or app: mode (app | probe), verdict, coverage, evidence dir.
 Probe: sandbox used and blast radius (what reads/triggers on the changed
 files). Scenario table: scenario · ran? · result · evidence (How tested;
-"reasoned" never backs a PASS row; app mode: every row cites a screenshot,
-every multi-step flow a video). Break hypotheses table: hypothesis ·
+"reasoned" never backs a PASS row; a row without evidence wasn't run). Break hypotheses table: hypothesis ·
 disproven / confirmed / unproven · evidence. Probe evidence in the dir: the run scripts and
 shims, one transcript per run with the resulting state, grader outputs
 plus a per-axis agreement table. Video only for app mode.

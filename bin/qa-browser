@@ -12,6 +12,8 @@
 
 set -euo pipefail
 
+mode="${1:-playwright}"
+
 root="${XDG_CACHE_HOME:-$HOME/.cache}/qa-tester"
 golden="$root/profile"
 mkdir -p "$golden" "$root/profiles"
@@ -27,7 +29,7 @@ if top=$(git rev-parse --show-toplevel 2>/dev/null); then
 else
   top="" profile="$root/profiles/_/default"
 fi
-[[ "${1:-}" == devtools ]] && profile="$profile-devtools"
+[[ $mode == devtools ]] && profile+=-devtools
 
 # Chrome leaves SingletonLock (-> host-pid) behind if killed; only a live pid counts
 in_use() { local t; t=$(readlink "$1/SingletonLock" 2>/dev/null) && kill -0 "${t##*-}" 2>/dev/null; }
@@ -47,7 +49,7 @@ fi
 mkdir -p "$profile"
 [[ -n "$top" ]] && echo "$top" >"$profile/.worktree"
 
-if [[ "${1:-}" == devtools ]]; then
+if [[ $mode == devtools ]]; then
   exec npx -y chrome-devtools-mcp@latest --headless --userDataDir="$profile" \
     --workspace="$HOME/screenshots" --no-usage-statistics --no-performance-crux
 fi

@@ -117,10 +117,9 @@ Setup
 
 Review (review mode)
 4. <panel: /sjsimpson:claude-panel <n>. Local only, post nothing |
-   /<review skill> <n>. It owns its GitHub delivery (pending review,
-   labels, checkbox). At its delivery question pick the pending review;
-   never push a fix or submit. Map its merged findings into the report
-   (blocking = its correctness/security ones that pass the harm test)>
+   /<review skill> <n>. It posts its own pending review: pick that at its
+   delivery question, never push or submit; map its findings into the
+   report>
 5. /sjsimpson:qa, app or probe mode per change (its step 0), brief
    Evidence: <report dir>. Start it alongside step 4. Probe mode: its
    plan, failure matrix, and versions (pre-fix, head, each proposed fix
@@ -134,10 +133,9 @@ Review (review mode)
       prod shapes. Cover edge cases: empty/zero, mixed, error paths, and
       cases that must stay unchanged
    Flag-gated code: test flag on and off. <repo config: QA gotchas>
-   Then QA checks the panel, presumed broken: when the panel finishes,
-   send QA a follow-up brief (same commit) whose `Hypotheses:` are the
-   panel's blocking, uncertain, and skeptic findings, plus test-coverage
-   claims to mutation-test. A finding QA ran and didn't reproduce is
+   Then QA checks the panel: panel findings left to disprove (qa →
+   Hypotheses) → still testing: message the desk to pass them to the
+   running tester; done: a follow-up brief, same commit. A finding QA ran and didn't reproduce is
    demoted (or refuted), with the run as evidence; one it reproduced is
    confirmed (its How tested says which); one QA couldn't run stays as
    the panel left it, listed under Not verified. Verdict banner: QA coverage
@@ -189,8 +187,7 @@ mergeable now / needs X, with the path to merge), Findings (drafts per the
 QA per pass with screenshot paths, Safety (risky only), Not verified.
 Nit commit: its sha and one line per fix, under Findings.
 Review mode, author isn't the user: also write the blocking findings that
-anchor to diff lines (repo review skill: QA findings only, its own are
-already in the pending review) as
+anchor to diff lines (repo review skill: QA findings only) as
 <report dir>/pr-<n>-findings.json ({"body": "<Pending review body per
 report.md (voice.md → Review bodies), then findings with no line>",
 "comments": [{"path", "line", "startLine"?, "body"}]}, bodies exactly as in
