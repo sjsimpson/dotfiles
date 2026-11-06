@@ -19,8 +19,10 @@ dir=${dir/#\~/$HOME}
 top=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || exit 0
 
 files=$(git -C "$top" diff --cached --name-only)
-if grep -Eq '[[:space:]]-[a-zA-Z]*a' <<<"$cmd"; then
+# `git add … && git commit` stages after this hook runs: count the unstaged too
+if grep -Eq '[[:space:]]-[a-zA-Z]*a|git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+add[[:space:]]' <<<"$cmd"; then
   files+=$'\n'$(git -C "$top" diff --name-only)
+  files+=$'\n'$(git -C "$top" ls-files --others --exclude-standard)
 fi
 
 docs=$(grep -E '(^|/)SKILL\.md$|(^|/)skills/[^/]+/.+\.md$|(^|/)agents/[^/]+\.md$|(^|/)(CLAUDE|AGENTS)\.md$|(^|/)plugin/reference/.+\.md$|\.workflow\.js$' <<<"$files" | sort -u || true)

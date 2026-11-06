@@ -146,7 +146,8 @@ I used tmux before herdr. The config lives on the
   `install.sh` links it into `~/.local/bin`
 - `agent-docs-gate`: Claude PreToolUse hook (`claude/settings.json`). A
   `git commit` that stages agent docs (skills, agents, CLAUDE.md/AGENTS.md,
-  plugin references, `*.workflow.js`) is denied once with "run the
+  plugin references, `*.workflow.js`; with `git add` or `-a` in the same
+  command, unstaged and untracked files count too) is denied once with "run the
   writing-for-agents review first"; the retry with the same files passes,
   `WIP:` commits skip it. `install.sh` links it into `~/.local/bin`
 - `basecamp-safe`: the `basecamp` CLI limited to reads + message drafts
