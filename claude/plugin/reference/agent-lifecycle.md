@@ -43,7 +43,7 @@ event line, then re-arm the watcher of each PR still open:
   offer the push (user's OK)
 - **Project agent** (`author`): CI failed → root cause from the log (`gh
   run view <id> --log-failed`) and a proposed fix; commit only on the user's OK
-  in the pane. New comments, reviews, or a CodeRabbit review → tell the
+  in the pane. New comments or reviews (human or bot) → tell the
   user in the pane (who, how many threads); `address-pr-comments` only
   when they ask. CI passed (the watcher reports it only on a
   draft based on the default branch: the bottom layer or a lone PR) →

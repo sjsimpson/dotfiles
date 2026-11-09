@@ -139,7 +139,7 @@ I used tmux before herdr. The config lives on the
 - `pr-watch <pr> [--as author|reviewer]`: polls a PR (gh only) and exits
   on the first change, a wake-up for herdr agents running it in the
   background: merge/close and human comments; author: CI failed, or passed
-  on a draft based on the default branch, CodeRabbit review posted;
+  on a draft based on the default branch, bot review posted (e.g. CodeRabbit);
   reviewer: new push, review re-requested
 - `herdr-sort [--dry-run]`: inside each repo's herdr group, project
   worktrees above reviews (`<ticket> review`); new worktrees append at the

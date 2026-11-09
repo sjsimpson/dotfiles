@@ -6,7 +6,7 @@
 # background: it exits on the first change, one line per event.
 #   both:     merged/closed; comments, reviews, replies from other humans
 #   author:   CI failed; CI passed on a draft based on the default branch;
-#             CodeRabbit review posted
+#             bot review posted (e.g. CodeRabbit)
 #             (own pushes restart CI tracking without exiting)
 #   reviewer: new push; review re-requested from me
 # Read-only.
@@ -54,7 +54,7 @@ query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){defaultBranchR
       talk: (([$p.comments.nodes[] | select(human)] | length)
            + ([$p.reviews.nodes[] | select(human) | select(.state != "PENDING")] | length)
            + ([$p.reviewThreads.nodes[].comments.nodes[] | select(human)] | length)),
-      rabbit: ([$p.reviews.nodes[] | select((.author.login // "") | startswith("coderabbitai"))] | length),
+      bot_reviews: ([$p.reviews.nodes[] | select(.author != null and (human | not) and .author.login != $me)] | length),
       checks: ($ctx | length),
       pending: ([$ctx[] | select((.status // "COMPLETED") != "COMPLETED" or .state == "PENDING" or .state == "EXPECTED")] | length),
       failing: [$ctx[] | select(.conclusion == "FAILURE" or .conclusion == "TIMED_OUT"
@@ -77,8 +77,8 @@ while :; do
   [[ $as == author && $pushed == true ]] && ci_open=true
   new_talk=$(( $(jq .talk <<<"$cur") - $(jq .talk <<<"$prev") ))
   (( new_talk > 0 )) && events+=("$new_talk new comment(s)/review(s) from others")
-  [[ $as == author ]] && (( $(jq .rabbit <<<"$cur") > $(jq .rabbit <<<"$prev") )) &&
-    events+=("CodeRabbit review posted")
+  [[ $as == author ]] && (( $(jq .bot_reviews <<<"$cur") > $(jq .bot_reviews <<<"$prev") )) &&
+    events+=("bot review posted (e.g. CodeRabbit)")
   if [[ $as == reviewer ]]; then
     [[ $pushed == true ]] && events+=("new push $(jq -r '.head[0:7]' <<<"$cur")")
     [[ $(jq .requested <<<"$cur") == true && $(jq .requested <<<"$prev") == false ]] &&

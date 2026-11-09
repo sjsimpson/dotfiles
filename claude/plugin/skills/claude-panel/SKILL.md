@@ -111,7 +111,7 @@ Completion ping: `osascript -e 'display notification "PR #<n>: <k> findings" wit
 
 ## Step 4: Follow-ups
 
-My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ticked)?" No pending review (`deep-review --draft` syncs its own).
+My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ticked)?" No pending review.
 
 **Pending review** (others' PRs, automatic after the report unless the caller said local only; invisible to others until the user submits in the UI):
 

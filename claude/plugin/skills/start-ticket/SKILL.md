@@ -57,8 +57,7 @@ Worktree on branch <branch>. <extra context, if any>
 4. Then build per the user's global rules (WIP commit first, gh stack for
    big changes). Code done → work the ready checklist
    (~/.dotfiles/claude/plugin/reference/ready-checklist.md; it includes
-   /sjsimpson:deep-review --draft, which asks before it pushes and opens
-   the draft PR), then report. Leaving draft: the checklist's Ready.
+   /sjsimpson:deep-review --draft), then report. Leaving draft: the checklist's Ready.
 5. Then follow ~/.dotfiles/claude/plugin/reference/agent-lifecycle.md →
    Handoff, Watch (from the PR's opening on), and Done.
 ```

@@ -10,7 +10,7 @@ after, through `address-pr-comments`, when I ask.
    passes). One round; findings go to step 3 as they are. QA `BLOCKED` →
    stop here, tell me what's blocked
 3. Report (shared template, report path from SKILL.md step 1 with `-draft`), plus
-   `<report dir>/pr-<n>-findings.json` (brief → Deliverable shape) holding
+   `<report dir>/pr-<n>-findings.json` (SKILL.md step 3 brief → Deliverable shape) holding
    every `fix` and `ticket` finding and every QA bug, blocking or not.
    Skip, Uncertain and Refuted stay in the report. Bodies per `voice.md`
    → PR feedback; one `voice` skill pass over the body and all comments
@@ -21,9 +21,8 @@ after, through `address-pr-comments`, when I ask.
      `voice` skill pass
    - CodeRabbit: `.coderabbit.yaml` in the repo root → `gh pr comment <n>
      --body "@coderabbitai full review"`. None → skip, say so
-   - Pending review: `pr-pending sync <n> <findings.json> --ledger
-     <report dir>/pr-<n>-pending-comments.json --run <ticket>-<head
-     sha:8>`. Never submit
+   - Pending review: the `pr-pending sync` command in SKILL.md step 4
+     (its ledger path and `--run` id). Never submit
    - Checkbox: the panel round had no failed agents → tick it (claude-panel
      Step 4 → Tick the template checkbox)
    - Watcher: `agent-lifecycle.md` → Watch (`--as author`)
