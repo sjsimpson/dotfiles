@@ -22,8 +22,9 @@
 ## Questions to me
 
 - Ask with AskUserQuestion: 2-4 options, recommended first and labeled
-  "(Recommended)", each question standalone (names the item it's about).
-  Up to 4 independent questions per call; as many calls as needed, and
+  "(Recommended)". The dialog may be all I see: each question carries the
+  context to decide (what was found, where, why it matters), and each
+  option says what it changes; wording or diffs go in `preview`. Up to 4 independent questions per call; as many calls as needed, and
   follow-ups that answers raise are welcome (grill-style cascade)
 - No numbered question lists in chat that need a typed answer. Free-text
   answers (names, wording) go in chat, one per message
