@@ -27,14 +27,14 @@ add=$(grep -oE 'git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+add[[:s
 paths=()
 for p in $add; do
   case $p in
-    -A|--all|-u|--update) paths=(.); break ;;
+    -A|--all|-u|--update) paths=(:/); break ;;
     -*) ;;
-    *) paths+=("$p") ;;
+    *) p=${p#[\"\']}; paths+=("${p%[\"\']}") ;;
   esac
 done
-if (( ${#paths[@]} )); then
-  files+=$'\n'$(git -C "$top" diff --name-only -- "${paths[@]}"; git -C "$top" ls-files --others --exclude-standard -- "${paths[@]}")
-fi
+for p in ${paths[@]+"${paths[@]}"}; do
+  files+=$'\n'$(git -C "$dir" diff --name-only -- "$p" 2>/dev/null; git -C "$dir" ls-files --full-name --others --exclude-standard -- "$p" 2>/dev/null || true)
+done
 
 docs=$(grep -E '(^|/)SKILL\.md$|(^|/)skills/[^/]+/.+\.md$|(^|/)agents/[^/]+\.md$|(^|/)(CLAUDE|AGENTS)\.md$|(^|/)plugin/reference/.+\.md$|\.workflow\.js$' <<<"$files" | sort -u || true)
 [ -n "$docs" ] || exit 0

@@ -277,6 +277,6 @@ logged; the done message → step 5. Stack: per `stack.md`.
 
 ## Never
 
-Post publicly, submit, or approve; push, except the nit commit (step 4) or draft-flow step 4, each on the user's OK; edit code outside `--fix`, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
+Post publicly, submit, or approve; push, except the nit commit (step 4) or draft-flow step 4, each on the user's OK; edit code outside `--fix`, `--draft` simplify, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
 or brief a review without both claude-panel and qa (review mode). Your
 GitHub writes: `pr-pending sync` (others' PRs), that nit push, and draft-flow step 4.

@@ -10,7 +10,7 @@ Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file)
 
 ## Rules
 
-- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → a pending review only from `deep-review --draft`. Checkbox tick only on explicit request or from `deep-review` on my own PR; public comments only on explicit request.
+- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → never a pending review from the panel (`deep-review --draft` syncs one itself). Checkbox tick only on explicit request or from `deep-review` on my own PR; public comments only on explicit request.
 - **Read-only everywhere.** No edits, `pnpm install`, or test runs in any worktree — safe on fork PRs.
 - Never touch the user's working tree for someone else's PR; use a disposable worktree.
 - Each Bash call is a fresh shell — start every call with `SCRATCH="${TMPDIR:-/tmp}"; SCRATCH="${SCRATCH%/}/claude-panel"`.

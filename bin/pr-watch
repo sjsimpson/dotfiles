@@ -54,7 +54,7 @@ query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){defaultBranchR
       talk: (([$p.comments.nodes[] | select(human)] | length)
            + ([$p.reviews.nodes[] | select(human) | select(.state != "PENDING")] | length)
            + ([$p.reviewThreads.nodes[].comments.nodes[] | select(human)] | length)),
-      bot_reviews: ([$p.reviews.nodes[] | select(.author != null and (human | not) and .author.login != $me)] | length),
+      bot_reviews: ([$p.reviews.nodes[] | select(.author != null and (human | not) and .author.login != $me and .state != "PENDING")] | length),
       checks: ($ctx | length),
       pending: ([$ctx[] | select((.status // "COMPLETED") != "COMPLETED" or .state == "PENDING" or .state == "EXPECTED")] | length),
       failing: [$ctx[] | select(.conclusion == "FAILURE" or .conclusion == "TIMED_OUT"

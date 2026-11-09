@@ -8,11 +8,12 @@ after, through `address-pr-comments`, when I ask.
 1. Simplify: `fix-loop.md` step 1
 2. Review + QA on local HEAD, as 3b (`claude-panel --local`, qa both
    passes). One round; findings go to step 3 as they are. QA `BLOCKED` →
-   stop here, tell me what's blocked
+   write the report with the blocker, stop, tell me
 3. Report (shared template, report path from SKILL.md step 1 with `-draft`), plus
-   `<report dir>/pr-<n>-findings.json` (SKILL.md step 3 brief → Deliverable shape) holding
-   every `fix` and `ticket` finding and every QA bug, blocking or not.
-   Skip, Uncertain and Refuted stay in the report. Bodies per `voice.md`
+   `<report dir>/pr-<n>-findings.json` (no PR yet: `<n>` = branch name;
+   SKILL.md step 3 brief → Deliverable shape) holding every `fix` and
+   `ticket` finding and every QA bug, blocking or not; lines outside the
+   diff go in the body. Skip, Uncertain and Refuted stay in the report. Bodies per `voice.md`
    → PR feedback; one `voice` skill pass over the body and all comments
 4. Ask once (AskUserQuestion): push and open the draft? On OK, in order:
    - Push: `git push -u origin HEAD` (stack: `gh stack push`). No PR yet
