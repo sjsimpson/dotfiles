@@ -9,8 +9,8 @@ gh pr list -R <owner/repo> --base <head> --state open --json number,headRefName 
 
 - Bottom → top. One layer → plain run. More than 4 → state the count and
   ask (each layer is a full panel + QA)
-- `--fix` doesn't combine: fix the checked-out layer, then the next after
-  the user opens it (`gh-stack.md` → Flow per layer)
+- `--draft` / `--fix` don't combine: run on the checked-out layer, then
+  the next after it's pushed (`gh-stack.md` → Flow per layer)
 - Per layer: steps 1-4 as above (herdr), own worktree, agent and report,
   brief with the stack line. Dispatch all at once; the QA desk queues their
   QA. Each layer's agent syncs its own pending review (step 4, in its

@@ -17,9 +17,10 @@
 ## Flow per layer
 
 1. Layer below merged → `gh stack sync` (fetch, rebase the whole stack)
-2. `gh stack checkout <next>` → `/deep-review --fix`: review + QA on
-   local commits, fix, repeat until steady state
-3. Report → the user opens it: `gh stack push`, `gh pr ready`
+2. `gh stack checkout <next>` → `/deep-review --draft`: one review + QA
+   pass, then on the user's OK push, the draft PR, CodeRabbit, and the
+   findings in their pending review
+3. Threads addressed when the user asks → `gh pr ready`
    (`ready-checklist.md` → Ready)
 4. Merge one layer at a time, never the whole stack: `gh stack rebase` →
    `gh stack push` → CI green → `gh stack merge <bottom-pr> --yes`

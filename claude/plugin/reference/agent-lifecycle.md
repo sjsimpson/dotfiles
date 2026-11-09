@@ -42,13 +42,14 @@ event line, then re-arm the watcher of each PR still open:
   `gh-stack.md` → Flow per layer step 1; a sync that rewrote layers →
   offer the push (user's OK)
 - **Project agent** (`author`): CI failed → root cause from the log (`gh
-  run view <id> --log-failed`) and a proposed fix. New comments or reviews
-  → `address-pr-comments` decision table. Both wait for the user's OK in
-  the pane before any commit. CI passed (the watcher reports it only on a
+  run view <id> --log-failed`) and a proposed fix; commit only on the user's OK
+  in the pane. New comments, reviews, or a CodeRabbit review → tell the
+  user in the pane (who, how many threads); `address-pr-comments` only
+  when they ask. CI passed (the watcher reports it only on a
   draft based on the default branch: the bottom layer or a lone PR) →
   `ready-checklist.md` → Ready; not ready → "CI green; not ready: `<open
-  checklist items>`", and an open Threads item → `address-pr-comments`
-  decision table
+  checklist items>`", and an open Threads item → offer
+  `address-pr-comments`
 - **Reviewer**: new push or re-review requested → `git range-diff <base
   at review>..<reviewed sha> <base now>..<new sha>` marks every commit
   `=` (rebase only) → tell the user in the pane "rebased, no change",

@@ -1,7 +1,7 @@
 ---
 name: deep-review
-description: Full review + QA of a PR (claude-panel + qa in app or probe mode, prod data read-only), in this session or in its own herdr worktree + agent. Modes --fix, --status, --risky, --stack. Use for /deep-review or to review/QA a PR; proactively --fix (no PR needed) once code on my branch is finished, before reporting done.
-argument-hint: "[pr-number | pr-url] [--status] [--risky] [--stack] [--fix] [extra context]"
+description: Full review + QA of a PR (claude-panel + qa in app or probe mode, prod data read-only), in this session or in its own herdr worktree + agent. Modes --draft, --fix, --status, --risky, --stack. Use for /deep-review or to review/QA a PR; proactively --draft (or --fix in a repo without PRs) once code on my branch is finished, before reporting done.
+argument-hint: "[pr-number | pr-url] [--status] [--risky] [--stack] [--draft | --fix] [extra context]"
 ---
 
 # Deep review
@@ -17,7 +17,7 @@ Where it runs:
 ## 0. Inputs
 
 - PR: number or URL. URL → `owner/repo`; number → current repo
-  (`gh repo view --json nameWithOwner`). `--fix` without one: the current
+  (`gh repo view --json nameWithOwner`). `--draft` / `--fix` without one: the current
   branch's PR if any, else no PR: skip the `gh pr view` and thread reads,
   base = gh stack parent or default branch, `pr-<n>` → branch name
 - Repo name = last part of `owner/repo`. Local checkout: the main worktree
@@ -29,7 +29,8 @@ Where it runs:
   the user didn't give; ask (step 1). `--risky` adds on to either. Also
   risky, unasked, when the diff touches an area the repo config lists as
   risky: say so. `--stack` combines with any of them (see **Stack**).
-  `--fix`: my own PR or layer, checked out here (else stop); see **3c**
+  `--draft` / `--fix`: my own PR or layer, checked out here (else stop);
+  see **3c** / **3d**
 - Reply-to (herdr): this session's name (`ListAgents` shows it). No name → the agent
   can't message back: tell the user to name the session, or rely on the
   report file only
@@ -209,12 +210,16 @@ desk replies wake you. While it runs: no branch switch, no code edits
 
 Follow `fix-loop.md` (this skill's folder).
 
+## 3d. Draft flow (`--draft`)
+
+Follow `draft-flow.md` (this skill's folder).
+
 ## 4. Findings → pending review or fixes
 
 Run by the session holding the worktree: you in 3b, the reviewer agent in
 its pane (herdr; the user works with it there, nothing is relayed).
 
-**My own PR** (not `--fix`): no pending review. Panel finished with no
+**My own PR** (not `--draft` / `--fix`): no pending review. Panel finished with no
 failed agents → tick the PR's "Reviewed by AI review panel" checkbox
 unasked (claude-panel Step 4 → Tick the template checkbox); say so in the
 report. Non-blocking fixes are
@@ -272,6 +277,6 @@ logged; the done message → step 5. Stack: per `stack.md`.
 
 ## Never
 
-Post publicly, submit, or approve; push, except the nit commit on the user's OK (step 4); edit code outside `--fix`, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
+Post publicly, submit, or approve; push, except the nit commit (step 4) or `--draft` step 4, each on the user's OK; edit code outside `--fix`, brief step 6 nit fixes, or status mode on the user's ask; write to prod data; run
 or brief a review without both claude-panel and qa (review mode). Your
-GitHub writes: `pr-pending sync` (others' PRs) and that nit push.
+GitHub writes: `pr-pending sync` (others' PRs), that nit push, and `--draft` step 4.

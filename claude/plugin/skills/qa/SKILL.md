@@ -1,6 +1,6 @@
 ---
 name: qa
-description: "Test a change for real: app mode (browser via the QA desk) or probe mode (sandboxed runs), picked from the diff. Use for a mid-work check, when deep-review/review-stack call it, or when the user asks to QA / test something. Finished code → `/deep-review --fix` instead."
+description: "Test a change for real: app mode (browser via the QA desk) or probe mode (sandboxed runs), picked from the diff. Use for a mid-work check, when deep-review/review-stack call it, or when the user asks to QA / test something. Finished code → `/deep-review --draft` instead."
 argument-hint: "[what to test] (optional; defaults to the current change)"
 ---
 

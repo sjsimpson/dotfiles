@@ -10,7 +10,7 @@ Preflight inline, then one Workflow run (`panel.workflow.js`, next to this file)
 
 ## Rules
 
-- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → never a pending review. Checkbox tick only on explicit request or from `deep-review` on my own PR; public comments only on explicit request.
+- **GitHub writes:** others' PRs → pending review after the report, automatically (Step 4); skipped when the caller says local only (e.g. `/deep-review`, which syncs it itself). My own PRs → a pending review only from `deep-review --draft`. Checkbox tick only on explicit request or from `deep-review` on my own PR; public comments only on explicit request.
 - **Read-only everywhere.** No edits, `pnpm install`, or test runs in any worktree — safe on fork PRs.
 - Never touch the user's working tree for someone else's PR; use a disposable worktree.
 - Each Bash call is a fresh shell — start every call with `SCRATCH="${TMPDIR:-/tmp}"; SCRATCH="${SCRATCH%/}/claude-panel"`.
@@ -111,7 +111,7 @@ Completion ping: `osascript -e 'display notification "PR #<n>: <k> findings" wit
 
 ## Step 4: Follow-ups
 
-My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ticked)?" No pending review.
+My own PR: offer in one line at the end: "Want fixes applied (or the checkbox ticked)?" No pending review (`deep-review --draft` syncs its own).
 
 **Pending review** (others' PRs, automatic after the report unless the caller said local only; invisible to others until the user submits in the UI):
 

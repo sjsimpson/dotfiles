@@ -16,8 +16,10 @@ HEAD: <sha>
 
 - [ ] History: no `WIP:` commits; Conventional Commits with the ticket
       scope; rebased on base (stack: `gh stack sync`)
-- [ ] Deep review: a `/deep-review --fix` run reached steady state and its
-      last round committed nothing
+- [ ] Deep review: `/deep-review --draft` ran on this branch after its last
+      feature commit (fix commits from threads are fine; its findings
+      count under Threads); repo without PRs → a `--fix` run reached
+      steady state and its last round committed nothing
 - [ ] Checks: the repo's lint, typecheck, tests pass for the packages the
       branch touches
 - [ ] CI: every GitHub check green on HEAD (`gh pr checks <n>`); not

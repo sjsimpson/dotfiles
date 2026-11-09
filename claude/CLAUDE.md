@@ -56,8 +56,9 @@
   "cosmetic" never justifies skipping a confident readability finding
   (premature abstraction, single-caller helper/export, stale name,
   needless indirection) on code my branch adds
-- Code finished on my own branch → run `/deep-review --fix` (it includes
-  qa) before saying done. Run it, don't suggest it
+- Code finished on my own branch → run `/deep-review --draft` (one local
+  panel + qa pass; findings go to the draft PR) before saying done; repo
+  without PRs → `--fix`. Run it, don't suggest it
 
 ## Scope
 
@@ -85,7 +86,10 @@
   - Pending reviews, only on others' PRs I review: `/deep-review` and
     `claude-panel` add findings via `pr-pending` without asking, never
     submit, and always report them locally too. My own PRs: no pending
-    review; report findings and offer to fix them
+    review (except below); report findings and offer to fix them
+  - `/deep-review --draft` on my own branch, after the push I OK'd: its
+    findings into my pending review (never submit), and the
+    `@coderabbitai full review` comment
   - Public comments/replies/submits: draft locally (as
     `address-pr-comments` does), post only when I ask. Posting a review
     thread reply also resolves that thread
